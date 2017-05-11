@@ -150,9 +150,15 @@ public class Player {
         switch (action){
             case TURN_LEFT:
                 direction = (direction - 1) % 4;
+                while(direction < 0){
+                    direction += 4;
+                }
                 break;
             case TURN_RIGHT:
                 direction = (direction + 1) % 4;
+                while(direction < 0){
+                    direction += 4;
+                }
                 break;
             case MOVE_FORWARD:
                 switch (direction){
@@ -233,16 +239,22 @@ public class Player {
     }
 
     public void printMap(){
-        for(int row = 0; row < BOARD_SIZE_ROW; row++){
-            for(int col = 0; col < BOARD_SIZE_COL; col++){
+        boolean flag;
+        for(int row = 40; row < 120; row++){
+            flag = false;
+            for(int col = 40; col < 120; col++){
                 if(row == playerRow && col == playerCol){
                     System.out.print(getDirection());
-                } else {
+                } else if(board[row][col] != UNKNOW) {
                     System.out.print((char)board[row][col]);
+                    flag = true;
                 }
             }
-            System.out.print('\n');
+            if(flag){
+                System.out.print('\n');
+            }
         }
+        System.out.print(direction);
     }
 
 }
