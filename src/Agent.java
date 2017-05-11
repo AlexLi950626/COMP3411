@@ -9,6 +9,18 @@ import java.util.*;
 import java.io.*;
 import java.net.*;
 
+
+//        T tree    a 	axe
+//        -	door	k	key
+//        *	wall	d	dynamite
+//        ~	water	$	treasure
+
+//        L   turn left
+//        R   turn right
+//        F   (try to) move forward
+//        C   (try to) chop down a tree, using an axe
+//        B   (try to) blast a wall or tree, using dynamite
+
 public class Agent {
 
    public char get_action( char view[][] ) {
@@ -60,15 +72,17 @@ public class Agent {
 
    public static void main( String[] args )
    {
-      InputStream in  = null;
-      OutputStream out= null;
-      Socket socket   = null;
-      Agent  agent    = new Agent();
-      char   view[][] = new char[5][5];
-      char   action   = 'F';
-      int port;
-      int ch;
-      int i,j;
+       InputStream in  = null;
+       OutputStream out= null;
+       Socket socket   = null;
+       Agent  agent    = new Agent();
+       char   view[][] = new char[5][5];
+       char   action   = 'F';
+       int port;
+       int ch;
+       int i,j;
+
+       Player p = new Player();
 
       if( args.length < 2 ) {
          System.out.println("Usage: java Agent -p <port>\n");
@@ -87,7 +101,7 @@ public class Agent {
          System.exit(-1);
       }
 
-      try { // scan 5-by-5 wintow around current location
+      try { // scan 5-by-5 window around current location
          while( true ) {
             for( i=0; i < 5; i++ ) {
                for( j=0; j < 5; j++ ) {
@@ -100,8 +114,11 @@ public class Agent {
                   }
                }
             }
+            p.update(view);
+            p.printMap();
             agent.print_view( view ); // COMMENT THIS OUT BEFORE SUBMISSION
             action = agent.get_action( view );
+            p.updateAction(action);
             out.write( action );
          }
       }
