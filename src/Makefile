@@ -1,20 +1,18 @@
 # Makefile
 
-CC = gcc
-CFLAGS = -Wall -O3
+JCC = javac
+JVM =  java
+JFLAGS = -g
 
-CSRC = agent.c pipe.c
-HSRC = pipe.h
-OBJ = $(CSRC:.c=.o)
+default:
+	 $(JCC) $(JFLAGS) *.java
 
-%o:%c $(HSRC)
-	$(CC) $(CFLAGS) -c $<
+run1:
+	$(JVM) Raft -p 31415 -i ../s0.in
 
-# additional targets
-.PHONY: clean
+run2:
+	$(JVM) Agent -p 31415 
 
-agent: $(OBJ)
-	$(CC) -lm $(CFLAGS) -o agent $(OBJ)
 
 clean:
-	rm *.o *.class agent
+	$(RM) *.class
