@@ -163,17 +163,26 @@ public class Player {
             case MOVE_FORWARD:
                 switch (direction){
                     case NORTH:
-                        playerRow--;
+                    	if(isBoardUpdate(playerRow-1, playerCol)){
+                            playerRow--;
+                    	}
                         break;
                     case SOUTH:
-                        playerRow++;
+                    	if(isBoardUpdate(playerRow+1, playerCol)){
+                            playerRow++;
+                    	}
                         break;
                     case WEST:
-                        playerCol--;
+                    	if(isBoardUpdate(playerRow, playerCol-1)){
+                            playerCol--;
+                    	}
                         break;
                     case EAST:
-                        playerCol++;
+                    	if(isBoardUpdate(playerRow, playerCol+1)){
+                            playerCol++;
+                    	}
                 }
+                System.out.println((char)board[playerRow][playerCol]);
                 //pick up things
                 interact();
                 break;
@@ -196,6 +205,14 @@ public class Player {
         }
     }
 
+    public boolean isBoardUpdate(int row, int col){
+    	if(board[row][col] == WALL || board[row][col] == DOOR || board[row][col] == TREE){
+    		return false;
+    	}
+    	return true;
+    }
+    
+    
     public void interact(){
         switch (board[playerRow][playerCol]){
             case AXE:
@@ -245,7 +262,7 @@ public class Player {
             for(int col = 40; col < 120; col++){
                 if(row == playerRow && col == playerCol){
                     System.out.print(getDirection());
-                } else if(board[row][col] != UNKNOW) {
+                } else {//if(board[row][col] != UNKNOW) {
                     System.out.print((char)board[row][col]);
                     flag = true;
                 }
