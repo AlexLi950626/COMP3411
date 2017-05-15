@@ -82,7 +82,7 @@ public class Agent {
        int ch;
        int i,j;
 
-       Player p = new Player();
+       Board b = new Board();
 
       if( args.length < 2 ) {
          System.out.println("Usage: java Agent -p <port>\n");
@@ -114,11 +114,11 @@ public class Agent {
                   }
                }
             }
-            p.update(view);
-            p.printMap();
+            b.update(view);
+            b.printMap();
             agent.print_view( view ); // COMMENT THIS OUT BEFORE SUBMISSION
             action = agent.get_action( view );
-            p.updateAction(action);
+            b.updateAction(action);
             out.write( action );
          }
       }
