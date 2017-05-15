@@ -5,7 +5,7 @@ import java.rmi.activation.UnknownObjectException;
 /**
  * Created by shiyun on 11/05/17.
  */
-public class Player {
+public class Board {
     // type
     public static final char TREE = 'T';
     public static final char DOOR = '-';
@@ -44,31 +44,55 @@ public class Player {
     public static final int VIEW_COL = 5;
 
     // if the player has any of these tools
-    private boolean axe;
+    /*private boolean axe;
     private boolean raft;
     private boolean key;
     private int dynamite;
-    private boolean treasure;
-
+    private boolean treasure;*/
+    
+    // if the known board has any of these tools
+    private boolean board_axe;
+    private boolean board_key;
+    private int board_dynamite;
+    private int board_tree;
+    private int board_door;
+    private int board_treasure;
+    
     // player position and direction
     // x is row, y is col
-    private int playerRow;
-    private int playerCol;
-    private int direction;
+    //private int playerRow;
+    //private int playerCol;
+    //private int direction;
 
     // board information;
     int[][] board;
+    
+    // search
+    private Search s;
+    
+    // player state
+    private State player;
 
-    public Player(){
-        axe = false;
+    public Board(){
+        /*axe = false;
         raft = false;
         key = false;
         dynamite = 0;
-        treasure = false;
+        treasure = false;*/
+        
+        board_axe = false;
+        board_key = false;
+        board_tree = 0;
+        board_door = 0;
+        board_dynamite = 0;
+        board_treasure = 0;
 
-        playerRow = START_ROW;
-        playerCol = START_COL;
-        direction = NORTH;
+        //playerRow = START_ROW;
+        //playerCol = START_COL;
+        //direction = NORTH;
+        
+        s = new Search();
+        player = new State(START_ROW, START_COL, NORTH);
 
         board = new int[BOARD_SIZE_ROW][BOARD_SIZE_COL];
 
@@ -84,55 +108,84 @@ public class Player {
     }
 
     public void update(char[][] view){
-        if(direction == NORTH){
+        if(player.direction() == NORTH){
             //finding 0,0
-            int viewRow = playerRow - 2;
-            int viewCol = playerCol - 2;
+            int viewRow = player.row() - 2;
+            int viewCol = player.col() - 2;
             for(int row = 0; row < VIEW_ROW; row++){
                 for(int col = 0; col < VIEW_COL; col++){
                     if(!(row == col && row == 2) && (board[viewRow + row][viewCol + col] == UNKNOW)) {
                         board[viewRow + row][viewCol + col] = view[row][col];
+                        board_update(view[row][col]);
                     }
                 }
             }
-        } else if(direction == SOUTH){
+        } else if(player.direction() == SOUTH){
             //finding 0,0
-            int viewRow = playerRow + 2;
-            int viewCol = playerCol + 2;
+            int viewRow = player.row() + 2;
+            int viewCol = player.col() + 2;
             for(int row = 0; row < VIEW_ROW; row++){
                 for(int col = 0; col < VIEW_COL; col++){
                     if(!(row == col && row == 2) && (board[viewRow - row][viewCol - col] == UNKNOW)) {
                         board[viewRow - row][viewCol - col] = view[row][col];
+                        board_update(view[row][col]);
                     }
                 }
             }
-        } else if(direction == EAST){
+        } else if(player.direction() == EAST){
             //finding 0,0
-            int viewRow = playerRow - 2;
-            int viewCol = playerCol + 2;
+            int viewRow = player.row() - 2;
+            int viewCol = player.col() + 2;
             for(int row = 0; row < VIEW_ROW; row++){
                 for(int col = 0; col < VIEW_COL; col++){
                     if(!(row == col && row == 2) && (board[viewRow + col][viewCol - row] == UNKNOW)) {
                         board[viewRow + col][viewCol - row] = view[row][col];
+                        board_update(view[row][col]);
                     }
                 }
             }
-        } else if(direction == WEST){
+        } else if(player.direction() == WEST){
             //finding 0,0
-            int viewRow = playerRow + 2;
-            int viewCol = playerCol - 2;
+            int viewRow = player.row() + 2;
+            int viewCol = player.col() - 2;
             for(int row = 0; row < VIEW_ROW; row++){
                 for(int col = 0; col < VIEW_COL; col++){
                     if(!(row == col && row == 2) && (board[viewRow - col][viewCol + row] == UNKNOW)) {
                         board[viewRow - col][viewCol + row] = view[row][col];
+                        board_update(view[row][col]);
                     }
                 }
             }
         }
     }
+    
+    public void board_update(char board){
+    	switch(board){
+    	case AXE:
+    		board_axe = true;
+    		break;
+    	case KEY:
+    		board_key = true;
+    		break;
+    	case TREE:
+    		board_tree ++;
+    		break;
+    	case DYNAMITE:
+    		board_dynamite ++;
+    		break;
+    	case TREASURE:
+    		board_treasure ++;
+    		break;
+    	case DOOR:
+    		board_door ++;
+    		break;
+    	default:
+    		break;
+    	}
+    }
 
     public char getDirection(){
-        switch (direction){
+        switch (player.direction()){
             case NORTH:
                 return '^';
             case SOUTH:
@@ -145,44 +198,57 @@ public class Player {
                 return (char) 0;
         }
     }
+    
+    public char setAction(char action){
+    	char path = 0;
+    	//check player holding treasure or not
+    	if(player.treasure()){
+    		//search path to original point
+    	}
+    	//check known board holding treasure or not
+    	if(board_treasure > 0){
+    		//search path to treasure
+    	}
+    		
+    	//check known board has tools or barrier or not
+    		//search path to tools or barrier
+    	//explore graph
+    	s.explore(board, player);
+    	
+    	return path;
+    }
 
     public void updateAction(char action){
         switch (action){
             case TURN_LEFT:
-                direction = (direction - 1) % 4;
-                while(direction < 0){
-                    direction += 4;
-                }
+            	player.updateDirection(player.direction()-1);
                 break;
             case TURN_RIGHT:
-                direction = (direction + 1) % 4;
-                while(direction < 0){
-                    direction += 4;
-                }
+            	player.updateDirection(player.direction()+1);
                 break;
             case MOVE_FORWARD:
-                switch (direction){
+                switch (player.direction()){
                     case NORTH:
-                    	if(isBoardUpdate(playerRow-1, playerCol)){
-                            playerRow--;
+                    	if(isBoardUpdate(player.row()-1, player.col())){
+                            player.updateRow(player.row()-1);
                     	}
                         break;
                     case SOUTH:
-                    	if(isBoardUpdate(playerRow+1, playerCol)){
-                            playerRow++;
+                    	if(isBoardUpdate(player.row()+1, player.col())){
+                            player.updateRow(player.row()+1);
                     	}
                         break;
                     case WEST:
-                    	if(isBoardUpdate(playerRow, playerCol-1)){
-                            playerCol--;
+                    	if(isBoardUpdate(player.row(), player.col()-1)){
+                            player.updateCol(player.col()-1);
                     	}
                         break;
                     case EAST:
-                    	if(isBoardUpdate(playerRow, playerCol+1)){
-                            playerCol++;
+                    	if(isBoardUpdate(player.row(), player.col()+1)){
+                            player.updateCol(player.col()+1);
                     	}
                 }
-                System.out.println((char)board[playerRow][playerCol]);
+                System.out.println((char)board[player.row()][player.col()]);
                 //pick up things
                 interact();
                 break;
@@ -190,18 +256,21 @@ public class Player {
                 int door_col = getForwardCol();
                 int door_row = getForwardRow();
                 board[door_row][door_col] = EMPTY;
+                board_door--;
                 break;
             case CHOP_TREE:
                 int tree_col = getForwardCol();
                 int tree_row = getForwardRow();
                 board[tree_row][tree_col] = EMPTY;
-                raft = true;
+                player.updateRaft(true);
+                board_tree --;
                 break;
             case BLAST_WALL_TREE:
                 int wall_col = getForwardCol();
                 int wall_row = getForwardRow();
                 board[wall_row][wall_col] = EMPTY;
-                dynamite--;
+                player.updateDynamite(player.dynamite()-1);
+                board_dynamite --;
         }
     }
 
@@ -214,44 +283,44 @@ public class Player {
     
     
     public void interact(){
-        switch (board[playerRow][playerCol]){
+        switch (board[player.row()][player.col()]){
             case AXE:
-                axe = true;
+                player.updateAxe(true);
                 break;
             case KEY:
-                key = true;
+                player.updateKey(true);
                 break;
             case DYNAMITE:
-                dynamite++;
+                player.updateDynamite(player.dynamite()+1);
                 break;
             case TREASURE:
-                treasure = true;
+                player.updateTreasure(true);
         }
-        if(board[playerRow][playerCol] == AXE || board[playerRow][playerCol] == KEY ||
-                board[playerRow][playerCol] == DYNAMITE || board[playerRow][playerCol] == TREASURE){
-            board[playerRow][playerCol] = EMPTY;
+        if(board[player.row()][player.col()] == AXE || board[player.row()][player.col()] == KEY ||
+                board[player.row()][player.col()] == DYNAMITE || board[player.row()][player.col()] == TREASURE){
+            board[player.row()][player.col()] = EMPTY;
         }
     }
 
     public int getForwardRow(){
-        switch (direction){
+        switch (player.direction()){
             case NORTH:
-                return playerRow - 1;
+                return player.row() - 1;
             case SOUTH:
-                return playerRow + 1;
+                return player.row() + 1;
             default:
-                return playerRow;
+                return player.row();
         }
     }
 
     public int getForwardCol(){
-        switch (direction){
+        switch (player.direction()){
             case WEST:
-                return playerCol - 1;
+                return player.col() - 1;
             case EAST:
-                return playerCol + 1;
+                return player.col() + 1;
             default:
-                return playerCol;
+                return player.col();
         }
     }
 
@@ -260,7 +329,7 @@ public class Player {
         for(int row = 40; row < 120; row++){
             flag = false;
             for(int col = 40; col < 120; col++){
-                if(row == playerRow && col == playerCol){
+                if(row == player.row() && col == player.col()){
                     System.out.print(getDirection());
                 } else {//if(board[row][col] != UNKNOW) {
                     System.out.print((char)board[row][col]);
@@ -271,7 +340,21 @@ public class Player {
                 System.out.print('\n');
             }
         }
-        System.out.print(direction);
+        System.out.print(player.direction());
+        System.out.println("board info:");
+        System.out.println("board_axe: " + board_axe);
+        System.out.println("board_key: " + board_key);
+        System.out.println("board_tree: " + board_tree);
+        System.out.println("board_door: " + board_door);
+        System.out.println("board_dynamite: " + board_dynamite);
+        System.out.println("board_treasure: " + board_treasure);
+        
+        System.out.println("player info:");
+        System.out.println("axe: " + player.axe());
+        System.out.println("key: " + player.key());
+        System.out.println("raft: " + player.raft());
+        System.out.println("dynamite: " + player.dynamite());
+        System.out.println("treasure: " + player.treasure());
     }
 
 }
