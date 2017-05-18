@@ -1,12 +1,13 @@
 import org.omg.CORBA.UNKNOWN;
 
 import java.rmi.activation.UnknownObjectException;
+import java.util.ArrayList;
 
 /**
  * Created by shiyun on 11/05/17.
  */
 public class Board {
-    // type
+    //board type
     public static final char TREE = 'T';
     public static final char DOOR = '-';
     public static final char WALL = '*';
@@ -43,12 +44,6 @@ public class Board {
     public static final int VIEW_ROW = 5;
     public static final int VIEW_COL = 5;
 
-    // if the player has any of these tools
-    /*private boolean axe;
-    private boolean raft;
-    private boolean key;
-    private int dynamite;
-    private boolean treasure;*/
     
     // if the known board has any of these tools
     private boolean board_axe;
@@ -56,42 +51,33 @@ public class Board {
     private int board_dynamite;
     private int board_tree;
     private int board_door;
-    private int board_treasure;
-    
-    // player position and direction
-    // x is row, y is col
-    //private int playerRow;
-    //private int playerCol;
-    //private int direction;
+    private boolean board_treasure;
 
     // board information;
     int[][] board;
     
     // search
     private Search s;
+    private ArrayList<Character> path;
+    
+    private State prv;
     
     // player state
     private State player;
 
     public Board(){
-        /*axe = false;
-        raft = false;
-        key = false;
-        dynamite = 0;
-        treasure = false;*/
-        
+    	//initialize the board info
         board_axe = false;
         board_key = false;
         board_tree = 0;
         board_door = 0;
         board_dynamite = 0;
-        board_treasure = 0;
-
-        //playerRow = START_ROW;
-        //playerCol = START_COL;
-        //direction = NORTH;
+        board_treasure = false;
+        
+        prv = null;
         
         s = new Search();
+        path = new ArrayList<Character> ();
         player = new State(START_ROW, START_COL, NORTH);
 
         board = new int[BOARD_SIZE_ROW][BOARD_SIZE_COL];
@@ -174,7 +160,7 @@ public class Board {
     		board_dynamite ++;
     		break;
     	case TREASURE:
-    		board_treasure ++;
+    		board_treasure = true;
     		break;
     	case DOOR:
     		board_door ++;
@@ -199,26 +185,37 @@ public class Board {
         }
     }
     
-    public char setAction(char action){
-    	char path = 0;
+    public char setAction(){
+
+    	ArrayList<State> exploreS =  new ArrayList<State>();
+    	
     	//check player holding treasure or not
     	if(player.treasure()){
     		//search path to original point
     	}
     	//check known board holding treasure or not
-    	if(board_treasure > 0){
+    	if(board_treasure){
     		//search path to treasure
     	}
     		
     	//check known board has tools or barrier or not
     		//search path to tools or barrier
     	//explore graph
-    	s.explore(board, player);
+    	exploreS = s.explore(board, player);
+    	//System.out.println("path contain element: " + exploreS.size());
+    	exploreS.get(0).printState();
     	
-    	return path;
+    	s.pathToChar(board, exploreS, player, path);
+    	//System.out.println("command: " + path);
+    	char action = path.get(0) ; //get the first element from the path
+    	//player.addPath(exploreS.get(0));//not really
+    	path.remove(0);
+    	//System.out.println("action " + action);
+    	return action;
     }
 
     public void updateAction(char action){
+
         switch (action){
             case TURN_LEFT:
             	player.updateDirection(player.direction()-1);
@@ -263,15 +260,21 @@ public class Board {
                 int tree_row = getForwardRow();
                 board[tree_row][tree_col] = EMPTY;
                 player.updateRaft(true);
-                board_tree --;
+                board_tree--;
                 break;
             case BLAST_WALL_TREE:
                 int wall_col = getForwardCol();
                 int wall_row = getForwardRow();
+                if(board[wall_row][wall_col] == TREE){
+            		board_tree--;
+                }
                 board[wall_row][wall_col] = EMPTY;
                 player.updateDynamite(player.dynamite()-1);
-                board_dynamite --;
         }
+    	if(prv == null || player.row() != prv.row() || player.col() != prv.col() ){
+        	player.updatePrv(prv);
+        	prv = new State(player);
+    	}
     }
 
     public boolean isBoardUpdate(int row, int col){
@@ -286,15 +289,19 @@ public class Board {
         switch (board[player.row()][player.col()]){
             case AXE:
                 player.updateAxe(true);
+                board_axe = false;
                 break;
             case KEY:
                 player.updateKey(true);
+                board_key = false;
                 break;
             case DYNAMITE:
                 player.updateDynamite(player.dynamite()+1);
+                board_dynamite--;
                 break;
             case TREASURE:
                 player.updateTreasure(true);
+                board_treasure =  false;
         }
         if(board[player.row()][player.col()] == AXE || board[player.row()][player.col()] == KEY ||
                 board[player.row()][player.col()] == DYNAMITE || board[player.row()][player.col()] == TREASURE){
@@ -348,13 +355,6 @@ public class Board {
         System.out.println("board_door: " + board_door);
         System.out.println("board_dynamite: " + board_dynamite);
         System.out.println("board_treasure: " + board_treasure);
-        
-        System.out.println("player info:");
-        System.out.println("axe: " + player.axe());
-        System.out.println("key: " + player.key());
-        System.out.println("raft: " + player.raft());
-        System.out.println("dynamite: " + player.dynamite());
-        System.out.println("treasure: " + player.treasure());
     }
 
 }

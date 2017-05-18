@@ -117,7 +117,7 @@ public class Agent {
             b.update(view);
             b.printMap();
             agent.print_view( view ); // COMMENT THIS OUT BEFORE SUBMISSION
-            action = agent.get_action( view );
+            action = b.setAction();	  //agent.get_action( view );
             b.updateAction(action);
             out.write( action );
          }
