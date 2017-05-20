@@ -59,43 +59,53 @@ public class Search {
 		
 	}
 	
-	public ArrayList<State> explore(int[][] view, State current){
-		exploreQ.add(current);
-
-		while(!exploreQ.isEmpty()){
-			/*System.out.println("----------------------------------");
-			for (State a : exploreQ) {
-				  a.printState();
-			}
-			System.out.println("----------------------------------");*/
-			State prv = new State(exploreQ.poll());
+	public State explore(int[][] view, State current){
+		//exploreQ.add(current);
+		//while(!exploreQ.isEmpty()){
+			//System.out.println("----------------------------------");
+			//for (State a : exploreQ) {
+			//	  a.printState();
+			//}
+			//System.out.println("----------------------------------");
+			State prv = current;
 			State next = new State(prv);
+			State returnState = null;
 			//prv.printState();
 			//expand North row-1
 			next.updateRow(prv.row()-1);
 			next.updateCol(prv.col());
 			// check if player allow to go forward in north direction
-			if(!exploreSeen.contains(next) && vaild(view, next) == true){
+			if( seen(exploreSeen, next) == false && vaild(view, next) == true){
 				next.updatePrv(prv);
 				exploreSeen.add(next);
-
+				//ArrayList<State> path = new ArrayList<State>();
 				for(int newCol = next.col()-2; newCol <= next.col()+2; newCol++){
-
 					//check any unknown position in the 5x5 area for the next step
 					if(view[next.row()-2][newCol] == UNKNOW){
 						//current to the next position
-						State step = new State(next);
-						ArrayList<State> path = new ArrayList<State>();
-						path.add(step);
-                        while (step.col() != current.col() && step.row() != current.row()){
-                        	step = step.prv();
-                        	path.add(0,step);
-                        }
-                        System.out.println("N push step: " + step.row() + " " + step.col());
-                        return path;
+						//State step = new State(next);
+						//path.add(step);
+                        /*while (step.col() != current.col() || step.row() != current.row()){
+                        	if(step.prv() == null){
+                        		path.add(0,step);
+                        		break;
+                        	} 
+                        		step = step.prv();
+                        	//if(step.prv().row() != step.row() ||step.prv().col() != step.col()){
+                        		path.add(0,step);
+                        	//}
+
+                        }*/
+                        //System.out.println("N push step: " + step.row() + " " + step.col());
+						System.out.println("N push step: " + next.row() + " " + next.col());
+						if(returnState == null){
+							returnState = next;
+						}
+						//exploreQ.add(next);
+                        break;
 					}
 				}
-				exploreQ.add(next);
+
 			}
 			
 			//expand South row+1
@@ -104,25 +114,40 @@ public class Search {
 			next.updateCol(prv.col());
 			
 			// check if player allow to go forward in north direction
-			if(!exploreSeen.contains(next) && vaild(view, next) == true){
+			if(seen(exploreSeen, next) == false && vaild(view, next) == true){
 				next.updatePrv(prv);
 				exploreSeen.add(next);
+				ArrayList<State> path = new ArrayList<State>();
 				for(int newCol = next.col()-2; newCol <= next.col()+2; newCol++){
 					//check any unknown position in the 5x5 area for the next step
 					if(view[next.row()+2][newCol] == UNKNOW){
 						//current to the next position
-						State step = new State(next);
-						ArrayList<State> path = new ArrayList<State>();
-						path.add(step);
-                        while (step.col() != current.col() && step.row() != current.row()){
+						//State step = new State(next);
+						
+						//path.add(step);
+                        /*while (step.col() != current.col() || step.row() != current.row()){
+                        	if(step.prv() == null){
+                        		path.add(0,step);
+                        		break;
+                        	}
                         	step = step.prv();
-                        	path.add(0,step);
-                        }
-                        System.out.println("S push step: " + step.row() + " " + step.col());
-                        return path;
+                        	//if(step.prv().row() != step.row() ||step.prv().col() != step.col()){
+                        		//step = step.prv();
+                    		path.add(0,step);
+                        	//}
+                    		
+                        }*/
+                       // System.out.println("S push step: " + step.row() + " " + step.col());
+						System.out.println("S push step: " + next.row() + " " + next.col());
+						if(returnState == null){
+							returnState = next;
+						}else{
+							exploreQ.add(next);
+						}
+                        break;
 					}
 				}
-				exploreQ.add(next);
+
 			}
 			
 			//expand West col-1
@@ -131,25 +156,40 @@ public class Search {
 			next.updateCol(prv.col()-1);
 			
 			// check if player allow to go forward in north direction
-			if(!exploreSeen.contains(next) && vaild(view, next) == true){
+			if(seen(exploreSeen, next) == false && vaild(view, next) == true){
 				next.updatePrv(prv);
 				exploreSeen.add(next);
+				ArrayList<State> path = new ArrayList<State>();
 				for(int newRow = next.row()-2; newRow <= next.row()+2; newRow++){
 					//check any unknown position in the 5x5 area for the next step
 					if(view[newRow][next.col()-2] == UNKNOW){
 						//current to the next position
-						State step = new State(next);
-						ArrayList<State> path = new ArrayList<State>();
-						path.add(step);
-                        while (step.col() != current.col() && step.row() != current.row()){
+						//State step = new State(next);
+						//path.add(step);
+                        /*while (step.col() != current.col() || step.row() != current.row()){
+                        	if(step.prv() == null){
+                        		path.add(0,step);
+                        		break;
+                        	}
                         	step = step.prv();
-                        	path.add(0,step);
-                        }
-                        System.out.println("W push step: " + step.row() + " " + step.col());
-                        return path;
+                        	//if(step.prv().row() != step.row() ||step.prv().col() != step.col()){
+                        		path.add(0,step);
+                        	//}
+                    		
+
+                        }*/
+                        //System.out.println("W push step: " + step.row() + " " + step.col());
+						System.out.println("W push step: " + next.row() + " " + next.col());
+						//exploreQ.add(next);
+						if(returnState == null){
+							returnState = next;
+						}else{
+							exploreQ.add(next);
+						}
+                        break;
 					}
 				}
-				exploreQ.add(next);
+				//return path;
 			}
 			
 			
@@ -158,130 +198,322 @@ public class Search {
 			next.updateRow(prv.row());
 			next.updateCol(prv.col()+1);
 			// check if player allow to go forward in north direction
-			if(!exploreSeen.contains(next) && vaild(view, next) == true){
+			if(seen(exploreSeen, next) == false && vaild(view, next) == true){
 				next.updatePrv(prv);
 				exploreSeen.add(next);
-				System.out.println(vaild(view, next));
-				System.out.println((char)view[next.row()][next.col()]);
-
+				//System.out.println(vaild(view, next));
+				//System.out.println((char)view[next.row()][next.col()]);
+				ArrayList<State> path = new ArrayList<State>();
 				for(int newRow = next.row()-2; newRow <= next.row()+2; newRow++){
 					//check any unknown position in the 5x5 area for the next step
 					if(view[newRow][next.col()+2] == UNKNOW){
 						//current to the next position
-						State step = new State(next);
-						ArrayList<State> path = new ArrayList<State>();
-						path.add(step);
-                        while (step.col() != current.col() && step.row() != current.row()){
-                        	step = step.prv();
-                        	path.add(0,step);
-                        }
-                        System.out.println("E push step: " + step.row() + " " + step.col());
-                        return path;
+						//State step = new State(next);
+						//ArrayList<State> path = new ArrayList<State>();
+						//path.add(step);
+                        /*while (step.col() != current.col() || step.row() != current.row()){
+                        	if(step.prv() == null){
+                        		path.add(0,step);
+                        		break;
+                        	}
+                        	//if(step.prv().row() != step.row() || step.prv().col() != step.col()){
+                        		step = step.prv();
+                        		path.add(0,step);
+                        	//}
+                        	//step = step.prv();
+                        }*/
+                        //System.out.println("E push step: " + step.row() + " " + step.col());
+						System.out.println("E push step: " + next.row() + " " + next.col());
+						if(returnState == null){
+							returnState = next;
+						}else{
+							exploreQ.add(next);
+						}
+						//exploreQ.add(next);
+                        break;
 					}
 				}
-				exploreQ.add(next);
+
+				//return  exploreQ.poll();
+			}
+		//}
+		if(returnState == null){
+			returnState = exploreQ.poll();
+		}
+		return returnState;
+	}
+	
+	public boolean seen(ArrayList<State> seen, State test){
+		for(State s: seen){
+			if(s.row() == test.row() && s.col() == test.col()){
+				return true;
 			}
 		}
-		return null;
+		return false;
 	}
 	
 	
-	public void pathToChar(int[][] view, ArrayList<State> path, State current, ArrayList<Character> output){
+	public void pathToChar(int[][] view, State path, State current, ArrayList<Character> output){
 		//ArrayList<Character> output = new ArrayList<Character>();
-		charPath.addAll(path);
-		State next1 = path.get(0).prv();
-		if(current.row() != next1.row() && current.col() != next1.col() && !changeSeen.contains(next1)){
-    		//find the path to that point
-    		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    		changeSeen.add(next1);
-    		current.printState();
-    		next1.printState();
-    		checkloop:
-    		for(State s1 : current.path()){
-    			for(State s2: next1.path()){
-    				if(s1.row() == s2.row() && s1.col() == s2.col()){
-    					System.out.println("current direction " + current.direction());
-    					System.out.println("row: " + s1.row());
-    					System.out.println("col: " + s1.col());
-    					output.addAll(0, pathReverse(s1,current));
-    					System.out.println(output);
-    					break checkloop;
+		//charPath.add(path);
+		System.out.println("----------------------------------");
+		//for (State a : path) {
+			  path.printState();
+		//}
+		System.out.println("----------------------------------");
+		State next1 = path.prv();
+		//if(next1 != null){
+		if(!(current.row() == next1.row() && current.col()== next1.col())){
+	    		//find the path to that point
+				System.out.println("here!");
+				if(!changeSeen.contains(next1)){
+					System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		    		changeSeen.add(next1);
+		    		//current.printState();
+		    		//next1.printState();
+		    		checkloop:
+		    		for(State s1 : current.path()){
 
-    				}
-    			}
-    		}
-    		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-    		
+		    			for(State s2: next1.path()){
 
-    	} else{
-    		for(State next: charPath){
-                
-    			State prv = next.prv();
-    			System.out.println("direction: " + prv.direction());
-    			
-    			if(next.row() == prv.row()-1 && next.col() == prv.col()){
-    				//go north
-    				output.addAll(directionAction(NORTH, prv.direction()));
-    				
-    			}else if(next.row() == prv.row()+1 && next.col() == prv.col()){
-    				//go south
-    				output.addAll(directionAction(SOUTH,prv.direction()));
-    				
-    			}else if(next.row() == prv.row() && next.col() == prv.col()-1){
-    				//go west
-    				output.addAll(directionAction(WEST,prv.direction()));
+		    				if(s1.row() == s2.row() && s1.col() == s2.col()){
+
+		    					System.out.println("row: " + s1.row());
+		    					System.out.println("col: " + s1.col());
+		    					ArrayList<Character> a = pathReverse(view,s1,current);
+		    					System.out.println(a);
+		    					output.addAll(0, a);
+		    					break checkloop;
+
+		    				}
+		    			}
+		    		}
+		    		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+				}
+	    		
+	 
+	    	} else{
+	    		
+	    		//for(int i = path.size()-1; i >= 1; i--){
+	    			/*if(i-1<0){
+	    				break;
+	    			}*/
+	    			State next = path; 
+	    			State prv = next.prv();
+	    			System.out.println("direction: " + prv.direction());
+	    			next.printState();
+	    			if(next.row() == prv.row()-1 && next.col() == prv.col()){
+	    				//go north
+	    				output.addAll(directionAction(NORTH, prv.direction()));
+	    				
+	    			}else if(next.row() == prv.row()+1 && next.col() == prv.col()){
+	    				//go south
+	    				output.addAll(directionAction(SOUTH,prv.direction()));
+	    				
+	    			}else if(next.row() == prv.row() && next.col() == prv.col()-1){
+	    				//go west
+	    				output.addAll(directionAction(WEST,prv.direction()));
 
 
-    			}else if(next.row() == prv.row() && next.col() == prv.col()+1){
-    				//go east
-    				output.addAll(directionAction(EAST,prv.direction()));
+	    			}else if(next.row() == prv.row() && next.col() == prv.col()+1){
+	    				//go east
+	    				output.addAll(directionAction(EAST,prv.direction()));
 
+	    			} else {
+	    				//bad path
+	    				System.out.println("bad path");
+	    				//next.printState();
 
-    			} else {
-    				//bad path
-    				System.out.println("bad path");
-    				next.printState();
+	    			}
+	    			
+	                if(view[next.row()][next.col()] == DOOR && next.key() == true){
+	                	output.add(UNLOCK_DOOR);
+	                }
+	                if(view[next.row()][next.col()] == TREE && next.axe() == true){
+	                	output.add(CHOP_TREE);
+	                }
+	               output.add(MOVE_FORWARD);
+	    		//}
+	    		//charPath.remove(0);
+	    	//}
+		}
 
-    			}
-    			
-                if(view[next.row()][next.col()] == DOOR && next.key() == true){
-                	output.add(UNLOCK_DOOR);
-                }
-                if(view[next.row()][next.col()] == TREE && next.axe() == true){
-                	output.add(CHOP_TREE);
-                }
-               output.add(MOVE_FORWARD);
-    		}
-    		charPath.clear();
-    	}
 	}
 	
-	public ArrayList<Character> pathReverse(State target, State current){
+	public ArrayList<Character> pathReverse(int[][] view, State target, State current){
 		ArrayList<Character> output = new ArrayList<Character>();
-		State prv = new State(current);
-		if(target.row() != prv.row() && target.col() != prv.col()){
-			output.addAll(directionAction(prv.prv().direction(), prv.direction()));
-			if(prv.row() == prv.prv().row()-1 && prv.col() == prv.prv().col()){
+		//write a bfs to target from current
+		// BFS uses Queue data structure
+		Queue<State> queue = new LinkedList<State>();
+		ArrayList<State> visited = new ArrayList<State>();
+		ArrayList<State> p = new ArrayList<State>();
+		queue.add(current);
+		visited.add(current);
+		while(!queue.isEmpty()) {
+
+			State prv = queue.poll();
+			State next = new State(prv);
+			if(next.row() == target.row() && next.col() == target.col()){
+				//return path
+				System.out.println("------------------------------------------------------------------");
+
+				while(!(next.col() == current.col() && next.row() == current.row())){
+					p.add(0,next);
+					next = next.prv();
+				}
+				for(State s : p){
+					System.out.println("------------------------------------------------------------------");
+					s.printState();
+					System.out.println("------------------------------------------------------------------");
+				}
+				break;
+			}
+			next.updateRow(prv.row()-1);
+			next.updateCol(prv.col());
+			// check if player allow to go forward in north direction
+			if(!visited.contains(next) && vaild(view, next) == true){
+				next.updatePrv(prv);
+				visited.add(next);
+				queue.add(next);
+			}
+			next = new State(prv);
+			next.updateRow(prv.row()+1);
+			next.updateCol(prv.col());
+			// check if player allow to go forward in north direction
+			if(!visited.contains(next) && vaild(view, next) == true){
+				next.updatePrv(prv);
+				visited.add(next);
+				queue.add(next);
+			}
+			next = new State(prv);
+			next.updateRow(prv.row());
+			next.updateCol(prv.col()-1);
+			// check if player allow to go forward in north direction
+			if(!visited.contains(next) && vaild(view, next) == true){
+				next.updatePrv(prv);
+				visited.add(next);
+				queue.add(next);
+			}
+			next = new State(prv);
+			next.updateRow(prv.row());
+			next.updateCol(prv.col()+1);
+			// check if player allow to go forward in north direction
+			if(!visited.contains(next) && vaild(view, next) == true){
+				next.updatePrv(prv);
+				visited.add(next);
+				queue.add(next);
+			}
+			
+		}
+		
+		for(int i = 0; i < p.size()-1; i++){
+			if(i+1 > p.size()-1){
+				break;
+			}
+			State prv = p.get(i);
+			State next = p.get(i+1);
+			System.out.println("direction: " + prv.direction());
+			next.printState();
+			if(next.row() == prv.row()-1 && next.col() == prv.col()){
 				//go north
 				output.addAll(directionAction(NORTH, prv.direction()));
+				p.get(i+1).updateDirection(NORTH);
 				
-			}else if(prv.row() == prv.prv().row()+1 && prv.col() == prv.prv().col()){
+			}else if(next.row() == prv.row()+1 && next.col() == prv.col()){
 				//go south
 				output.addAll(directionAction(SOUTH,prv.direction()));
+				p.get(i+1).updateDirection(SOUTH);
+
 				
-			}else if(prv.row() == prv.prv().row() && prv.col() == prv.prv().col()-1){
+			}else if(next.row() == prv.row() && next.col() == prv.col()-1){
 				//go west
 				output.addAll(directionAction(WEST,prv.direction()));
+				p.get(i+1).updateDirection(WEST);
 
 
-			}else if(prv.row() == prv.prv().row() && prv.col() == prv.prv().col()+1){
+
+			}else if(next.row() == prv.row() && next.col() == prv.col()+1){
 				//go east
 				output.addAll(directionAction(EAST,prv.direction()));
-			}
+				p.get(i+1).updateDirection(EAST);
 
-	        output.add(MOVE_FORWARD);
-	        //prv = new State(prv.prv());
+
+			} else {
+				//bad path
+				System.out.println("bad path");
+				//next.printState();
+
+			}
+			
+	        if(view[next.row()][next.col()] == DOOR && next.key() == true){
+	        	output.add(UNLOCK_DOOR);
+	        }
+	        if(view[next.row()][next.col()] == TREE && next.axe() == true){
+	        	output.add(CHOP_TREE);
+	        }
+	       output.add(MOVE_FORWARD);
 		}
+		
+		System.out.println(output);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		/*State prv = new State(current);
+		while(target.row() != prv.row() || target.col() != prv.col()){	
+			
+			if(prv.prv().row() == prv.row()-1 && prv.prv().col() == prv.col()){
+				//go north
+				System.out.println("go n");
+
+				output.addAll(directionAction(NORTH, prv.direction()));
+		        output.add(MOVE_FORWARD);
+		        output.addAll(directionAction(prv.prv().direction(),NORTH));
+				//break;
+			}else if(prv.prv().row() == prv.row()+1 && prv.prv().col() == prv.col()){
+				//go south
+				System.out.println("go s");
+
+				output.addAll(directionAction(SOUTH,prv.direction()));
+		        output.add(MOVE_FORWARD);
+		        output.addAll(directionAction(prv.prv().direction(),SOUTH));
+				//break;
+			}else if(prv.prv().row() == prv.row() && prv.prv().col() == prv.col()-1){
+				//go west
+				System.out.println("go w");
+
+				output.addAll(directionAction(WEST,prv.direction()));
+		        output.add(MOVE_FORWARD);
+		        output.addAll(directionAction(prv.prv().direction(),WEST));
+		        //break;
+			}else if(prv.prv().row() == prv.row() && prv.prv().col() == prv.col()+1){
+				//go east
+				System.out.println("go e");
+				output.addAll(directionAction(EAST,prv.direction()));
+		        output.add(MOVE_FORWARD);
+		        output.addAll(directionAction(prv.prv().direction(),EAST));
+		        //break;
+			}else if (prv.prv().row() == prv.row() && prv.prv().col() == prv.col()){
+		        output.addAll(directionAction(prv.prv().direction(),prv.direction()));
+
+			}
+			System.out.println("-----------------------------------------------------");
+			System.out.println("current direction " + prv.direction());
+			System.out.println("aim direction " + prv.prv().direction());
+
+			System.out.println(prv.row() + " " + prv.col());
+			System.out.println(prv.prv().row() + " " + prv.prv().col());
+			System.out.println("-----------------------------------------------------");
+
+			System.out.println(output);
+	        prv = new State(prv.prv());
+		}*/
 
 		return output;
 	}

@@ -74,7 +74,7 @@ public class Board {
         board_dynamite = 0;
         board_treasure = false;
         
-        prv = null;
+        prv = new State(START_ROW, START_COL, NORTH);
         
         s = new Search();
         path = new ArrayList<Character> ();
@@ -201,15 +201,14 @@ public class Board {
     	//check known board has tools or barrier or not
     		//search path to tools or barrier
     	//explore graph
-    	exploreS = s.explore(board, player);
+    	State explore= s.explore(board, player);
     	//System.out.println("path contain element: " + exploreS.size());
-    	exploreS.get(0).printState();
+    	//exploreS.get(0).printState();
     	
-    	s.pathToChar(board, exploreS, player, path);
-    	//System.out.println("command: " + path);
+    	s.pathToChar(board, explore, player, path);
+    	System.out.println("command: " + path);
     	char action = path.get(0) ; //get the first element from the path
-    	//player.addPath(exploreS.get(0));//not really
-    	path.remove(0);
+       	path.remove(0);
     	//System.out.println("action " + action);
     	return action;
     }
@@ -271,10 +270,10 @@ public class Board {
                 board[wall_row][wall_col] = EMPTY;
                 player.updateDynamite(player.dynamite()-1);
         }
-    	if(prv == null || player.row() != prv.row() || player.col() != prv.col() ){
+    	//if(prv == null){ //|| player.row() != prv.row() || player.col() != prv.col() ){
         	player.updatePrv(prv);
         	prv = new State(player);
-    	}
+    	//}
     }
 
     public boolean isBoardUpdate(int row, int col){

@@ -159,11 +159,11 @@ public class State {
 
 
 
-        System.out.println("axe: " + this.axe());
+       /* System.out.println("axe: " + this.axe());
         System.out.println("key: " + this.key());
         System.out.println("raft: " + this.raft());
         System.out.println("dynamite: " + this.dynamite());
-        System.out.println("treasure: " + this.treasure());
+        System.out.println("treasure: " + this.treasure());*/
     	
     }
 }
