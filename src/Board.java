@@ -185,10 +185,7 @@ public class Board {
         }
     }
     
-    public char setAction(){
-
-    	ArrayList<State> exploreS =  new ArrayList<State>();
-    	
+    public char setAction(){    	
     	//check player holding treasure or not
     	if(player.treasure()){
     		//search path to original point
