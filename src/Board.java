@@ -185,7 +185,8 @@ public class Board {
         }
     }
     
-    public char setAction(){    	
+    public char setAction(){
+    	/****************TO BE IMPLEMENT****************************/
     	//check player holding treasure or not
     	if(player.treasure()){
     		//search path to original point
@@ -197,16 +198,17 @@ public class Board {
     		
     	//check known board has tools or barrier or not
     		//search path to tools or barrier
-    	//explore graph
+    	
+    	
+    	//explore graph 
+    	//only the environment surrounding the current position, Using BFS
+    	//Currently, it won't explore the water or the graph in the other side
     	State explore= s.explore(board, player);
-    	//System.out.println("path contain element: " + exploreS.size());
-    	//exploreS.get(0).printState();
     	
     	s.pathToChar(board, explore, player, path);
     	System.out.println("command: " + path);
     	char action = path.get(0) ; //get the first element from the path
        	path.remove(0);
-    	//System.out.println("action " + action);
     	return action;
     }
 
