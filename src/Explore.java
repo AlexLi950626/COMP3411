@@ -1,38 +1,7 @@
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
+
 import java.util.*;
 public class Explore {
-	//Max number
-	public static final int CHAR_MAX = 10000;
-	
-    // board type
-    public static final char TREE = 'T';
-    public static final char DOOR = '-';
-    public static final char WALL = '*';
-    public static final char WATER = '~';
-    public static final char AXE = 'a';
-    public static final char KEY = 'k';
-    public static final char DYNAMITE = 'd';
-    public static final char TREASURE = '$';
-    public static final char UNKNOW = 'u';
-    public static final char BOUNDAY = '.';
-    public static final char EMPTY = ' ';
-    
-    //commands
-    public static final char TURN_LEFT = 'L';
-    public static final char TURN_RIGHT = 'R';
-    public static final char MOVE_FORWARD = 'F';
-    public static final char CHOP_TREE = 'C';
-    public static final char BLAST_WALL_TREE = 'B';
-    public static final char UNLOCK_DOOR = 'U';
-    
-    // read directions
-    public static final char NORTH = 0;
-    public static final char SOUTH = 2;
-    public static final char EAST = 1;
-    public static final char WEST = 3;
-    
-    // board size
-    public static final int BOARD_SIZE_ROW = 164;
-    public static final int BOARD_SIZE_COL = 164;
     
     // queue for explore
     private ArrayList<State> exploreQ;
@@ -81,7 +50,7 @@ public class Explore {
 		next.updateRow(prv.row()-1);
 		next.updateCol(prv.col());
 		// check if player allow to go forward in north direction
-		if( seen(exploreSeen, next) == false && valid(view, next) == true){
+		if(!seen(exploreSeen, next) && valid(view, next)){
 			next.updatePrv(prv);
 			exploreSeen.add(next);
 			if(returnState == null){
@@ -98,7 +67,7 @@ public class Explore {
 		next.updateCol(prv.col());
 		
 		// check if player allow to go forward in north direction
-		if(seen(exploreSeen, next) == false && valid(view, next) == true){
+		if(!seen(exploreSeen, next) && valid(view, next)){
 			next.updatePrv(prv);
 			exploreSeen.add(next);
 			if(returnState == null){
@@ -116,7 +85,7 @@ public class Explore {
 		next.updateCol(prv.col()-1);
 		
 		// check if player allow to go forward in north direction
-		if(seen(exploreSeen, next) == false && valid(view, next) == true){
+		if(!seen(exploreSeen, next) && valid(view, next)){
 			next.updatePrv(prv);
 			exploreSeen.add(next);
 			if(returnState == null){
@@ -133,7 +102,7 @@ public class Explore {
 		next.updateRow(prv.row());
 		next.updateCol(prv.col()+1);
 		// check if player allow to go forward in north direction
-		if(seen(exploreSeen, next) == false && valid(view, next) == true){
+		if(!seen(exploreSeen, next) && valid(view, next)){
 			next.updatePrv(prv);
 			exploreSeen.add(next);
 			if(returnState == null){
@@ -198,7 +167,7 @@ public class Explore {
 				State next1 = charPath.get(0).prv();
 				if(!(current.row() == next1.row() && current.col()== next1.col())){
 			    		//find the path to that point
-						if(seen(changeSeen,next1) == false && output.size() == 0){
+						if(!seen(changeSeen, next1) && output.size() == 0){
 							//System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 				    		changeSeen.add(next1);
 				    		
@@ -213,48 +182,44 @@ public class Explore {
 			    		
 			 
 			    	} else{
-			    			// translate the path to next point to command
-			    			State next = charPath.get(0);
-			    			State prv = current;
-			    			if(next.row() == prv.row()-1 && next.col() == prv.col()){
-			    				//go north
-			    				output.addAll(directionAction(NORTH, prv.direction()));
-			    				
-			    			}else if(next.row() == prv.row()+1 && next.col() == prv.col()){
-			    				//go south
-			    				output.addAll(directionAction(SOUTH,prv.direction()));
-			    				
-			    			}else if(next.row() == prv.row() && next.col() == prv.col()-1){
-			    				//go west
-			    				output.addAll(directionAction(WEST,prv.direction()));
+						// translate the path to next point to command
+						State next = charPath.get(0);
+						if(next.row() == current.row()-1 && next.col() == current.col()){
+							//go north
+							output.addAll(directionAction(Constants.NORTH, current.direction()));
+
+						}else if(next.row() == current.row()+1 && next.col() == current.col()){
+							//go south
+							output.addAll(directionAction(Constants.SOUTH, current.direction()));
+
+						}else if(next.row() == current.row() && next.col() == current.col()-1){
+							//go west
+							output.addAll(directionAction(Constants.WEST, current.direction()));
 
 
-			    			}else if(next.row() == prv.row() && next.col() == prv.col()+1){
-			    				//go east
-			    				output.addAll(directionAction(EAST,prv.direction()));
+						}else if(next.row() == current.row() && next.col() == current.col()+1){
+							//go east
+							output.addAll(directionAction(Constants.EAST, current.direction()));
 
-			    			} else {
-			    				//bad path
-			    				System.out.println("bad path");
-			    				//next.printState();
+						} else {
+							//bad path
+							System.out.println("bad path");
+							//next.printState();
 
-			    			}
-			    			
-			                if(view[next.row()][next.col()] == DOOR && next.key() == true){
-			                	output.add(UNLOCK_DOOR);
-			                }
-			                if(view[next.row()][next.col()] == TREE && next.axe() == true){
-			                	output.add(CHOP_TREE);
-			                }
-			               output.add(MOVE_FORWARD);
-			               
-			               charPath.remove(0);
+						}
+
+						if(view[next.row()][next.col()] == Constants.DOOR && next.key()){
+							output.add(Constants.UNLOCK_DOOR);
+						}
+						if(view[next.row()][next.col()] == Constants.TREE && next.axe()){
+							output.add(Constants.CHOP_TREE);
+						}
+					   output.add(Constants.MOVE_FORWARD);
+
+					   charPath.remove(0);
 				}
 			}
 		}
-
-			
-
 
 	}
 	
@@ -293,7 +258,7 @@ public class Explore {
 			next.updateRow(prv.row()-1);
 			next.updateCol(prv.col());
 			// check if player allow to go forward in north direction
-			if(seen(visited,next) == false && valid(view, next) == true){
+			if(!seen(visited, next) && valid(view, next)){
 				next.updatePrv(prv);
 				visited.add(next);
 				queue.add(next);
@@ -302,7 +267,7 @@ public class Explore {
 			next.updateRow(prv.row()+1);
 			next.updateCol(prv.col());
 			// check if player allow to go forward in south direction
-			if(seen(visited,next)== false && valid(view, next) == true){
+			if(!seen(visited, next) && valid(view, next)){
 				next.updatePrv(prv);
 				visited.add(next);
 				queue.add(next);
@@ -311,7 +276,7 @@ public class Explore {
 			next.updateRow(prv.row());
 			next.updateCol(prv.col()-1);
 			// check if player allow to go forward in west direction
-			if(seen(visited,next)== false && valid(view, next) == true){
+			if(!seen(visited, next) && valid(view, next)){
 				next.updatePrv(prv);
 				visited.add(next);
 				queue.add(next);
@@ -320,7 +285,7 @@ public class Explore {
 			next.updateRow(prv.row());
 			next.updateCol(prv.col()+1);
 			// check if player allow to go forward in east direction
-			if(seen(visited,next)== false && valid(view, next) == true){
+			if(!seen(visited, next) && valid(view, next)){
 				next.updatePrv(prv);
 				visited.add(next);
 				queue.add(next);
@@ -339,26 +304,26 @@ public class Explore {
 			//next.printState();
 			if(next.row() == prv.row()-1 && next.col() == prv.col()){
 				//go north
-				output.addAll(directionAction(NORTH, prv.direction()));
-				p.get(i+1).updateDirection(NORTH);
+				output.addAll(directionAction(Constants.NORTH, prv.direction()));
+				p.get(i+1).updateDirection(Constants.NORTH);
 				
 			}else if(next.row() == prv.row()+1 && next.col() == prv.col()){
 				//go south
-				output.addAll(directionAction(SOUTH,prv.direction()));
-				p.get(i+1).updateDirection(SOUTH);
+				output.addAll(directionAction(Constants.SOUTH,prv.direction()));
+				p.get(i+1).updateDirection(Constants.SOUTH);
 
 				
 			}else if(next.row() == prv.row() && next.col() == prv.col()-1){
 				//go west
-				output.addAll(directionAction(WEST,prv.direction()));
-				p.get(i+1).updateDirection(WEST);
+				output.addAll(directionAction(Constants.WEST,prv.direction()));
+				p.get(i+1).updateDirection(Constants.WEST);
 
 
 
 			}else if(next.row() == prv.row() && next.col() == prv.col()+1){
 				//go east
-				output.addAll(directionAction(EAST,prv.direction()));
-				p.get(i+1).updateDirection(EAST);
+				output.addAll(directionAction(Constants.EAST,prv.direction()));
+				p.get(i+1).updateDirection(Constants.EAST);
 
 
 			} else {
@@ -368,13 +333,13 @@ public class Explore {
 
 			}
 			
-	        if(view[next.row()][next.col()] == DOOR && next.key() == true){
-	        	output.add(UNLOCK_DOOR);
+	        if(view[next.row()][next.col()] == Constants.DOOR && next.key()){
+	        	output.add(Constants.UNLOCK_DOOR);
 	        }
-	        if(view[next.row()][next.col()] == TREE && next.axe() == true){
-	        	output.add(CHOP_TREE);
+	        if(view[next.row()][next.col()] == Constants.TREE && next.axe()){
+	        	output.add(Constants.CHOP_TREE);
 	        }
-	       output.add(MOVE_FORWARD);
+	       output.add(Constants.MOVE_FORWARD);
 		}
 		
 		//System.out.println(output);
@@ -390,67 +355,67 @@ public class Explore {
 	public ArrayList<Character> directionAction(int aim, int d){
 		ArrayList<Character> output = new ArrayList<Character>();
 		switch (aim){
-		case NORTH:
+		case Constants.NORTH:
 			switch(d){
-			case SOUTH:
-				output.add(TURN_LEFT);
-				output.add(TURN_LEFT);						
+			case Constants.SOUTH:
+				output.add(Constants.TURN_LEFT);
+				output.add(Constants.TURN_LEFT);
 				break;
-			case WEST:
-				output.add(TURN_RIGHT);
+			case Constants.WEST:
+				output.add(Constants.TURN_RIGHT);
 				break;
-			case EAST:
-				output.add(TURN_LEFT);
+			case Constants.EAST:
+				output.add(Constants.TURN_LEFT);
 				break;
-			case NORTH:
+			case Constants.NORTH:
 				break;
 			}
 		break;
-		case SOUTH:
+		case Constants.SOUTH:
 			switch(d){
-			case NORTH:
-				output.add(TURN_LEFT);
-				output.add(TURN_LEFT);
+			case Constants.NORTH:
+				output.add(Constants.TURN_LEFT);
+				output.add(Constants.TURN_LEFT);
 				break;
-			case WEST:
-				output.add(TURN_LEFT);
+			case Constants.WEST:
+				output.add(Constants.TURN_LEFT);
 				break;
-			case EAST:
-				output.add(TURN_RIGHT);
+			case Constants.EAST:
+				output.add(Constants.TURN_RIGHT);
 				break;
-			case SOUTH:
+			case Constants.SOUTH:
 				break;
 			}
 		break;
-		case WEST:
+		case Constants.WEST:
 			switch(d){
-			case NORTH:
-				output.add(TURN_LEFT);
+			case Constants.NORTH:
+				output.add(Constants.TURN_LEFT);
 				break;
-			case SOUTH:
-				output.add(TURN_RIGHT);
+			case Constants.SOUTH:
+				output.add(Constants.TURN_RIGHT);
 				break;
-			case EAST:
-				output.add(TURN_LEFT);
-				output.add(TURN_LEFT);
+			case Constants.EAST:
+				output.add(Constants.TURN_LEFT);
+				output.add(Constants.TURN_LEFT);
 				break;
-			case WEST:
+			case Constants.WEST:
 				break;
 			}
 		break;
-		case EAST:
+		case Constants.EAST:
 			switch(d){
-			case NORTH:
-				output.add(TURN_RIGHT);
+			case Constants.NORTH:
+				output.add(Constants.TURN_RIGHT);
 				break;
-			case SOUTH:
-				output.add(TURN_LEFT);
+			case Constants.SOUTH:
+				output.add(Constants.TURN_LEFT);
 				break;
-			case WEST:
-				output.add(TURN_LEFT);
-				output.add(TURN_LEFT);
+			case Constants.WEST:
+				output.add(Constants.TURN_LEFT);
+				output.add(Constants.TURN_LEFT);
 				break;
-			case EAST:
+			case Constants.EAST:
 				break;
 			}
 		break;
@@ -463,47 +428,38 @@ public class Explore {
 	 */
 	public boolean valid(int[][]view, State current){
 		// view overflow or not
-		if(current.row() >  BOARD_SIZE_ROW-1 || current.col() > BOARD_SIZE_COL-1){
+		if(current.row() >  Constants.BOARD_SIZE_ROW-1 || current.col() > Constants.BOARD_SIZE_COL-1){
 			return false;
 		}
 		if(current.row() < 0 || current.col() < 0){
 			return false;
 		}
 		//check boundary 5X% area
-		if(current.row()+2 >  BOARD_SIZE_ROW-1 || current.row()-2 < 0){
+		if(current.row()+2 >  Constants.BOARD_SIZE_ROW-1 || current.row()-2 < 0){
 			return false;
 		}
-		if(current.col()+2 >  BOARD_SIZE_COL-1 || current.col()-2 < 0){
+		if(current.col()+2 >  Constants.BOARD_SIZE_COL-1 || current.col()-2 < 0){
 			return false;
 		}
 		// it is a wall
-		if(view[current.row()][current.col()] == WALL){// && current.dynamite() < 1){
+		if(view[current.row()][current.col()] == Constants.WALL){// && current.dynamite() < 1){
 			return false;
 		}
 		// it is over boundary '.'
-		else if(view[current.row()][current.col()] == BOUNDAY){
+		else if(view[current.row()][current.col()] == Constants.BOUNDARY){
 			return false;
 		}
 		// it is water
-		else if(view[current.row()][current.col()] == WATER ){//&& current.raft() == false){  currently dun add this for the BFS
+		else if(view[current.row()][current.col()] == Constants.WATER ){//&& current.raft() == false){  currently dun add this for the BFS
 			//check raft
 			return false;
 		}
 		// it is tree
-		else if (view[current.row()][current.col()] == TREE){
+		else if (view[current.row()][current.col()] == Constants.TREE){
 			//check axe or dynamite
-			if(current.axe() == true || current.dynamite() > 1){
-				return true;
-			} else {
-				return false;
-			}
+			return current.axe() || current.dynamite() > 1;
 		}
 		// it is a door
-		else if (view[current.row()][current.col()] == DOOR && current.key() == false){
-			// check key
-			return false;
-		}else{
-			return true;
-		}
+		else return view[current.row()][current.col()] != Constants.DOOR || current.key();
 	}
 }

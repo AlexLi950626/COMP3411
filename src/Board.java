@@ -1,50 +1,9 @@
-import org.omg.CORBA.UNKNOWN;
-
-import java.rmi.activation.UnknownObjectException;
 import java.util.ArrayList;
 
 /**
  * Created by shiyun on 11/05/17.
  */
 public class Board {
-    //board type
-    public static final char TREE = 'T';
-    public static final char DOOR = '-';
-    public static final char WALL = '*';
-    public static final char WATER = '~';
-    public static final char AXE = 'a';
-    public static final char KEY = 'k';
-    public static final char DYNAMITE = 'd';
-    public static final char TREASURE = '$';
-    public static final char UNKNOW = 'u';
-    public static final char BOUNDAY = '.';
-    public static final char EMPTY = ' ';
-
-    // read directions
-    public static final char NORTH = 0;
-    public static final char SOUTH = 2;
-    public static final char EAST = 1;
-    public static final char WEST = 3;
-
-    //start position of the player
-    public static final int START_ROW = 81;
-    public static final int START_COL = 81;
-    public static final int BOARD_SIZE_ROW = 164;
-    public static final int BOARD_SIZE_COL = 164;
-
-    //commands
-    public static final char TURN_LEFT = 'L';
-    public static final char TURN_RIGHT = 'R';
-    public static final char MOVE_FORWARD = 'F';
-    public static final char CHOP_TREE = 'C';
-    public static final char BLAST_WALL_TREE = 'B';
-    public static final char UNLOCK_DOOR = 'U';
-
-    // view size
-    public static final int VIEW_ROW = 5;
-    public static final int VIEW_COL = 5;
-
-    
     // if the known board has any of these tools
     private boolean board_axe;
     private boolean board_key;
@@ -53,9 +12,18 @@ public class Board {
     private int board_door;
     private boolean board_treasure;
 
+    // these position variables are used to store the positions of items agent can interact with
+    private ArrayList<Position> axe_positions;
+    private ArrayList<Position> key_positions;
+    private ArrayList<Position> dynamite_positions;
+    private ArrayList<Position> door_positions;
+    private ArrayList<Position> treasure_positions;
+    private ArrayList<Position> tree_positions;
+
     // board information;
-    int[][] board;
-    
+    private int[][] board;
+
+    // Explore phase
     // search
     private Explore e;
     private ArrayList<Character> path;
@@ -73,133 +41,172 @@ public class Board {
         board_door = 0;
         board_dynamite = 0;
         board_treasure = false;
-        
-        prv = new State(START_ROW, START_COL, NORTH);
+
+        // A* use
+        axe_positions = new ArrayList<>();
+        key_positions = new ArrayList<>();
+        dynamite_positions = new ArrayList<>();
+        door_positions = new ArrayList<>();
+        treasure_positions = new ArrayList<>();
+        tree_positions = new ArrayList<>();
+
+
+        prv = new State(Constants.START_ROW, Constants.START_COL, Constants.NORTH);
         
         e = new Explore();
-        path = new ArrayList<Character> ();
-        player = new State(START_ROW, START_COL, NORTH);
+        path = new ArrayList<> ();
+        player = new State(Constants.START_ROW, Constants.START_COL, Constants.NORTH);
 
-        board = new int[BOARD_SIZE_ROW][BOARD_SIZE_COL];
+        board = new int[Constants.BOARD_SIZE_ROW][Constants.BOARD_SIZE_COL];
 
-        for(int i = 0; i < BOARD_SIZE_ROW; i++){
-            for(int j =0; j < BOARD_SIZE_COL; j++){
-                if(i == START_ROW && j == START_COL){
-                    board[i][j] = EMPTY;
+        for(int i = 0; i < Constants.BOARD_SIZE_ROW; i++){
+            for(int j =0; j < Constants.BOARD_SIZE_COL; j++){
+                if(i == Constants.START_ROW && j == Constants.START_COL){
+                    board[i][j] = Constants.EMPTY;
                 } else {
-                    board[i][j] = UNKNOW;
+                    board[i][j] = Constants.UNKNOW;
                 }
             }
         }
     }
 
+    /**
+     * given view from the engine, update local map
+     * @param view
+     */
     public void update(char[][] view){
-        if(player.direction() == NORTH){
+        if(player.direction() == Constants.NORTH){
             //finding 0,0
             int viewRow = player.row() - 2;
             int viewCol = player.col() - 2;
-            for(int row = 0; row < VIEW_ROW; row++){
-                for(int col = 0; col < VIEW_COL; col++){
-                    if(!(row == col && row == 2) && (board[viewRow + row][viewCol + col] == UNKNOW)) {
+            for(int row = 0; row < Constants.VIEW_ROW; row++){
+                for(int col = 0; col < Constants.VIEW_COL; col++){
+                    if(!(row == col && row == 2) && (board[viewRow + row][viewCol + col] == Constants.UNKNOW)) {
                         board[viewRow + row][viewCol + col] = view[row][col];
-                        board_update(view[row][col]);
+                        board_update(viewRow + row, viewCol + col);
                     }
                 }
             }
-        } else if(player.direction() == SOUTH){
+        } else if(player.direction() == Constants.SOUTH){
             //finding 0,0
             int viewRow = player.row() + 2;
             int viewCol = player.col() + 2;
-            for(int row = 0; row < VIEW_ROW; row++){
-                for(int col = 0; col < VIEW_COL; col++){
-                    if(!(row == col && row == 2) && (board[viewRow - row][viewCol - col] == UNKNOW)) {
+            for(int row = 0; row < Constants.VIEW_ROW; row++){
+                for(int col = 0; col < Constants.VIEW_COL; col++){
+                    if(!(row == col && row == 2) && (board[viewRow - row][viewCol - col] == Constants.UNKNOW)) {
                         board[viewRow - row][viewCol - col] = view[row][col];
-                        board_update(view[row][col]);
+                        board_update(viewRow - row,viewCol - col);
                     }
                 }
             }
-        } else if(player.direction() == EAST){
+        } else if(player.direction() == Constants.EAST){
             //finding 0,0
             int viewRow = player.row() - 2;
             int viewCol = player.col() + 2;
-            for(int row = 0; row < VIEW_ROW; row++){
-                for(int col = 0; col < VIEW_COL; col++){
-                    if(!(row == col && row == 2) && (board[viewRow + col][viewCol - row] == UNKNOW)) {
+            for(int row = 0; row < Constants.VIEW_ROW; row++){
+                for(int col = 0; col < Constants.VIEW_COL; col++){
+                    if(!(row == col && row == 2) && (board[viewRow + col][viewCol - row] == Constants.UNKNOW)) {
                         board[viewRow + col][viewCol - row] = view[row][col];
-                        board_update(view[row][col]);
+                        board_update(viewRow + col, viewCol - row);
                     }
                 }
             }
-        } else if(player.direction() == WEST){
+        } else if(player.direction() == Constants.WEST){
             //finding 0,0
             int viewRow = player.row() + 2;
             int viewCol = player.col() - 2;
-            for(int row = 0; row < VIEW_ROW; row++){
-                for(int col = 0; col < VIEW_COL; col++){
-                    if(!(row == col && row == 2) && (board[viewRow - col][viewCol + row] == UNKNOW)) {
+            for(int row = 0; row < Constants.VIEW_ROW; row++){
+                for(int col = 0; col < Constants.VIEW_COL; col++){
+                    if(!(row == col && row == 2) && (board[viewRow - col][viewCol + row] == Constants.UNKNOW)) {
                         board[viewRow - col][viewCol + row] = view[row][col];
-                        board_update(view[row][col]);
+                        board_update(viewRow - col, viewCol + row);
                     }
                 }
             }
         }
     }
-    
-    public void board_update(char board){
-    	switch(board){
-    	case AXE:
+
+    /**
+     * update number of items in the board and store the positions of these items
+     * @param row
+     * @param col
+     */
+    public void board_update(int row, int col){
+        Position k = new Position(row, col);
+    	switch(board[row][col]){
+    	case Constants.AXE:
     		board_axe = true;
+            if(!containPosition(axe_positions, k)){
+                axe_positions.add(k);
+            }
     		break;
-    	case KEY:
+    	case Constants.KEY:
     		board_key = true;
+    		if(!containPosition(key_positions, k)){
+    		    key_positions.add(k);
+            }
     		break;
-    	case TREE:
+    	case Constants.TREE:
     		board_tree ++;
+    		if(!containPosition(tree_positions, k)){
+    		    tree_positions.add(k);
+            }
     		break;
-    	case DYNAMITE:
+    	case Constants.DYNAMITE:
     		board_dynamite ++;
+            if(!containPosition(dynamite_positions, k)){
+                dynamite_positions.add(k);
+            }
     		break;
-    	case TREASURE:
+    	case Constants.TREASURE:
     		board_treasure = true;
+            if(!containPosition(treasure_positions, k)){
+                treasure_positions.add(k);
+            }
     		break;
-    	case DOOR:
+    	case Constants.DOOR:
     		board_door++;
+            if(!containPosition(door_positions, k)){
+                door_positions.add(k);
+            }
     		break;
     	default:
     		break;
     	}
     }
 
+    /**
+     * check if given arraylist contains certain Position
+     * @param al
+     * @param k
+     * @return
+     */
+    private boolean containPosition(ArrayList<Position> al, Position k){
+        for(Position i:al){
+            if(i.getRow() == k.getRow() && i.getCol() == k.getCol()){
+                return true;
+            }
+        }
+        return false;
+    }
+
     public char getDirection(){
         switch (player.direction()){
-            case NORTH:
+            case Constants.NORTH:
                 return '^';
-            case SOUTH:
+            case Constants.SOUTH:
                 return 'v';
-            case WEST:
+            case Constants.WEST:
                 return '<';
-            case EAST:
+            case Constants.EAST:
                 return '>';
             default:
                 return (char) 0;
         }
     }
-    
+
+    // only for explore phase
     public char setAction(){
-    	/****************TO BE IMPLEMENT****************************/
-    	//check player holding treasure or not
-    	if(player.treasure()){
-    		//search path to original point
-    	}
-    	//check known board holding treasure or not
-    	if(board_treasure){
-    		//search path to treasure
-    	}
-    		
-    	//check known board has tools or barrier or not
-    		//search path to tools or barrier
-    	
-    	
     	//explore graph 
     	//only the environment surrounding the current position, Using BFS
     	//Currently, it won't explore the water or the graph in the other side
@@ -213,37 +220,40 @@ public class Board {
         	action = path.get(0) ; //get the first element from the path
            	path.remove(0);
     	}
-
     	return action;
     }
 
+    /**
+     * update the board when a action is executed
+     * @param action
+     */
     public void updateAction(char action){
 
         switch (action){
-            case TURN_LEFT:
+            case Constants.TURN_LEFT:
             	player.updateDirection(player.direction()-1);
                 break;
-            case TURN_RIGHT:
+            case Constants.TURN_RIGHT:
             	player.updateDirection(player.direction()+1);
                 break;
-            case MOVE_FORWARD:
+            case Constants.MOVE_FORWARD:
                 switch (player.direction()){
-                    case NORTH:
+                    case Constants.NORTH:
                     	if(isBoardUpdate(player.row()-1, player.col())){
                             player.updateRow(player.row()-1);
                     	}
                         break;
-                    case SOUTH:
+                    case Constants.SOUTH:
                     	if(isBoardUpdate(player.row()+1, player.col())){
                             player.updateRow(player.row()+1);
                     	}
                         break;
-                    case WEST:
+                    case Constants.WEST:
                     	if(isBoardUpdate(player.row(), player.col()-1)){
                             player.updateCol(player.col()-1);
                     	}
                         break;
-                    case EAST:
+                    case Constants.EAST:
                     	if(isBoardUpdate(player.row(), player.col()+1)){
                             player.updateCol(player.col()+1);
                     	}
@@ -252,26 +262,26 @@ public class Board {
                 //pick up things
                 interact();
                 break;
-            case UNLOCK_DOOR:
+            case Constants.UNLOCK_DOOR:
                 int door_col = getForwardCol();
                 int door_row = getForwardRow();
-                board[door_row][door_col] = EMPTY;
+                board[door_row][door_col] = Constants.EMPTY;
                 board_door--;
                 break;
-            case CHOP_TREE:
+            case Constants.CHOP_TREE:
                 int tree_col = getForwardCol();
                 int tree_row = getForwardRow();
-                board[tree_row][tree_col] = EMPTY;
+                board[tree_row][tree_col] = Constants.EMPTY;
                 player.updateRaft(true);
                 board_tree--;
                 break;
-            case BLAST_WALL_TREE:
+            case Constants.BLAST_WALL_TREE:
                 int wall_col = getForwardCol();
                 int wall_row = getForwardRow();
-                if(board[wall_row][wall_col] == TREE){
+                if(board[wall_row][wall_col] == Constants.TREE){
             		board_tree--;
                 }
-                board[wall_row][wall_col] = EMPTY;
+                board[wall_row][wall_col] = Constants.EMPTY;
                 player.updateDynamite(player.dynamite()-1);
         }
     	//if(prv == null){ //|| player.row() != prv.row() || player.col() != prv.col() ){
@@ -284,7 +294,7 @@ public class Board {
      * check it is allow the current position to go to the next position
      */
     public boolean isBoardUpdate(int row, int col){
-    	if(board[row][col] == WALL || board[row][col] == DOOR || board[row][col] == TREE){
+    	if(board[row][col] == Constants.WALL || board[row][col] == Constants.DOOR || board[row][col] == Constants.TREE){
     		return false;
     	}
     	return true;
@@ -293,33 +303,33 @@ public class Board {
     
     public void interact(){
         switch (board[player.row()][player.col()]){
-            case AXE:
+            case Constants.AXE:
                 player.updateAxe(true);
                 board_axe = false;
                 break;
-            case KEY:
+            case Constants.KEY:
                 player.updateKey(true);
                 board_key = false;
                 break;
-            case DYNAMITE:
+            case Constants.DYNAMITE:
                 player.updateDynamite(player.dynamite()+1);
                 board_dynamite--;
                 break;
-            case TREASURE:
+            case Constants.TREASURE:
                 player.updateTreasure(true);
                 board_treasure =  false;
         }
-        if(board[player.row()][player.col()] == AXE || board[player.row()][player.col()] == KEY ||
-                board[player.row()][player.col()] == DYNAMITE || board[player.row()][player.col()] == TREASURE){
-            board[player.row()][player.col()] = EMPTY;
+        if(board[player.row()][player.col()] == Constants.AXE || board[player.row()][player.col()] == Constants.KEY ||
+                board[player.row()][player.col()] == Constants.DYNAMITE || board[player.row()][player.col()] == Constants.TREASURE){
+            board[player.row()][player.col()] = Constants.EMPTY;
         }
     }
 
     public int getForwardRow(){
         switch (player.direction()){
-            case NORTH:
+            case Constants.NORTH:
                 return player.row() - 1;
-            case SOUTH:
+            case Constants.SOUTH:
                 return player.row() + 1;
             default:
                 return player.row();
@@ -328,9 +338,9 @@ public class Board {
 
     public int getForwardCol(){
         switch (player.direction()){
-            case WEST:
+            case Constants.WEST:
                 return player.col() - 1;
-            case EAST:
+            case Constants.EAST:
                 return player.col() + 1;
             default:
                 return player.col();
@@ -344,7 +354,7 @@ public class Board {
             for(int col = 40; col < 120; col++){
                 if(row == player.row() && col == player.col()){
                     System.out.print(getDirection());
-                } else {//if(board[row][col] != UNKNOW) {
+                } else {
                     System.out.print((char)board[row][col]);
                     flag = true;
                 }

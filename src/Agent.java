@@ -9,66 +9,61 @@ import java.util.*;
 import java.io.*;
 import java.net.*;
 
-
-//        T tree    a 	axe
-//        -	door	k	key
-//        *	wall	d	dynamite
-//        ~	water	$	treasure
-
-//        L   turn left
-//        R   turn right
-//        F   (try to) move forward
-//        C   (try to) chop down a tree, using an axe
-//        B   (try to) blast a wall or tree, using dynamite
-
 public class Agent {
+    // used store information of the game
+    private Board currBoard;
 
-   public char get_action( char view[][] ) {
+    // information about the Agent
+    private State currAgent;
 
-      // REPLACE THIS CODE WITH AI TO CHOOSE ACTION
+    /**
+     * constructor
+     */
+    public Agent(){
+        currBoard = new Board();
+        currAgent = new State(Constants.START_ROW, Constants.START_COL, Constants.NORTH);
+    }
 
-      int ch=0;
 
-      System.out.print("Enter Action(s): ");
+    /**
+     * method to search the best action for agent to find the goal
+     * @param view
+     * @return
+     */
+    public char get_action( char view[][] ) {
 
-      try {
-         while ( ch != -1 ) {
-            // read character from keyboard
-            ch  = System.in.read();
+        currBoard.update(view); //update the view from what we have seen
+        currBoard.printMap(); //print current map we have
+        //agent.print_view( view ); // COMMENT THIS OUT BEFORE SUBMISSION
+        char action = currBoard.setAction();
+        currBoard.updateAction(action);
 
-            switch( ch ) { // if character is a valid action, return it
-            case 'F': case 'L': case 'R': case 'C': case 'U': case 'B':
-            case 'f': case 'l': case 'r': case 'c': case 'u': case 'b':
-               return((char) ch );
+        return action;
+    }
+
+    /**
+     * print the view that is returned from the server
+     * @param view
+     */
+    void print_view( char view[][] )
+    {
+        int i,j;
+
+        System.out.println("\n+-----+");
+        for( i=0; i < 5; i++ ) {
+            System.out.print("|");
+            for( j=0; j < 5; j++ ) {
+                if(( i == 2 )&&( j == 2 )) {
+                    System.out.print('^');
+                }
+                else {
+                    System.out.print( view[i][j] );
+                }
             }
-         }
-      }
-      catch (IOException e) {
-         System.out.println ("IO error:" + e );
-      }
-
-      return 0;
-   }
-
-   void print_view( char view[][] )
-   {
-      int i,j;
-
-      System.out.println("\n+-----+");
-      for( i=0; i < 5; i++ ) {
-         System.out.print("|");
-         for( j=0; j < 5; j++ ) {
-            if(( i == 2 )&&( j == 2 )) {
-               System.out.print('^');
-            }
-            else {
-               System.out.print( view[i][j] );
-            }
-         }
-         System.out.println("|");
-      }
-      System.out.println("+-----+");
-   }
+            System.out.println("|");
+        }
+        System.out.println("+-----+");
+    }
 
    public static void main( String[] args )
    {
@@ -82,55 +77,53 @@ public class Agent {
        int ch;
        int i,j;
 
-       Board b = new Board();
+       if( args.length < 2 ) {
+          System.out.println("Usage: java Agent -p <port>\n");
+          System.exit(-1);
+       }
 
-      if( args.length < 2 ) {
-         System.out.println("Usage: java Agent -p <port>\n");
-         System.exit(-1);
-      }
+       port = Integer.parseInt( args[1] );
 
-      port = Integer.parseInt( args[1] );
+       try { // open socket to Game Engine
+           socket = new Socket( "localhost", port );
+           in  = socket.getInputStream();
+           out = socket.getOutputStream();
+       }
+       catch( IOException e ) {
+           System.out.println("Could not bind to port: "+port);
+           System.exit(-1);
+       }
 
-      try { // open socket to Game Engine
-         socket = new Socket( "localhost", port );
-         in  = socket.getInputStream();
-         out = socket.getOutputStream();
-      }
-      catch( IOException e ) {
-         System.out.println("Could not bind to port: "+port);
-         System.exit(-1);
-      }
-
-      try { // scan 5-by-5 window around current location
-         while( true ) {
-            for( i=0; i < 5; i++ ) {
-               for( j=0; j < 5; j++ ) {
-                  if( !(( i == 2 )&&( j == 2 ))) {
-                     ch = in.read();
-                     if( ch == -1 ) {
-                        System.exit(-1);
-                     }
-                     view[i][j] = (char) ch;
-                  }
+       try { // scan 5-by-5 window around current location
+           while( true ) {
+               for( i=0; i < 5; i++ ) {
+                   for( j=0; j < 5; j++ ) {
+                       if( !(( i == 2 )&&( j == 2 ))) {
+                           ch = in.read();
+                           if( ch == -1 ) {
+                               System.exit(-1);
+                           }
+                           view[i][j] = (char) ch;
+                       }
+                   }
                }
-            }
-            b.update(view);
-            b.printMap();
-            agent.print_view( view ); // COMMENT THIS OUT BEFORE SUBMISSION
-            action = b.setAction();	  //agent.get_action( view );
-            b.updateAction(action);
-            out.write( action );
-         }
-      }
-      catch( IOException e ) {
-         System.out.println("Lost connection to port: "+ port );
-         System.exit(-1);
-      }
-      finally {
-         try {
-            socket.close();
-         }
-         catch( IOException e ) {}
-      }
+
+               agent.get_action( view );
+               out.write( action );
+           }
+       }
+       catch( IOException e ) {
+           System.out.println("Lost connection to port: "+ port );
+           System.exit(-1);
+       }
+       finally {
+           try {
+               socket.close();
+           }
+           catch( IOException e )
+           {
+               e.printStackTrace();
+           }
+       }
    }
 }

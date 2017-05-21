@@ -4,24 +4,11 @@ import java.util.ArrayList;
  * Created by shiyun on 11/05/17.
  */
 public class State {
-    // board type
-    public static final char TREE = 'T';
-    public static final char DOOR = '-';
-    public static final char WALL = '*';
-    public static final char WATER = '~';
-    public static final char AXE = 'a';
-    public static final char KEY = 'k';
-    public static final char DYNAMITE = 'd';
-    public static final char TREASURE = '$';
-    public static final char UNKNOW = 'u';
-    public static final char BOUNDAY = '.';
-    public static final char EMPTY = ' ';
-	
 	//state info
 	private int row;
 	private int col;
 	private int direction;
-	private State prv;
+	private State preState;
 	private ArrayList<State> path;
 	
     // if the current state has any of these tools
@@ -31,17 +18,11 @@ public class State {
     private int dynamite;
     private boolean treasure;
     
-    // directions
-    public static final char NORTH = 0;
-    public static final char SOUTH = 2;
-    public static final char EAST = 1;
-    public static final char WEST = 3;
-    
     public State(int row, int col, int direction){
     	this.row = row;
     	this.col = col;
     	this.direction = direction;
-    	this.prv = null;
+    	this.preState = null;
     	this.path =  new ArrayList<State>();
     	
         this.axe = false;
@@ -55,7 +36,7 @@ public class State {
     	this.row = newState.row();
     	this.col = newState.col();
     	this.direction = newState.direction();
-    	this.prv = newState.prv();
+    	this.preState = newState.prv();
     	this.path = newState.path();
     	
         this.axe = newState.axe();
@@ -101,7 +82,7 @@ public class State {
     }
     
     public void updatePrv(State s){
-    	this.prv = s;
+    	this.preState = s;
     	addPath(s);
     }
     
@@ -122,7 +103,7 @@ public class State {
     }
     
     public State prv(){
-    	return this.prv;
+    	return this.preState;
     }
     
     public boolean axe(){
@@ -160,8 +141,6 @@ public class State {
             System.out.println("prv node row: " + this.prv().row());
             System.out.println("prv node col: " + this.prv().col());
         }
-
-
 
         System.out.println("axe: " + this.axe());
         System.out.println("key: " + this.key());
