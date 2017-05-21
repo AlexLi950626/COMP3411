@@ -34,7 +34,7 @@ public class Explore {
 	 * It only return one state each time
 	 */
 	
-	public State explore(int[][] view, State current){
+	public State explore(char[][] view, State current){
 		/*System.out.println("-----------------Queue-----------------");
 		for(State s :  exploreQ){
 			s.printState();
@@ -142,7 +142,7 @@ public class Explore {
 	 * However, we are using BFS, the node from the queue will have different getPreState node
 	 * Then we also need to calculate the path to go back to the getPreState node
 	 */
-	public void pathToChar(int[][] view, State path, State current, ArrayList<Character> output){
+	public void pathToChar(char[][] view, State path, State current, ArrayList<Character> output){
 			/*System.out.println("-----------------Recieve----------------");
 			for(State s: charPath){
 				s.printState();
@@ -225,7 +225,7 @@ public class Explore {
 	 * This method is used to find the path to target position from current by BFS
 	 */
 	
-	public ArrayList<Character> pathReverse(int[][] view, State target, State current){
+	public ArrayList<Character> pathReverse(char[][] view, State target, State current){
 		ArrayList<Character> output = new ArrayList<Character>();
 		//write a bfs to target from current
 		// BFS uses Queue data structure
@@ -424,7 +424,7 @@ public class Explore {
 	/*
 	 * Check current position is valid or not
 	 */
-	public boolean valid(int[][]view, State current){
+	public boolean valid(char[][]view, State current){
 		// view overflow or not
 		if(current.getRow() >  Constants.BOARD_SIZE_ROW-1 || current.getCol() > Constants.BOARD_SIZE_COL-1){
 			return false;

@@ -4,7 +4,8 @@ import java.util.ArrayList;
 public class SearchItem{
 
     private ArrayList<Position> AStar(Board currBoard, Position dest){
-
+    	ArrayList<Position> p = new ArrayList<Position>();
+    	return p;
     }
 
 

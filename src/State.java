@@ -128,6 +128,43 @@ public class State {
     public ArrayList<State> path(){
     	return this.path;
     }
+    
+    public int getForwardRow(){
+        switch (this.getDirection()){
+            case Constants.NORTH:
+                return this.getRow() - 1;
+            case Constants.SOUTH:
+                return this.getRow() + 1;
+            default:
+                return this.getRow();
+        }
+    }
+
+    public int getForwardCol(){
+        switch (this.getDirection()){
+            case Constants.WEST:
+                return this.getCol() - 1;
+            case Constants.EAST:
+                return this.getCol() + 1;
+            default:
+                return this.getCol();
+        }
+    }
+    
+    public char getDirectionChar(){
+        switch (this.getDirection()){
+            case Constants.NORTH:
+                return '^';
+            case Constants.SOUTH:
+                return 'v';
+            case Constants.WEST:
+                return '<';
+            case Constants.EAST:
+                return '>';
+            default:
+                return (char) 0;
+        }
+    }
 	
     
     /*
