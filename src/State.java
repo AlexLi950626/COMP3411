@@ -148,6 +148,10 @@ public class State {
     	return this.path;
     }
 	
+    
+    /*
+     * print the current state info
+     */
     public void printState(){
         System.out.println("player info:");
         System.out.println("row: " + this.row());

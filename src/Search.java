@@ -59,6 +59,13 @@ public class Search {
 		
 	}
 	
+	/*
+	 * This method is trying to explore the unknown node in the board by BFS
+	 * It will check the valid point surround the current position (check NSWE direction)
+	 * For the next valid point, check the 5x5 area, whether it exists any unknown point
+	 * If exist unknown point add the next node to the queue
+	 */
+	
 	public State explore(int[][] view, State current){
 		/*System.out.println("-----------------Queue-----------------");
 		for(State s :  exploreQ){
@@ -73,7 +80,7 @@ public class Search {
 		next.updateRow(prv.row()-1);
 		next.updateCol(prv.col());
 		// check if player allow to go forward in north direction
-		if( seen(exploreSeen, next) == false && vaild(view, next) == true){
+		if( seen(exploreSeen, next) == false && valid(view, next) == true){
 			next.updatePrv(prv);
 			exploreSeen.add(next);
 			//ArrayList<State> path = new ArrayList<State>();
@@ -100,7 +107,7 @@ public class Search {
 		next.updateCol(prv.col());
 		
 		// check if player allow to go forward in north direction
-		if(seen(exploreSeen, next) == false && vaild(view, next) == true){
+		if(seen(exploreSeen, next) == false && valid(view, next) == true){
 			next.updatePrv(prv);
 			exploreSeen.add(next);
 			for(int newCol = next.col()-2; newCol <= next.col()+2; newCol++){
@@ -126,7 +133,7 @@ public class Search {
 		next.updateCol(prv.col()-1);
 		
 		// check if player allow to go forward in north direction
-		if(seen(exploreSeen, next) == false && vaild(view, next) == true){
+		if(seen(exploreSeen, next) == false && valid(view, next) == true){
 			next.updatePrv(prv);
 			exploreSeen.add(next);
 			for(int newRow = next.row()-2; newRow <= next.row()+2; newRow++){
@@ -151,7 +158,7 @@ public class Search {
 		next.updateRow(prv.row());
 		next.updateCol(prv.col()+1);
 		// check if player allow to go forward in north direction
-		if(seen(exploreSeen, next) == false && vaild(view, next) == true){
+		if(seen(exploreSeen, next) == false && valid(view, next) == true){
 			next.updatePrv(prv);
 			exploreSeen.add(next);
 			for(int newRow = next.row()-2; newRow <= next.row()+2; newRow++){
@@ -170,7 +177,10 @@ public class Search {
 			}
 
 		}
+
+		//if all valid points surround this position are checked, pop first element from the queue
 		if(exploreQ.size() != 0 && returnState == null){
+			// If the node is changing the direction in current position then do not return any node 
 			if(current.prv() != null && !(current.prv().row() == current.row() && current.prv().col() == current.col())){
 	    		//System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!POP!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 				returnState = exploreQ.get(0);
@@ -180,6 +190,9 @@ public class Search {
 		return returnState;
 	}
 	
+	/*
+	 * check current position is in the array list or not
+	 */
 	public boolean seen(ArrayList<State> seen, State test){
 		for(State s: seen){
 			if(s.row() == test.row() && s.col() == test.col()){
@@ -189,7 +202,11 @@ public class Search {
 		return false;
 	}
 	
-	
+	/*
+	 * This method is used to translate the action to next valid point
+	 * However, we are using BFS, the node from the queue will have different prv node
+	 * Then we also need to calculate the path to go back to the prv node
+	 */
 	public void pathToChar(int[][] view, State path, State current, ArrayList<Character> output){
 			/*System.out.println("-----------------Recieve----------------");
 			for(State s: charPath){
@@ -205,6 +222,10 @@ public class Search {
 				charPath.add(path);
 			}
 
+			//check the current node's prv position
+			// if its position is different to current position
+			// then we need to go back to the prv point first then go to the next point
+			// this part only called when the output doesn't have any action anymore to get the newest current position
 			State next1 = charPath.get(0).prv();
 			if(!(current.row() == next1.row() && current.col()== next1.col())){
 		    		//find the path to that point
@@ -223,6 +244,7 @@ public class Search {
 		    		
 		 
 		    	} else{
+		    			// translate the path to next point to command
 		    			State next = charPath.get(0);
 		    			State prv = current;
 		    			if(next.row() == prv.row()-1 && next.col() == prv.col()){
@@ -264,6 +286,10 @@ public class Search {
 
 	}
 	
+	/*
+	 * This method is used to find the path to target position from current by BFS
+	 */
+	
 	public ArrayList<Character> pathReverse(int[][] view, State target, State current){
 		ArrayList<Character> output = new ArrayList<Character>();
 		//write a bfs to target from current
@@ -295,7 +321,7 @@ public class Search {
 			next.updateRow(prv.row()-1);
 			next.updateCol(prv.col());
 			// check if player allow to go forward in north direction
-			if(seen(visited,next) == false && vaild(view, next) == true){
+			if(seen(visited,next) == false && valid(view, next) == true){
 				next.updatePrv(prv);
 				visited.add(next);
 				queue.add(next);
@@ -304,7 +330,7 @@ public class Search {
 			next.updateRow(prv.row()+1);
 			next.updateCol(prv.col());
 			// check if player allow to go forward in south direction
-			if(seen(visited,next)== false && vaild(view, next) == true){
+			if(seen(visited,next)== false && valid(view, next) == true){
 				next.updatePrv(prv);
 				visited.add(next);
 				queue.add(next);
@@ -313,7 +339,7 @@ public class Search {
 			next.updateRow(prv.row());
 			next.updateCol(prv.col()-1);
 			// check if player allow to go forward in west direction
-			if(seen(visited,next)== false && vaild(view, next) == true){
+			if(seen(visited,next)== false && valid(view, next) == true){
 				next.updatePrv(prv);
 				visited.add(next);
 				queue.add(next);
@@ -322,7 +348,7 @@ public class Search {
 			next.updateRow(prv.row());
 			next.updateCol(prv.col()+1);
 			// check if player allow to go forward in east direction
-			if(seen(visited,next)== false && vaild(view, next) == true){
+			if(seen(visited,next)== false && valid(view, next) == true){
 				next.updatePrv(prv);
 				visited.add(next);
 				queue.add(next);
@@ -330,6 +356,7 @@ public class Search {
 			
 		}
 		
+		// translate the path to the target to command
 		for(int i = 0; i < p.size()-1; i++){
 			if(i+1 > p.size()-1){
 				break;
@@ -383,6 +410,11 @@ public class Search {
 		return output;
 	}
 	
+	/*
+	 * Known the direction which current node need to go
+	 * And known current node's direction
+	 * Calculating which direction current node should turn around
+	 */
 	public ArrayList<Character> directionAction(int aim, int d){
 		ArrayList<Character> output = new ArrayList<Character>();
 		switch (aim){
@@ -454,7 +486,10 @@ public class Search {
 		return output;
 	}
 	
-	public boolean vaild(int[][]view, State current){
+	/*
+	 * Check current position is valid or not
+	 */
+	public boolean valid(int[][]view, State current){
 		// view overflow or not
 		if(current.row() >  BOARD_SIZE_ROW-1 || current.col() > BOARD_SIZE_COL-1){
 			return false;
