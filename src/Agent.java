@@ -42,6 +42,12 @@ public class Agent {
     }
 
     /**
+     * translate path to set of actions
+     *
+     */
+    private a
+
+    /**
      * print the view that is returned from the server
      * @param view
      */

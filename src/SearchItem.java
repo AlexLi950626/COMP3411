@@ -3,7 +3,7 @@ import java.util.ArrayList;
 
 public class SearchItem{
 
-    public ArrayList<Position> AStar(Board currBoard, Position dest){
+    private ArrayList<Position> AStar(Board currBoard, Position dest){
 
     }
 

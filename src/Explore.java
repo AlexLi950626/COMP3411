@@ -1,5 +1,3 @@
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
-
 import java.util.*;
 public class Explore {
     
@@ -30,7 +28,7 @@ public class Explore {
 	
 	/*
 	 * This method is trying to explore the unknown node in the board by BFS
-	 * It will check the valid point surround the current position (check NSWE direction)
+	 * It will check the valid point surround the current position (check NSWE getDirection)
 	 * For the next valid point, check the 5x5 area, whether it exists any unknown point
 	 * If exist unknown point add the next node to the queue
 	 * It only return one state each time
@@ -46,32 +44,32 @@ public class Explore {
 		State next = new State(prv);
 		State returnState = null;
 
-		//expand North row-1
-		next.updateRow(prv.row()-1);
-		next.updateCol(prv.col());
-		// check if player allow to go forward in north direction
+		//expand North getRow-1
+		next.setRow(prv.getRow()-1);
+		next.setCol(prv.getCol());
+		// check if player allow to go forward in north getDirection
 		if(!seen(exploreSeen, next) && valid(view, next)){
-			next.updatePrv(prv);
+			next.setPreState(prv);
 			exploreSeen.add(next);
 			if(returnState == null){
-			//System.out.println("S push step: " + next.row() + " " + next.col());
+			//System.out.println("S push step: " + next.getRow() + " " + next.getCol());
 				returnState = next;
 			}else{
 				exploreQ.add(next);
 			}
 		}
 		
-		//expand South row+1
+		//expand South getRow+1
 		next = new State(prv);
-		next.updateRow(prv.row()+1);
-		next.updateCol(prv.col());
+		next.setRow(prv.getRow()+1);
+		next.setCol(prv.getCol());
 		
-		// check if player allow to go forward in north direction
+		// check if player allow to go forward in north getDirection
 		if(!seen(exploreSeen, next) && valid(view, next)){
-			next.updatePrv(prv);
+			next.setPreState(prv);
 			exploreSeen.add(next);
 			if(returnState == null){
-			//System.out.println("S push step: " + next.row() + " " + next.col());
+			//System.out.println("S push step: " + next.getRow() + " " + next.getCol());
 				returnState = next;
 			}else{
 				exploreQ.add(next);
@@ -79,17 +77,17 @@ public class Explore {
 
 		}
 		
-		//expand West col-1
+		//expand West getCol-1
 		next = new State(prv);
-		next.updateRow(prv.row());
-		next.updateCol(prv.col()-1);
+		next.setRow(prv.getRow());
+		next.setCol(prv.getCol()-1);
 		
-		// check if player allow to go forward in north direction
+		// check if player allow to go forward in north getDirection
 		if(!seen(exploreSeen, next) && valid(view, next)){
-			next.updatePrv(prv);
+			next.setPreState(prv);
 			exploreSeen.add(next);
 			if(returnState == null){
-				//System.out.println("W push step: " + next.row() + " " + next.col());
+				//System.out.println("W push step: " + next.getRow() + " " + next.getCol());
 				returnState = next;
 			}else{	
 				exploreQ.add(next);
@@ -97,16 +95,16 @@ public class Explore {
 		}
 		
 		
-		//expand East col+1
+		//expand East getCol+1
 		next = new State(prv);
-		next.updateRow(prv.row());
-		next.updateCol(prv.col()+1);
-		// check if player allow to go forward in north direction
+		next.setRow(prv.getRow());
+		next.setCol(prv.getCol()+1);
+		// check if player allow to go forward in north getDirection
 		if(!seen(exploreSeen, next) && valid(view, next)){
-			next.updatePrv(prv);
+			next.setPreState(prv);
 			exploreSeen.add(next);
 			if(returnState == null){
-				//System.out.println("E push step: " + next.row() + " " + next.col());
+				//System.out.println("E push step: " + next.getRow() + " " + next.getCol());
 				returnState = next;
 			}else{
 				exploreQ.add(next);
@@ -117,8 +115,8 @@ public class Explore {
 
 		//if all valid points surround this position are checked, pop first element from the queue
 		if(exploreQ.size() != 0 && returnState == null){
-			// If the node is changing the direction in current position then do not return any node 
-			if(current.prv() != null && !(current.prv().row() == current.row() && current.prv().col() == current.col())){
+			// If the node is changing the getDirection in current position then do not return any node
+			if(current.getPreState() != null && !(current.getPreState().getRow() == current.getRow() && current.getPreState().getCol() == current.getCol())){
 	    		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!POP!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 				returnState = exploreQ.get(0);
 				exploreQ.remove(0);
@@ -132,7 +130,7 @@ public class Explore {
 	 */
 	public boolean seen(ArrayList<State> seen, State test){
 		for(State s: seen){
-			if(s.row() == test.row() && s.col() == test.col()){
+			if(s.getRow() == test.getRow() && s.getCol() == test.getCol()){
 				return true;
 			}
 		}
@@ -141,8 +139,8 @@ public class Explore {
 	
 	/*
 	 * This method is used to translate the action to next valid point
-	 * However, we are using BFS, the node from the queue will have different prv node
-	 * Then we also need to calculate the path to go back to the prv node
+	 * However, we are using BFS, the node from the queue will have different getPreState node
+	 * Then we also need to calculate the path to go back to the getPreState node
 	 */
 	public void pathToChar(int[][] view, State path, State current, ArrayList<Character> output){
 			/*System.out.println("-----------------Recieve----------------");
@@ -160,21 +158,21 @@ public class Explore {
 			}
 			
 			if(charPath.size() != 0){
-				//check the current node's prv position
+				//check the current node's getPreState position
 				// if its position is different to current position
-				// then we need to go back to the prv point first then go to the next point
+				// then we need to go back to the getPreState point first then go to the next point
 				// this part only called when the output doesn't have any action anymore to get the newest current position
-				State next1 = charPath.get(0).prv();
-				if(!(current.row() == next1.row() && current.col()== next1.col())){
+				State next1 = charPath.get(0).getPreState();
+				if(!(current.getRow() == next1.getRow() && current.getCol()== next1.getCol())){
 			    		//find the path to that point
 						if(!seen(changeSeen, next1) && output.size() == 0){
 							//System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
 				    		changeSeen.add(next1);
 				    		
-		    					/*System.out.println("row: " + next1.row());
-		    					System.out.println("col: " + next1.col());
-		    					System.out.println("current row: " + current.row());
-		    					System.out.println("current col: " + current.col());*/
+		    					/*System.out.println("getRow: " + next1.getRow());
+		    					System.out.println("getCol: " + next1.getCol());
+		    					System.out.println("current getRow: " + current.getRow());
+		    					System.out.println("current getCol: " + current.getCol());*/
 		    					ArrayList<Character> a = pathReverse(view,next1,current);
 		    					output.addAll(a);
 				    		//System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
@@ -184,22 +182,22 @@ public class Explore {
 			    	} else{
 						// translate the path to next point to command
 						State next = charPath.get(0);
-						if(next.row() == current.row()-1 && next.col() == current.col()){
+						if(next.getRow() == current.getRow()-1 && next.getCol() == current.getCol()){
 							//go north
-							output.addAll(directionAction(Constants.NORTH, current.direction()));
+							output.addAll(directionAction(Constants.NORTH, current.getDirection()));
 
-						}else if(next.row() == current.row()+1 && next.col() == current.col()){
+						}else if(next.getRow() == current.getRow()+1 && next.getCol() == current.getCol()){
 							//go south
-							output.addAll(directionAction(Constants.SOUTH, current.direction()));
+							output.addAll(directionAction(Constants.SOUTH, current.getDirection()));
 
-						}else if(next.row() == current.row() && next.col() == current.col()-1){
+						}else if(next.getRow() == current.getRow() && next.getCol() == current.getCol()-1){
 							//go west
-							output.addAll(directionAction(Constants.WEST, current.direction()));
+							output.addAll(directionAction(Constants.WEST, current.getDirection()));
 
 
-						}else if(next.row() == current.row() && next.col() == current.col()+1){
+						}else if(next.getRow() == current.getRow() && next.getCol() == current.getCol()+1){
 							//go east
-							output.addAll(directionAction(Constants.EAST, current.direction()));
+							output.addAll(directionAction(Constants.EAST, current.getDirection()));
 
 						} else {
 							//bad path
@@ -208,10 +206,10 @@ public class Explore {
 
 						}
 
-						if(view[next.row()][next.col()] == Constants.DOOR && next.key()){
+						if(view[next.getRow()][next.getCol()] == Constants.DOOR && next.getKey()){
 							output.add(Constants.UNLOCK_DOOR);
 						}
-						if(view[next.row()][next.col()] == Constants.TREE && next.axe()){
+						if(view[next.getRow()][next.getCol()] == Constants.TREE && next.getAxe()){
 							output.add(Constants.CHOP_TREE);
 						}
 					   output.add(Constants.MOVE_FORWARD);
@@ -240,12 +238,12 @@ public class Explore {
 
 			State prv = queue.poll();
 			State next = new State(prv);
-			if(next.row() == target.row() && next.col() == target.col()){
+			if(next.getRow() == target.getRow() && next.getCol() == target.getCol()){
 				//return path
 				//System.out.println("------------------------------------------------------------------");
-				while(!(next.col() == current.col() && next.row() == current.row())){
+				while(!(next.getCol() == current.getCol() && next.getRow() == current.getRow())){
 					p.add(0,next);
-					next = next.prv();
+					next = next.getPreState();
 				}
 				p.add(0,next);
 				/*for(State s : p){
@@ -255,38 +253,38 @@ public class Explore {
 				}*/
 				break;
 			}
-			next.updateRow(prv.row()-1);
-			next.updateCol(prv.col());
-			// check if player allow to go forward in north direction
+			next.setRow(prv.getRow()-1);
+			next.setCol(prv.getCol());
+			// check if player allow to go forward in north getDirection
 			if(!seen(visited, next) && valid(view, next)){
-				next.updatePrv(prv);
+				next.setPreState(prv);
 				visited.add(next);
 				queue.add(next);
 			}
 			next = new State(prv);
-			next.updateRow(prv.row()+1);
-			next.updateCol(prv.col());
-			// check if player allow to go forward in south direction
+			next.setRow(prv.getRow()+1);
+			next.setCol(prv.getCol());
+			// check if player allow to go forward in south getDirection
 			if(!seen(visited, next) && valid(view, next)){
-				next.updatePrv(prv);
+				next.setPreState(prv);
 				visited.add(next);
 				queue.add(next);
 			}
 			next = new State(prv);
-			next.updateRow(prv.row());
-			next.updateCol(prv.col()-1);
-			// check if player allow to go forward in west direction
+			next.setRow(prv.getRow());
+			next.setCol(prv.getCol()-1);
+			// check if player allow to go forward in west getDirection
 			if(!seen(visited, next) && valid(view, next)){
-				next.updatePrv(prv);
+				next.setPreState(prv);
 				visited.add(next);
 				queue.add(next);
 			}
 			next = new State(prv);
-			next.updateRow(prv.row());
-			next.updateCol(prv.col()+1);
-			// check if player allow to go forward in east direction
+			next.setRow(prv.getRow());
+			next.setCol(prv.getCol()+1);
+			// check if player allow to go forward in east getDirection
 			if(!seen(visited, next) && valid(view, next)){
-				next.updatePrv(prv);
+				next.setPreState(prv);
 				visited.add(next);
 				queue.add(next);
 			}
@@ -300,29 +298,29 @@ public class Explore {
 			}
 			State prv = p.get(i);
 			State next = p.get(i+1);
-			//System.out.println("direction: " + prv.direction());
+			//System.out.println("getDirection: " + getPreState.getDirection());
 			//next.printState();
-			if(next.row() == prv.row()-1 && next.col() == prv.col()){
+			if(next.getRow() == prv.getRow()-1 && next.getCol() == prv.getCol()){
 				//go north
-				output.addAll(directionAction(Constants.NORTH, prv.direction()));
+				output.addAll(directionAction(Constants.NORTH, prv.getDirection()));
 				p.get(i+1).updateDirection(Constants.NORTH);
 				
-			}else if(next.row() == prv.row()+1 && next.col() == prv.col()){
+			}else if(next.getRow() == prv.getRow()+1 && next.getCol() == prv.getCol()){
 				//go south
-				output.addAll(directionAction(Constants.SOUTH,prv.direction()));
+				output.addAll(directionAction(Constants.SOUTH,prv.getDirection()));
 				p.get(i+1).updateDirection(Constants.SOUTH);
 
 				
-			}else if(next.row() == prv.row() && next.col() == prv.col()-1){
+			}else if(next.getRow() == prv.getRow() && next.getCol() == prv.getCol()-1){
 				//go west
-				output.addAll(directionAction(Constants.WEST,prv.direction()));
+				output.addAll(directionAction(Constants.WEST,prv.getDirection()));
 				p.get(i+1).updateDirection(Constants.WEST);
 
 
 
-			}else if(next.row() == prv.row() && next.col() == prv.col()+1){
+			}else if(next.getRow() == prv.getRow() && next.getCol() == prv.getCol()+1){
 				//go east
-				output.addAll(directionAction(Constants.EAST,prv.direction()));
+				output.addAll(directionAction(Constants.EAST,prv.getDirection()));
 				p.get(i+1).updateDirection(Constants.EAST);
 
 
@@ -333,10 +331,10 @@ public class Explore {
 
 			}
 			
-	        if(view[next.row()][next.col()] == Constants.DOOR && next.key()){
+	        if(view[next.getRow()][next.getCol()] == Constants.DOOR && next.getKey()){
 	        	output.add(Constants.UNLOCK_DOOR);
 	        }
-	        if(view[next.row()][next.col()] == Constants.TREE && next.axe()){
+	        if(view[next.getRow()][next.getCol()] == Constants.TREE && next.getAxe()){
 	        	output.add(Constants.CHOP_TREE);
 	        }
 	       output.add(Constants.MOVE_FORWARD);
@@ -348,9 +346,9 @@ public class Explore {
 	}
 	
 	/*
-	 * Known the direction which current node need to go
-	 * And known current node's direction
-	 * Calculating which direction current node should turn around
+	 * Known the getDirection which current node need to go
+	 * And known current node's getDirection
+	 * Calculating which getDirection current node should turn around
 	 */
 	public ArrayList<Character> directionAction(int aim, int d){
 		ArrayList<Character> output = new ArrayList<Character>();
@@ -428,38 +426,38 @@ public class Explore {
 	 */
 	public boolean valid(int[][]view, State current){
 		// view overflow or not
-		if(current.row() >  Constants.BOARD_SIZE_ROW-1 || current.col() > Constants.BOARD_SIZE_COL-1){
+		if(current.getRow() >  Constants.BOARD_SIZE_ROW-1 || current.getCol() > Constants.BOARD_SIZE_COL-1){
 			return false;
 		}
-		if(current.row() < 0 || current.col() < 0){
+		if(current.getRow() < 0 || current.getCol() < 0){
 			return false;
 		}
 		//check boundary 5X% area
-		if(current.row()+2 >  Constants.BOARD_SIZE_ROW-1 || current.row()-2 < 0){
+		if(current.getRow()+2 >  Constants.BOARD_SIZE_ROW-1 || current.getRow()-2 < 0){
 			return false;
 		}
-		if(current.col()+2 >  Constants.BOARD_SIZE_COL-1 || current.col()-2 < 0){
+		if(current.getCol()+2 >  Constants.BOARD_SIZE_COL-1 || current.getCol()-2 < 0){
 			return false;
 		}
 		// it is a wall
-		if(view[current.row()][current.col()] == Constants.WALL){// && current.dynamite() < 1){
+		if(view[current.getRow()][current.getCol()] == Constants.WALL){// && current.dynamite() < 1){
 			return false;
 		}
 		// it is over boundary '.'
-		else if(view[current.row()][current.col()] == Constants.BOUNDARY){
+		else if(view[current.getRow()][current.getCol()] == Constants.BOUNDARY){
 			return false;
 		}
 		// it is water
-		else if(view[current.row()][current.col()] == Constants.WATER ){//&& current.raft() == false){  currently dun add this for the BFS
-			//check raft
+		else if(view[current.getRow()][current.getCol()] == Constants.WATER ){//&& current.getRaft() == false){  currently dun add this for the BFS
+			//check getRaft
 			return false;
 		}
 		// it is tree
-		else if (view[current.row()][current.col()] == Constants.TREE){
-			//check axe or dynamite
-			return current.axe() || current.dynamite() > 1;
+		else if (view[current.getRow()][current.getCol()] == Constants.TREE){
+			//check getAxe or dynamite
+			return current.getAxe() || current.dynamite() > 1;
 		}
 		// it is a door
-		else return view[current.row()][current.col()] != Constants.DOOR || current.key();
+		else return view[current.getRow()][current.getCol()] != Constants.DOOR || current.getKey();
 	}
 }

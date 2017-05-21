@@ -20,9 +20,9 @@ public class Raft {
    private char[][] view;
 
    private int nrows;     // number of rows in environment
-   private int irow,icol; // initial row and column
+   private int irow,icol; // initial getRow and column
 
-    // current row, column and direction of agent
+    // current getRow, column and getDirection of agent
    private int row,col,dirn;
 
    private boolean have_axe     = false;
@@ -83,7 +83,7 @@ public class Raft {
       }
 
       nrows = r+1; // number of rows
-      irow  = row; // initial row
+      irow  = row; // initial getRow
       icol  = col; // initial column
    }
 

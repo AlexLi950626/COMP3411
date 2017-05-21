@@ -23,7 +23,7 @@ public class State {
     	this.col = col;
     	this.direction = direction;
     	this.preState = null;
-    	this.path =  new ArrayList<State>();
+    	this.path =  new ArrayList<>();
     	
         this.axe = false;
         this.raft = false;
@@ -33,24 +33,24 @@ public class State {
     }
     
     public State(State newState){
-    	this.row = newState.row();
-    	this.col = newState.col();
-    	this.direction = newState.direction();
-    	this.preState = newState.prv();
+    	this.row = newState.getRow();
+    	this.col = newState.getCol();
+    	this.direction = newState.getDirection();
+    	this.preState = newState.getPreState();
     	this.path = newState.path();
     	
-        this.axe = newState.axe();
-        this.raft = newState.raft();
-        this.key = newState.key();
+        this.axe = newState.getAxe();
+        this.raft = newState.getRaft();
+        this.key = newState.getKey();
         this.dynamite = newState.dynamite();
         this.treasure = newState.treasure();
     }
     
-    public void updateRow(int newRow){
+    public void setRow(int newRow){
     	this.row = newRow;
     }
     
-    public void updateCol(int newCol){
+    public void setCol(int newCol){
     	this.col = newCol;
     }
     
@@ -61,27 +61,27 @@ public class State {
         }
     }
     
-    public void updateAxe(boolean newAxe){
+    public void setAxe(boolean newAxe){
     	this.axe = newAxe;
     }
     
-    public void updateRaft(boolean newRaft){
+    public void setRaft(boolean newRaft){
     	this.raft = newRaft;
     }
     
-    public void updateKey(boolean newKey){
+    public void setKey(boolean newKey){
     	this.key = newKey;
     }
     
-    public void updateTreasure(boolean newTreasure){
+    public void setTreasure(boolean newTreasure){
     	this.treasure = newTreasure;
     }
     
-    public void updateDynamite(int newDynamite){
+    public void setDynamite(int newDynamite){
     	this.dynamite = newDynamite;
     }
     
-    public void updatePrv(State s){
+    public void setPreState(State s){
     	this.preState = s;
     	addPath(s);
     }
@@ -90,31 +90,31 @@ public class State {
     	this.path.add(s);
     }
     
-    public int row(){
+    public int getRow(){
     	return this.row;
     }
     
-    public int col(){
+    public int getCol(){
     	return this.col;
     }
     
-    public int direction(){
+    public int getDirection(){
     	return this.direction;
     }
     
-    public State prv(){
+    public State getPreState(){
     	return this.preState;
     }
     
-    public boolean axe(){
+    public boolean getAxe(){
     	return this.axe;
     }
     
-    public boolean raft(){
+    public boolean getRaft(){
     	return this.raft;
     }
     
-    public boolean key(){
+    public boolean getKey(){
     	return this.key;
     }
     
@@ -135,16 +135,16 @@ public class State {
      */
     public void printState(){
         System.out.println("player info:");
-        System.out.println("row: " + this.row());
-        System.out.println("col: " + this.col());
-        if(this.prv() != null){
-            System.out.println("prv node row: " + this.prv().row());
-            System.out.println("prv node col: " + this.prv().col());
+        System.out.println("getRow: " + this.getRow());
+        System.out.println("getCol: " + this.getCol());
+        if(this.getPreState() != null){
+            System.out.println("getPreState node getRow: " + this.getPreState().getRow());
+            System.out.println("getPreState node getCol: " + this.getPreState().getCol());
         }
 
-        System.out.println("axe: " + this.axe());
-        System.out.println("key: " + this.key());
-        System.out.println("raft: " + this.raft());
+        System.out.println("getAxe: " + this.getAxe());
+        System.out.println("getKey: " + this.getKey());
+        System.out.println("getRaft: " + this.getRaft());
         System.out.println("dynamite: " + this.dynamite());
         System.out.println("treasure: " + this.treasure());
     	

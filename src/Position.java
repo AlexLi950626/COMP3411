@@ -12,7 +12,7 @@ public class Position {
     }
 
     /**
-     * another constructor used to take row and col input and make new coordinates
+     * another constructor used to take getRow and getCol input and make new coordinates
      * @param row
      * @param col
      */
