@@ -57,7 +57,7 @@ public class Board {
     int[][] board;
     
     // search
-    private Search s;
+    private Explore e;
     private ArrayList<Character> path;
     
     private State prv;
@@ -76,7 +76,7 @@ public class Board {
         
         prv = new State(START_ROW, START_COL, NORTH);
         
-        s = new Search();
+        e = new Explore();
         path = new ArrayList<Character> ();
         player = new State(START_ROW, START_COL, NORTH);
 
@@ -203,12 +203,17 @@ public class Board {
     	//explore graph 
     	//only the environment surrounding the current position, Using BFS
     	//Currently, it won't explore the water or the graph in the other side
-    	State explore= s.explore(board, player);
+    	State explore= e.explore(board, player);
     	
-    	s.pathToChar(board, explore, player, path);
+    	e.pathToChar(board, explore, player, path);
     	System.out.println("command: " + path);
-    	char action = path.get(0) ; //get the first element from the path
-       	path.remove(0);
+    	char action = '0';
+    	//if the path is null then the explore is done do some other search
+    	if(path.size() != 0){
+        	action = path.get(0) ; //get the first element from the path
+           	path.remove(0);
+    	}
+
     	return action;
     }
 
