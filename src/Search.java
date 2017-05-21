@@ -1,4 +1,5 @@
 import java.util.*;
+
 public class Search {
 	//Max number
 	public static final int CHAR_MAX = 10000;
@@ -58,7 +59,8 @@ public class Search {
 	public void to_poi(){
 		
 	}
-	
+
+
 	public State explore(int[][] view, State current){
 		/*System.out.println("-----------------Queue-----------------");
 		for(State s :  exploreQ){
