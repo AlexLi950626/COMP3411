@@ -163,7 +163,7 @@ public class Board {
     		board_treasure = true;
     		break;
     	case DOOR:
-    		board_door ++;
+    		board_door++;
     		break;
     	default:
     		break;
@@ -275,6 +275,9 @@ public class Board {
     	//}
     }
 
+    /*
+     * check it is allow the current position to go to the next position
+     */
     public boolean isBoardUpdate(int row, int col){
     	if(board[row][col] == WALL || board[row][col] == DOOR || board[row][col] == TREE){
     		return false;
