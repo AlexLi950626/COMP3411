@@ -21,7 +21,7 @@ public class Agent {
     // Explore phase
     // search
     private Explore e;
-    private ArrayList<Character> path;
+
 
     /**
      * constructor
@@ -31,7 +31,6 @@ public class Agent {
         currAgent = new State(Constants.START_ROW, Constants.START_COL, Constants.NORTH);
         prv = new State(Constants.START_ROW, Constants.START_COL, Constants.NORTH);
         e = new Explore();
-        path = new ArrayList<> ();
 
     }
 
@@ -110,9 +109,17 @@ public class Agent {
        //print current map we have
        currBoard.printMap(currAgent);
        //agent.print_view( view );
-       char action = setAction();
-       updateBoardAndStateFromGivenAction(action);
+       char action = e.checkExplore(currBoard.getBoard(), currAgent);
+       if(action != '0'){
+           updateBoardAndStateFromGivenAction(action);
+           return action;
+       }
+       //if finished explore if will only return '0'
+       //need to do sth else here
+       
+       
        return action;
+
    }
    
     /**
@@ -293,30 +300,6 @@ public class Agent {
     		    currBoard.getType(currAgent.getRow(),currAgent.getCol()) == Constants.DYNAMITE || currBoard.getType(currAgent.getRow(),currAgent.getCol()) == Constants.TREASURE){
     	    currBoard.setType(currAgent.getRow(),currAgent.getCol() ,Constants.EMPTY);
        }
-   } 
-   
-   
-   
-   // only for explore phase
-   public char setAction(){
-	   	//explore graph 
-	   	//only the environment surrounding the current position, Using BFS
-	   	//Currently, it won't explore the water or the graph in the other side
-	   	State explore= e.explore(currBoard.getBoard(), currAgent);
-	   	
-	   	e.pathToChar(currBoard.getBoard(), explore,currAgent, path);
-	   	System.out.println("command: " + path);
-	   	char action = '0';
-	   	//if the path is null then the explore is done do some other search
-	   	if(path.size() != 0){
-	       	action = path.get(0) ; //get the first element from the path
-	        path.remove(0);
-	   	} else {
-	   		/***************TO BE IMPLEMENT*****************************/
-	   		//explore water if currAgent can get into water
-	   	}
-   		return action;
    }
-
  
 }

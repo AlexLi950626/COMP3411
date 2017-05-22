@@ -6,12 +6,14 @@ public class Explore {
     private ArrayList<State> exploreSeen;
     private ArrayList<State> changeSeen;
     private ArrayList<State> charPath;
+    private ArrayList<Character> path;
     
 	public Explore(){
 		exploreQ = new ArrayList<State>();
 		exploreSeen = new ArrayList<State>();
 		changeSeen = new ArrayList<State>();
 		charPath = new ArrayList<State>();
+        path = new ArrayList<> ();
 	}
 	
 	public void to_Gold(){
@@ -25,6 +27,31 @@ public class Explore {
 	public void to_poi(){
 		
 	}
+	
+	/*
+	 * if current situation is allow the map to explore then it will start explore 
+	 * if the map is finished exploring then it will return char '0' instead
+	 */
+	public char checkExplore(char[][] board, State player){
+		//explore graph 
+	   	//only the environment surrounding the current position, Using BFS
+	   	//Currently, it won't explore the water or the graph in the other side
+	   	State explore= explore(board, player);
+	   	
+	   	pathToChar(board, explore, player, path);
+	   	System.out.println("command: " + path);
+	   	char action = '0';
+	   	//if the path is null then the explore is done do some other search
+	   	if(path.size() != 0){
+	       	action = path.get(0) ; //get the first element from the path
+	        path.remove(0);
+	   	} else {
+	   		/***************TO BE IMPLEMENT*****************************/
+	   		//explore water if currAgent can get into water
+	   	}
+   		return action;
+	}
+	
 	
 	/*
 	 * This method is trying to explore the unknown node in the board by BFS
