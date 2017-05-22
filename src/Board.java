@@ -3,7 +3,7 @@ import java.util.ArrayList;
 /**
  * Created by shiyun on 11/05/17.
  */
-public class Board {
+public class Board implements Cloneable {
     // if the known board has any of these tools
     private boolean board_axe;
     private boolean board_key;
@@ -55,21 +55,11 @@ public class Board {
             }
         }
     }
-
-    /*
-     * check it is allow the current position to go to the next position
-     */
-    public boolean isBoardUpdate(int row, int col){
-    	if(board[row][col] == Constants.WALL || board[row][col] == Constants.DOOR || board[row][col] == Constants.TREE){
-    		return false;
-    	}
-    	return true;
-    }
     
     /*
      * set up the board
      */
-    public void setChar(int row, int col, char represent){
+    public void setType(int row, int col, char represent){
     	this.board[row][col] =  represent;
     }
     
@@ -80,17 +70,17 @@ public class Board {
     	return this.board;
     }
     
-    public char getChar(int row, int col){
-    	return (char)this.board[row][col];
+    public char getType(int row, int col){
+    	return this.board[row][col];
     }
 
 
     /**
-     * update number of items in the board and store the positions of these items
+     * updateBoardFromGivenView number of items in the board and store the positions of these items
      * @param row
      * @param col
      */
-    public void board_update(int row, int col){
+    public void updateItem(int row, int col){
         Position k = new Position(row, col);
     	switch(board[row][col]){
     	case Constants.AXE:
@@ -140,7 +130,7 @@ public class Board {
      * @param row
      * @param col
      */
-    public void board_remove(int row, int col){
+    public void removeItem(int row, int col){
         Position k = new Position(row, col);
     	switch(board[row][col]){
     	case Constants.AXE:
@@ -187,7 +177,19 @@ public class Board {
         return false;
     }
 
- 
+    /**
+     * check it is allow the current position to go to the next position
+     * @param row
+     * @param col
+     * @return
+     */
+    public boolean isBoardUpdate(int row, int col){
+        if(board[row][col] == Constants.WALL || board[row][col] == Constants.DOOR || board[row][col] == Constants.TREE){
+            return false;
+        }
+        return true;
+    }
+
     public void printMap(State player){
         boolean flag;
         for(int row = 40; row < 120; row++){
