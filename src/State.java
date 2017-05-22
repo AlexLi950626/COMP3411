@@ -1,7 +1,3 @@
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
-
-import java.util.ArrayList;
-
 /**
  * Created by shiyun on 11/05/17.
  */
@@ -41,8 +37,8 @@ public class State implements Cloneable {
         this.axe = newState.getAxe();
         this.raft = newState.getRaft();
         this.key = newState.getKey();
-        this.dynamite = newState.dynamite();
-        this.treasure = newState.treasure();
+        this.dynamite = newState.getDynamite();
+        this.treasure = newState.getTreasure();
     }
     
     public void setRow(int newRow){
@@ -112,11 +108,11 @@ public class State implements Cloneable {
     	return this.key;
     }
     
-    public boolean treasure(){
+    public boolean getTreasure(){
     	return this.treasure;
     }
     
-    public int dynamite(){
+    public int getDynamite(){
     	return this.dynamite;
     }
     
@@ -189,8 +185,8 @@ public class State implements Cloneable {
         System.out.println("getAxe: " + this.getAxe());
         System.out.println("getKey: " + this.getKey());
         System.out.println("getRaft: " + this.getRaft());
-        System.out.println("dynamite: " + this.dynamite());
-        System.out.println("treasure: " + this.treasure());
+        System.out.println("getDynamite: " + this.getDynamite());
+        System.out.println("getTreasure: " + this.getTreasure());
     	
     }
 }

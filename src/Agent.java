@@ -26,7 +26,7 @@ public class Agent {
      * constructor
      */
     public Agent(){
-        currBoard = new Board();
+        currBoard = new Board(Constants.BOARD_SIZE_ROW, Constants.BOARD_SIZE_COL);
         currAgent = new State(Constants.START_ROW, Constants.START_COL, Constants.NORTH);
         prv = new State(Constants.START_ROW, Constants.START_COL, Constants.NORTH);
         e = new Explore();
@@ -117,6 +117,16 @@ public class Agent {
            currAgent.setPreState(prv);
            prv = new State(currAgent);
            return action;
+       } else {
+           Board snapshotBoard = currBoard.extractBoard();
+           State snapshotAgent = new State(currAgent.getRow()-snapshotBoard.getStartRow(),
+                   currAgent.getCol()-snapshotBoard.getStartCol(), currAgent.getDirection());
+           snapshotBoard.printExtractMap(snapshotAgent);
+
+           Board cloneBoard = snapshotBoard.clone();
+           State cloneAgent = snapshotAgent.clone();
+           cloneBoard.printExtractMap(cloneAgent);
+
        }
        //if finished explore if will only return '0'
        //need to do sth else here

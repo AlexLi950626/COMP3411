@@ -1,4 +1,3 @@
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -24,11 +23,19 @@ public class Board implements Cloneable {
 
     // board information;
     private char[][] board;
+    private int startCol;
+    private int startRow;
+    private int endCol;
+    private int endRow;
 
-    // player state
-    //private State player;
+//    /**
+//     * constructor for A star search board
+//     * @param currBoard
+//     */
+//    public Board(Board currBoard){
+//    }
 
-    public Board(){
+    public Board(int rowSize, int colSize){
     	//initialize the board info
         board_axe = false;
         board_key = false;
@@ -45,10 +52,10 @@ public class Board implements Cloneable {
         treasure_positions = new ArrayList<>();
         tree_positions = new ArrayList<>();
 
-        board = new char[Constants.BOARD_SIZE_ROW][Constants.BOARD_SIZE_COL];
+        board = new char[rowSize][colSize];
 
-        for(int i = 0; i < Constants.BOARD_SIZE_ROW; i++){
-            for(int j =0; j < Constants.BOARD_SIZE_COL; j++){
+        for(int i = 0; i < rowSize; i++){
+            for(int j =0; j < colSize; j++){
                 if(i == Constants.START_ROW && j == Constants.START_COL){
                     board[i][j] = Constants.EMPTY;
                 } else {
@@ -192,7 +199,7 @@ public class Board implements Cloneable {
                     this.removeItem(wall_row,wall_col);
                 }
                 this.setType(wall_row, wall_col,Constants.EMPTY);
-                currAgent.setDynamite(currAgent.dynamite()-1);
+                currAgent.setDynamite(currAgent.getDynamite()-1);
         }
     }
 
@@ -210,7 +217,7 @@ public class Board implements Cloneable {
                 this.removeItem(currAgent.getRow(),currAgent.getCol());
                 break;
             case Constants.DYNAMITE:
-                currAgent.setDynamite(currAgent.dynamite()+1);
+                currAgent.setDynamite(currAgent.getDynamite()+1);
                 this.removeItem(currAgent.getRow(),currAgent.getCol());
                 break;
             case Constants.TREASURE:
@@ -369,13 +376,21 @@ public class Board implements Cloneable {
      * @return
      */
     public Board clone(){
-        Board newBoard = new Board();
+        Board newBoard = new Board(this.board.length, this.board[0].length);
+
         newBoard.board_axe = this.board_axe;
         newBoard.board_key = this.board_key;
         newBoard.board_dynamite = this.board_dynamite;
         newBoard.board_tree = this.board_tree;
         newBoard.board_door = this.board_door;
         newBoard.board_treasure = this.board_treasure;
+
+        newBoard.axe_positions = new ArrayList<>();
+        newBoard.key_positions = new ArrayList<>();
+        newBoard.dynamite_positions = new ArrayList<>();
+        newBoard.door_positions = new ArrayList<>();
+        newBoard.treasure_positions = new ArrayList<>();
+        newBoard.tree_positions = new ArrayList<>();
 
         newBoard.axe_positions.addAll(this.axe_positions);
         newBoard.key_positions.addAll(this.key_positions);
@@ -384,6 +399,13 @@ public class Board implements Cloneable {
         newBoard.treasure_positions.addAll(this.treasure_positions);
         newBoard.tree_positions.addAll(this.tree_positions);
 
+        newBoard.startCol = this.startCol;
+        newBoard.startRow = this.startRow;
+        newBoard.endCol = this.endCol;
+        newBoard.endRow = this.endRow;
+
+        newBoard.board = new char[this.board.length][this.board[0].length];
+
         for(int i = 0; i < newBoard.board.length; i++){
             newBoard.board[i] = Arrays.copyOf(this.board[i], this.board[i].length);
         }
@@ -391,4 +413,182 @@ public class Board implements Cloneable {
         return newBoard;
     }
 
+    /**
+     * @return extract snapshot of the board and return that board
+     */
+    public Board extractBoard(){
+        //find left bound col
+        int leftCol = 0;
+        for(int col = 0; col < this.board[0].length; col++){
+            for (char[] aBoard : this.board) {
+                if (aBoard[col] != Constants.UNKNOW && aBoard[col] != Constants.BOUNDARY) {
+                    leftCol = col;
+                    break;
+                }
+            }
+            if (leftCol != 0) {
+                break;
+            }
+        }
+
+        //find right bound col
+        int rightCol = Constants.BOARD_SIZE_COL - 1;
+        for(int col = Constants.BOARD_SIZE_COL - 1; col >= 0; col--){
+            for(char[] aBoard : this.board){
+                if (aBoard[col] != Constants.UNKNOW && aBoard[col] != Constants.BOUNDARY) {
+                    rightCol = col;
+                    break;
+                }
+            }
+            if (rightCol != Constants.BOARD_SIZE_COL - 1){
+                break;
+            }
+        }
+
+        //find the up bound row
+        int upRow = 0;
+        for(int row = 0; row < this.board.length; row++){
+            for(int col = 0; col < this.board[row].length; col++){
+                if (this.board[row][col] != Constants.UNKNOW && this.board[row][col] != Constants.BOUNDARY){
+                    upRow = row;
+                }
+            }
+            if (upRow != 0){
+                break;
+            }
+        }
+
+        //find the bottom bound row
+        int bottomRow = Constants.BOARD_SIZE_ROW - 1;
+        for(int row = Constants.BOARD_SIZE_ROW - 1; row >= 0; row--){
+            for(int col = 0; col < this.board[row].length; col++){
+                if (this.board[row][col] != Constants.UNKNOW && this.board[row][col] != Constants.BOUNDARY){
+                    bottomRow = row;
+                }
+            }
+            if (bottomRow != Constants.BOARD_SIZE_ROW - 1){
+                break;
+            }
+        }
+
+        Board newBoard = new Board(bottomRow - upRow + 1, rightCol - leftCol + 1);
+
+        newBoard.board_axe = this.board_axe;
+        newBoard.board_key = this.board_key;
+        newBoard.board_dynamite = this.board_dynamite;
+        newBoard.board_tree = this.board_tree;
+        newBoard.board_door = this.board_door;
+        newBoard.board_treasure = this.board_treasure;
+
+        newBoard.axe_positions = new ArrayList<>();
+        newBoard.key_positions = new ArrayList<>();
+        newBoard.dynamite_positions = new ArrayList<>();
+        newBoard.door_positions = new ArrayList<>();
+        newBoard.treasure_positions = new ArrayList<>();
+        newBoard.tree_positions = new ArrayList<>();
+
+        newBoard.startRow = upRow;
+        newBoard.startCol = leftCol;
+        newBoard.endRow = bottomRow;
+        newBoard.endCol = rightCol;
+
+        for(Position p : this.axe_positions){
+            newBoard.axe_positions.add(new Position(p.getRow()-newBoard.startRow, p.getCol()-newBoard.startCol));
+        }
+        for(Position p : this.key_positions){
+            newBoard.key_positions.add(new Position(p.getRow()-newBoard.startRow, p.getCol()-newBoard.startCol));
+        }
+        for(Position p : this.dynamite_positions){
+            newBoard.dynamite_positions.add(new Position(p.getRow()-newBoard.startRow, p.getCol()-newBoard.startCol));
+        }
+        for(Position p : this.door_positions){
+            newBoard.door_positions.add(new Position(p.getRow()-newBoard.startRow, p.getCol()-newBoard.startCol));
+        }
+        for(Position p : this.treasure_positions){
+            newBoard.treasure_positions.add(new Position(p.getRow()-newBoard.startRow, p.getCol()-newBoard.startCol));
+        }
+        for(Position p : this.tree_positions){
+            newBoard.tree_positions.add(new Position(p.getRow()-newBoard.startRow, p.getCol()-newBoard.startCol));
+        }
+
+        for(int row = 0; row < newBoard.board.length; row++){
+            for(int col = 0; col < newBoard.board[row].length; col++){
+                newBoard.board[row][col] = this.board[row + newBoard.startRow][col + newBoard.startCol];
+            }
+        }
+        return newBoard;
+    }
+
+    /**
+     * start col represent where this snapshot of board begin
+     * @return startCol of the board
+     */
+    public int getStartCol() {
+        return startCol;
+    }
+
+    /**
+     * start row represent where this snapshot of board begin
+     * @return startRow
+     */
+    public int getStartRow() {
+        return startRow;
+    }
+
+    /**
+     * check around the Agent find all possible position the agent can potential go
+     * @param agentPosition
+     * @return ArrayList of all possible Positions
+     */
+    public ArrayList<Position> possiblePositions(Position agentPosition) {
+        ArrayList<Position> posiPos = new ArrayList<>();
+
+        int row = agentPosition.getRow();
+        int col = agentPosition.getCol();
+
+        // down direction
+        if(row+1 < board.length && board[row+1][col] != Constants.UNKNOW && board[row+1][col] != Constants.BOUNDARY){
+            posiPos.add(new Position(row+1, col));
+        }
+        if(col+1 < board[0].length && board[row][col+1] != Constants.UNKNOW && board[row][col+1] != Constants.BOUNDARY){
+            posiPos.add(new Position(row, col+1));
+        }
+        if(row-1 >= 0 && board[row-1][col] != Constants.UNKNOW && board[row-1][col] != Constants.BOUNDARY){
+            posiPos.add(new Position(row-1, col));
+        }
+        if(col-1 >= 0 && board[row][col-1] != Constants.UNKNOW && board[row][col-1] != Constants.BOUNDARY){
+            posiPos.add(new Position(row, col-1));
+        }
+        return posiPos;
+    }
+
+    /**
+     * print extract map
+     * @param player
+     */
+    public void printExtractMap(State player){
+        boolean flag;
+        for(int row = 0; row < this.board.length; row++){
+            flag = false;
+            for(int col = 0; col < this.board[0].length; col++){
+                if(row == player.getRow() && col == player.getCol()){
+                    System.out.print(player.getDirectionChar());
+                } else {
+                    System.out.print(board[row][col]);
+                    flag = true;
+                }
+            }
+            if(flag){
+                System.out.print('\n');
+            }
+        }
+        //System.out.print(player.getDirection());
+        System.out.println("board info:");
+        System.out.println("board_axe: " + board_axe);
+        System.out.println("board_key: " + board_key);
+        System.out.println("board_tree: " + board_tree);
+        System.out.println("board_door: " + board_door);
+        System.out.println("board_dynamite: " + board_dynamite);
+        System.out.println("board_treasure: " + board_treasure);
+    }
 }

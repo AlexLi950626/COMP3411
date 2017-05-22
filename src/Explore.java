@@ -467,7 +467,7 @@ public class Explore {
 			return false;
 		}
 		// it is a wall
-		if(view[current.getRow()][current.getCol()] == Constants.WALL){// && current.dynamite() < 1){
+		if(view[current.getRow()][current.getCol()] == Constants.WALL){// && current.getDynamite() < 1){
 			return false;
 		}
 		// it is over boundary '.'
@@ -481,8 +481,8 @@ public class Explore {
 		}
 		// it is tree
 		else if (view[current.getRow()][current.getCol()] == Constants.TREE){
-			//check getAxe or dynamite
-			return current.getAxe() || current.dynamite() > 1;
+			//check getAxe or getDynamite
+			return current.getAxe() || current.getDynamite() > 1;
 		}
 		// it is a door
 		else return view[current.getRow()][current.getCol()] != Constants.DOOR || current.getKey();
