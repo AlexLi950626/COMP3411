@@ -76,6 +76,152 @@ public class Board implements Cloneable {
 
 
     /**
+     * given view from the engine, updateBoardFromGivenView local map
+     * @param view
+     * @param currAgent which is the state for the current agent
+     */
+    public void updateBoardFromGivenView(char[][] view, State currAgent){
+        if(currAgent.getDirection() == Constants.NORTH){
+            //finding 0,0
+            int viewRow = currAgent.getRow() - 2;
+            int viewCol = currAgent.getCol() - 2;
+            for(int row = 0; row < Constants.VIEW_ROW; row++){
+                for(int col = 0; col < Constants.VIEW_COL; col++){
+                    if(!(row == col && row == 2) && (this.getType(viewRow + row, viewCol + col) == Constants.UNKNOW)) {
+                        this.setType(viewRow + row , viewCol + col, view[row][col]);
+                        this.updateItem(viewRow + row, viewCol + col);
+                    }
+                }
+            }
+        } else if(currAgent.getDirection() == Constants.SOUTH){
+            //finding 0,0
+            int viewRow = currAgent.getRow() + 2;
+            int viewCol = currAgent.getCol() + 2;
+            for(int row = 0; row < Constants.VIEW_ROW; row++){
+                for(int col = 0; col < Constants.VIEW_COL; col++){
+                    if(!(row == col && row == 2) && (this.getType(viewRow - row, viewCol - col) == Constants.UNKNOW)) {
+                        this.setType(viewRow - row, viewCol - col, view[row][col]);
+                        this.updateItem(viewRow - row,viewCol - col);
+                    }
+                }
+            }
+        } else if(currAgent.getDirection() == Constants.EAST){
+            //finding 0,0
+            int viewRow = currAgent.getRow() - 2;
+            int viewCol = currAgent.getCol() + 2;
+            for(int row = 0; row < Constants.VIEW_ROW; row++){
+                for(int col = 0; col < Constants.VIEW_COL; col++){
+                    if(!(row == col && row == 2) && (this.getType(viewRow + col, viewCol - row) == Constants.UNKNOW)) {
+                        this.setType(viewRow + col, viewCol - row, view[row][col]);
+                        this.updateItem(viewRow + col, viewCol - row);
+                    }
+                }
+            }
+        } else if(currAgent.getDirection() == Constants.WEST){
+            //finding 0,0
+            int viewRow = currAgent.getRow() + 2;
+            int viewCol = currAgent.getCol() - 2;
+            for(int row = 0; row < Constants.VIEW_ROW; row++){
+                for(int col = 0; col < Constants.VIEW_COL; col++){
+                    if(!(row == col && row == 2) && (this.getType(viewRow - col,viewCol + row) == Constants.UNKNOW)) {
+                        this.setType(viewRow - col, viewCol + row, view[row][col]);
+                        this.updateItem(viewRow - col, viewCol + row);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * updateBoardFromGivenView the board when a action is executed
+     * @param action
+     */
+    public void updateBoardAndStateFromGivenAction(char action, State currAgent){
+        switch (action){
+            case Constants.TURN_LEFT:
+                currAgent.updateDirection(currAgent.getDirection()-1);
+                break;
+            case Constants.TURN_RIGHT:
+                currAgent.updateDirection(currAgent.getDirection()+1);
+                break;
+            case Constants.MOVE_FORWARD:
+                switch (currAgent.getDirection()){
+                    case Constants.NORTH:
+                        if(this.isBoardUpdate(currAgent.getRow()-1, currAgent.getCol())){
+                            currAgent.setRow(currAgent.getRow()-1);
+                        }
+                        break;
+                    case Constants.SOUTH:
+                        if(this.isBoardUpdate(currAgent.getRow()+1, currAgent.getCol())){
+                            currAgent.setRow(currAgent.getRow()+1);
+                        }
+                        break;
+                    case Constants.WEST:
+                        if(this.isBoardUpdate(currAgent.getRow(), currAgent.getCol()-1)){
+                            currAgent.setCol(currAgent.getCol()-1);
+                        }
+                        break;
+                    case Constants.EAST:
+                        if(this.isBoardUpdate(currAgent.getRow(), currAgent.getCol()+1)){
+                            currAgent.setCol(currAgent.getCol()+1);
+                        }
+                }
+                System.out.println((char)this.getType(currAgent.getRow(),currAgent.getCol()));
+                //pick up things
+                interact(currAgent);
+                break;
+            case Constants.UNLOCK_DOOR:
+                int door_col = currAgent.getForwardCol();
+                int door_row = currAgent.getForwardRow();
+                this.setType(door_row, door_col,Constants.EMPTY);
+                this.removeItem(currAgent.getRow(),currAgent.getCol());
+                break;
+            case Constants.CHOP_TREE:
+                int tree_col = currAgent.getForwardCol();
+                int tree_row = currAgent.getForwardRow();
+                this.setType(tree_row, tree_col, Constants.EMPTY);
+                currAgent.setRaft(true);
+                this.removeItem(currAgent.getRow(),currAgent.getCol());
+                break;
+            case Constants.BLAST_WALL_TREE:
+                int wall_col = currAgent.getForwardCol();
+                int wall_row = currAgent.getForwardRow();
+                if(this.getType(wall_row,wall_col) == Constants.TREE){
+                    this.removeItem(currAgent.getRow(),currAgent.getCol());
+                }
+                this.setType(wall_row, wall_col,Constants.EMPTY);
+                currAgent.setDynamite(currAgent.dynamite()-1);
+        }
+    }
+
+    /**
+     * update Board and Agent while a action is carried out
+     */
+    public void interact(State currAgent){
+        switch (this.getType(currAgent.getRow(),currAgent.getCol())){
+            case Constants.AXE:
+                currAgent.setAxe(true);
+                this.updateItem(currAgent.getRow(),currAgent.getCol());
+                break;
+            case Constants.KEY:
+                currAgent.setKey(true);
+                this.updateItem(currAgent.getRow(),currAgent.getCol());
+                break;
+            case Constants.DYNAMITE:
+                currAgent.setDynamite(currAgent.dynamite()+1);
+                this.updateItem(currAgent.getRow(),currAgent.getCol());
+                break;
+            case Constants.TREASURE:
+                currAgent.setTreasure(true);
+                this.updateItem(currAgent.getRow(),currAgent.getCol());
+        }
+        if(this.getType(currAgent.getRow(),currAgent.getCol()) == Constants.AXE ||this.getType(currAgent.getRow(),currAgent.getCol()) == Constants.KEY ||
+                this.getType(currAgent.getRow(),currAgent.getCol()) == Constants.DYNAMITE || this.getType(currAgent.getRow(),currAgent.getCol()) == Constants.TREASURE){
+            this.setType(currAgent.getRow(),currAgent.getCol() ,Constants.EMPTY);
+        }
+    }
+
+    /**
      * updateBoardFromGivenView number of items in the board and store the positions of these items
      * @param row
      * @param col
