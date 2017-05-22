@@ -33,4 +33,9 @@ public class Position {
     public int getCol(){
         return col;
     }
+
+    @Override
+    public boolean equals(){
+
+    }
 }

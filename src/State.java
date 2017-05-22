@@ -1,15 +1,16 @@
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
+
 import java.util.ArrayList;
 
 /**
  * Created by shiyun on 11/05/17.
  */
-public class State {
+public class State implements Cloneable {
 	//state info
 	private int row;
 	private int col;
 	private int direction;
 	private State preState;
-	private ArrayList<State> path;
 	
     // if the current state has any of these tools
     private boolean axe;
@@ -23,7 +24,6 @@ public class State {
     	this.col = col;
     	this.direction = direction;
     	this.preState = null;
-    	this.path =  new ArrayList<>();
     	
         this.axe = false;
         this.raft = false;
@@ -37,7 +37,6 @@ public class State {
     	this.col = newState.getCol();
     	this.direction = newState.getDirection();
     	this.preState = newState.getPreState();
-    	this.path = newState.path();
     	
         this.axe = newState.getAxe();
         this.raft = newState.getRaft();
@@ -80,14 +79,9 @@ public class State {
     public void setDynamite(int newDynamite){
     	this.dynamite = newDynamite;
     }
-    
+
     public void setPreState(State s){
     	this.preState = s;
-    	addPath(s);
-    }
-    
-    public void addPath(State s){
-    	this.path.add(s);
     }
     
     public int getRow(){
@@ -124,9 +118,6 @@ public class State {
     
     public int dynamite(){
     	return this.dynamite;
-    }
-    public ArrayList<State> path(){
-    	return this.path;
     }
     
     public int getForwardRow(){
@@ -165,8 +156,24 @@ public class State {
                 return (char) 0;
         }
     }
-	
-    
+
+    public State clone(){
+        State newState = new State(Constants.START_ROW, Constants.START_COL, Constants.NORTH);
+
+        newState.row = this.row;
+        newState.col = this.col;
+        newState.direction = this.direction;
+        newState.preState = this.preState;
+
+        newState.axe = this.axe;
+        newState.raft = this.raft;
+        newState.key = this.key;
+        newState.dynamite = this.dynamite;
+        newState.treasure = this.treasure;
+
+        return newState;
+    }
+
     /*
      * print the current state info
      */

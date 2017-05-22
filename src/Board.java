@@ -1,4 +1,6 @@
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by shiyun on 11/05/17.
@@ -166,28 +168,28 @@ public class Board implements Cloneable {
                             currAgent.setCol(currAgent.getCol()+1);
                         }
                 }
-                System.out.println((char)this.getType(currAgent.getRow(),currAgent.getCol()));
+                System.out.println(this.getType(currAgent.getRow(),currAgent.getCol()));
                 //pick up things
                 interact(currAgent);
                 break;
             case Constants.UNLOCK_DOOR:
                 int door_col = currAgent.getForwardCol();
                 int door_row = currAgent.getForwardRow();
+                this.removeItem(door_row,door_col);
                 this.setType(door_row, door_col,Constants.EMPTY);
-                this.removeItem(currAgent.getRow(),currAgent.getCol());
                 break;
             case Constants.CHOP_TREE:
                 int tree_col = currAgent.getForwardCol();
                 int tree_row = currAgent.getForwardRow();
-                this.setType(tree_row, tree_col, Constants.EMPTY);
                 currAgent.setRaft(true);
-                this.removeItem(currAgent.getRow(),currAgent.getCol());
+                this.removeItem(tree_row,tree_col);
+                this.setType(tree_row, tree_col, Constants.EMPTY);
                 break;
             case Constants.BLAST_WALL_TREE:
                 int wall_col = currAgent.getForwardCol();
                 int wall_row = currAgent.getForwardRow();
                 if(this.getType(wall_row,wall_col) == Constants.TREE){
-                    this.removeItem(currAgent.getRow(),currAgent.getCol());
+                    this.removeItem(wall_row,wall_col);
                 }
                 this.setType(wall_row, wall_col,Constants.EMPTY);
                 currAgent.setDynamite(currAgent.dynamite()-1);
@@ -201,19 +203,19 @@ public class Board implements Cloneable {
         switch (this.getType(currAgent.getRow(),currAgent.getCol())){
             case Constants.AXE:
                 currAgent.setAxe(true);
-                this.updateItem(currAgent.getRow(),currAgent.getCol());
+                this.removeItem(currAgent.getRow(),currAgent.getCol());
                 break;
             case Constants.KEY:
                 currAgent.setKey(true);
-                this.updateItem(currAgent.getRow(),currAgent.getCol());
+                this.removeItem(currAgent.getRow(),currAgent.getCol());
                 break;
             case Constants.DYNAMITE:
                 currAgent.setDynamite(currAgent.dynamite()+1);
-                this.updateItem(currAgent.getRow(),currAgent.getCol());
+                this.removeItem(currAgent.getRow(),currAgent.getCol());
                 break;
             case Constants.TREASURE:
                 currAgent.setTreasure(true);
-                this.updateItem(currAgent.getRow(),currAgent.getCol());
+                this.removeItem(currAgent.getRow(),currAgent.getCol());
         }
         if(this.getType(currAgent.getRow(),currAgent.getCol()) == Constants.AXE ||this.getType(currAgent.getRow(),currAgent.getCol()) == Constants.KEY ||
                 this.getType(currAgent.getRow(),currAgent.getCol()) == Constants.DYNAMITE || this.getType(currAgent.getRow(),currAgent.getCol()) == Constants.TREASURE){
@@ -344,7 +346,7 @@ public class Board implements Cloneable {
                 if(row == player.getRow() && col == player.getCol()){
                     System.out.print(player.getDirectionChar());
                 } else {
-                    System.out.print((char)board[row][col]);
+                    System.out.print(board[row][col]);
                     flag = true;
                 }
             }
@@ -360,6 +362,33 @@ public class Board implements Cloneable {
         System.out.println("board_door: " + board_door);
         System.out.println("board_dynamite: " + board_dynamite);
         System.out.println("board_treasure: " + board_treasure);
+    }
+
+    /**
+     * create a deep copy of the game
+     * @return
+     */
+    public Board clone(){
+        Board newBoard = new Board();
+        newBoard.board_axe = this.board_axe;
+        newBoard.board_key = this.board_key;
+        newBoard.board_dynamite = this.board_dynamite;
+        newBoard.board_tree = this.board_tree;
+        newBoard.board_door = this.board_door;
+        newBoard.board_treasure = this.board_treasure;
+
+        newBoard.axe_positions.addAll(this.axe_positions);
+        newBoard.key_positions.addAll(this.key_positions);
+        newBoard.dynamite_positions.addAll(this.dynamite_positions);
+        newBoard.door_positions.addAll(this.door_positions);
+        newBoard.treasure_positions.addAll(this.treasure_positions);
+        newBoard.tree_positions.addAll(this.tree_positions);
+
+        for(int i = 0; i < newBoard.board.length; i++){
+            newBoard.board[i] = Arrays.copyOf(this.board[i], this.board[i].length);
+        }
+
+        return newBoard;
     }
 
 }
