@@ -5,8 +5,11 @@
  *  UNSW Session 1, 2017
 */
 
+import javax.security.auth.callback.CallbackHandler;
 import java.io.*;
+import java.lang.reflect.Array;
 import java.net.*;
+import java.util.ArrayList;
 
 public class Agent {
     // used store information of the game
@@ -21,6 +24,9 @@ public class Agent {
     // search
     private Explore e;
 
+    //the first point is always the place you want to go;
+    private ArrayList<Character> getToItemPath;
+
 
     /**
      * constructor
@@ -30,7 +36,7 @@ public class Agent {
         currAgent = new State(Constants.START_ROW, Constants.START_COL, Constants.NORTH);
         prv = new State(Constants.START_ROW, Constants.START_COL, Constants.NORTH);
         e = new Explore();
-
+        getToItemPath = null;
     }
 
    public static void main( String[] args )
@@ -106,11 +112,6 @@ public class Agent {
        //updateBoardFromGivenView the view from what we have seen
        currBoard.updateBoardFromGivenView(view, currAgent);
 
-       //print current map we have
-       currBoard.printMap(currAgent);
-       currAgent.printState();
-
-       //agent.print_view( view );
        char action = e.checkExplore(currBoard.getBoard(), currAgent);
        if(action != '0'){
            currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
@@ -118,28 +119,29 @@ public class Agent {
            prv = new State(currAgent);
            return action;
        } else {
-           Board snapshotBoard = currBoard.extractBoard();
-           State snapshotAgent = new State(currAgent.getRow()-snapshotBoard.getStartRow(),
-                   currAgent.getCol()-snapshotBoard.getStartCol(), currAgent.getDirection());
-           snapshotBoard.printExtractMap(snapshotAgent);
+           currBoard.printMap(currAgent);
+           if(getToItemPath.isEmpty()){
 
-           Board cloneBoard = snapshotBoard.clone();
-           State cloneAgent = snapshotAgent.clone();
-           cloneBoard.printExtractMap(cloneAgent);
+               Board snapshotBoard = currBoard.extractBoard();
+               State snapshotAgent = new State(currAgent);
+               snapshotAgent.setRow(currAgent.getRow()-snapshotBoard.getStartRow());
+               snapshotAgent.setCol(currAgent.getCol()-snapshotBoard.getStartCol());
+               snapshotAgent.setPreState(null);
+
+               SearchItem SI = new SearchItem(snapshotBoard, snapshotAgent, snapshotBoard.axe_positions.get(0));
+               ArrayList<Position> path = SI.AStar();
+               getToItemPath = getActionPathFromPosPath(path);
+
+               action = getToItemPath.get(0);
+               getToItemPath.remove(0);
+           } else {
+               action = getToItemPath.get(0);
+               getToItemPath.remove(0);
+           }
 
        }
-       //if finished explore if will only return '0'
-       //need to do sth else here
-
-
        return action;
    }
-   
-    /**
-    * translate path to set of actions
-    *
-    */
-   //private a;
 
    /**
     * print the view that is returned from the server
@@ -164,4 +166,86 @@ public class Agent {
        }
        System.out.println("+-----+");
    }
+
+    /**
+     * Translate coordinates path to actual action path
+     * @return the action path
+     */
+   public ArrayList<Character> getActionPathFromPosPath(ArrayList<Position> path){
+       Board copyBoard = currBoard.clone();
+       State copyState = currAgent.clone();
+
+       ArrayList<Character> actionPath = new ArrayList<>();
+       while(!path.isEmpty()){
+           // if current point is where we want to go
+           if(copyState.getCurrentPosition().equals(path.get(0))){
+               path.remove(0);
+           } else {
+               Position goingToPos = path.get(0);
+               Position currPos = copyState.getCurrentPosition();
+
+               // make sure agent is at right direction to move
+               if(currPos.getRow() == goingToPos.getRow()+1){ //go north
+                   actionPath.addAll(e.directionAction(Constants.NORTH, copyState.getDirection()));
+                   copyState.updateDirection(Constants.NORTH);
+               }else if(currPos.getRow() == goingToPos.getRow()-1){ //go south
+                   actionPath.addAll(e.directionAction(Constants.SOUTH, copyState.getDirection()));
+                   copyState.updateDirection(Constants.SOUTH);
+               }else if(currPos.getCol() == goingToPos.getCol()+1){ //go west
+                   actionPath.addAll(e.directionAction(Constants.WEST, copyState.getDirection()));
+                   copyState.updateDirection(Constants.WEST);
+               }else if(currPos.getCol() == goingToPos.getCol()-1){ //go east
+                   actionPath.addAll(e.directionAction(Constants.EAST, copyState.getDirection()));
+                   copyState.updateDirection(Constants.EAST);
+               } else {
+                   //bad path
+                   System.out.println("bad path");
+                   //next.printState();
+               }
+
+               //depend on the type of where we going do different action
+               switch (copyBoard.getType(goingToPos.getRow(), goingToPos.getCol())) {
+                   case Constants.TREE:
+                       if (copyState.getAxe()) {
+                           copyBoard.updateBoardAndStateFromGivenAction(Constants.CHOP_TREE, copyState);
+                           actionPath.add(Constants.CHOP_TREE);
+                       } else if (copyState.getDynamite() > 0) {
+                           copyBoard.updateBoardAndStateFromGivenAction(Constants.BLAST_WALL_TREE, copyState);
+                           actionPath.add(Constants.BLAST_WALL_TREE);
+                       } else throw new RuntimeException();
+                       break;
+                   case Constants.WALL:
+                       if (copyState.getDynamite() > 0) {
+                           copyBoard.updateBoardAndStateFromGivenAction(Constants.BLAST_WALL_TREE, copyState);
+                           actionPath.add(Constants.BLAST_WALL_TREE);
+                       } else throw new RuntimeException();
+                       break;
+                   case Constants.DOOR:
+                       if (copyState.getKey()) {
+                           copyBoard.updateBoardAndStateFromGivenAction(Constants.UNLOCK_DOOR, copyState);
+                           actionPath.add(Constants.UNLOCK_DOOR);
+                       } else throw new RuntimeException();
+                       break;
+               }
+               copyBoard.updateBoardAndStateFromGivenAction(Constants.MOVE_FORWARD, copyState);
+               actionPath.add(Constants.MOVE_FORWARD);
+           }
+       }
+
+       return actionPath;
+   }
+
+   public void printPath(ArrayList<Position> pos){
+       for(Position p : pos){
+           System.out.print(p.toString());
+       }
+       System.out.println();
+   }
+   public void printActionPath(){
+        for(char c : getToItemPath){
+            System.out.print(c + " ");
+        }
+        System.out.println();
+    }
 }
+

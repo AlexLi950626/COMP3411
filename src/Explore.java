@@ -32,7 +32,8 @@ public class Explore {
 		if(inWater == false){
 		   	explore(board, player);
 
-		   	System.out.println("command: " + path);
+		   	//System.out.println("command: " + path);
+
 		   	//if the path is null then the explore is done do some other search
 		   	if(path.size() != 0){
 		       	action = path.get(0) ; //get the first element from the path
@@ -133,7 +134,7 @@ public class Explore {
 		   	}
    			
    		}
-	   	System.out.println("command: " + path);
+//	   	System.out.println("command: " + path);
    		return action;
 	}
 	
@@ -299,7 +300,7 @@ public class Explore {
 			if(view[next.getRow()][next.getCol()] == Constants.TREE && next.getAxe()){
 				output.add(Constants.CHOP_TREE);
 			}
-		   output.add(Constants.MOVE_FORWARD);
+		   	output.add(Constants.MOVE_FORWARD);
 		}
 
 	}
@@ -327,9 +328,9 @@ public class Explore {
 					p.add(0,next);
 				}
 				//p.add(0,next);
-				for(State s : p){
-					s.printState();
-				}
+//				for(State s : p){
+//					s.printState();
+//				}
 				break;
 			}
 			next.setRow(prv.getRow()-1);
@@ -456,7 +457,7 @@ public class Explore {
 	 * Calculating which getDirection current node should turn around
 	 */
 	public ArrayList<Character> directionAction(int aim, int d){
-		ArrayList<Character> output = new ArrayList<Character>();
+		ArrayList<Character> output = new ArrayList<>();
 		switch (aim){
 		case Constants.NORTH:
 			switch(d){

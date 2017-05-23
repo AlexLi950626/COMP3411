@@ -14,12 +14,12 @@ public class Board implements Cloneable {
     private boolean board_treasure;
 
     // these position variables are used to store the positions of items agent can interact with
-    private ArrayList<Position> axe_positions;
-    private ArrayList<Position> key_positions;
-    private ArrayList<Position> dynamite_positions;
-    private ArrayList<Position> door_positions;
-    private ArrayList<Position> treasure_positions;
-    private ArrayList<Position> tree_positions;
+    public ArrayList<Position> axe_positions;
+    public ArrayList<Position> key_positions;
+    public ArrayList<Position> dynamite_positions;
+    public ArrayList<Position> door_positions;
+    public ArrayList<Position> treasure_positions;
+    public ArrayList<Position> tree_positions;
 
     // board information;
     private char[][] board;
@@ -181,7 +181,6 @@ public class Board implements Cloneable {
                             currAgent.setCol(currAgent.getCol()+1);
                         }
                 }
-                System.out.println(this.getType(currAgent.getRow(),currAgent.getCol()));
                 //pick up things
                 interact(currAgent);
                 break;
@@ -367,7 +366,6 @@ public class Board implements Cloneable {
                 System.out.print('\n');
             }
         }
-        //System.out.print(player.getDirection());
         System.out.println("board info:");
         System.out.println("board_axe: " + board_axe);
         System.out.println("board_key: " + board_key);
@@ -570,15 +568,15 @@ public class Board implements Cloneable {
 
     /**
      * print extract map
-     * @param player
+     * @param agentPos
      */
-    public void printExtractMap(State player){
+    public void printExtractMap(Position agentPos){
         boolean flag;
         for(int row = 0; row < this.board.length; row++){
             flag = false;
             for(int col = 0; col < this.board[0].length; col++){
-                if(row == player.getRow() && col == player.getCol()){
-                    System.out.print(player.getDirectionChar());
+                if(row == agentPos.getRow() && col == agentPos.getCol()){
+                    System.out.print('P');
                 } else {
                     System.out.print(board[row][col]);
                     flag = true;
@@ -588,7 +586,6 @@ public class Board implements Cloneable {
                 System.out.print('\n');
             }
         }
-        //System.out.print(player.getDirection());
         System.out.println("board info:");
         System.out.println("board_axe: " + board_axe);
         System.out.println("board_key: " + board_key);

@@ -4,9 +4,9 @@ import java.util.HashMap;
 import java.util.PriorityQueue;
 
 public class SearchItem{
-    Board originalBoard;
-    State originalState;
-    Position dest;
+    private Board originalBoard;
+    private State originalState;
+    private Position dest;
 
     /**
      * constructor for the search item object to do path finding
@@ -35,6 +35,7 @@ public class SearchItem{
         while(!statePQ.isEmpty()){
             // get a state from queue
             SearchState currentState = statePQ.poll();
+
             // if destination is reached return path
             Position currPosition = currentState.getAgentPosition();
             char currPositionType = currentState.getTypeInBoard(currPosition.getRow(), currPosition.getCol());
@@ -122,12 +123,7 @@ public class SearchItem{
                                 newState.sethCost(ManhattanHeuristic(p));
                                 newState.addBeenPosition(p);
                                 statePQ.add(newState);
-                            } else {
-                                System.out.println("next move is water " + "from " + currPositionType + "haven't been there, with no raft" );
                             }
-                        } else {
-                            System.out.println("next move is water " + "from " + currPositionType + "been there" );
-
                         }
                         break;
                     case Constants.EMPTY:
@@ -146,11 +142,7 @@ public class SearchItem{
                                 newState.sethCost(ManhattanHeuristic(p));
                                 newState.addBeenPosition(p);
                                 statePQ.add(newState);
-                            } else {
-                                System.out.println("next move is EMPTY " + "from " + currPositionType + "haven't been there" );
                             }
-                        } else {
-                            System.out.println("next move is EMPTY " + "from " + currPositionType + "been there" );
                         }
                         break;
                     case Constants.AXE:
@@ -186,14 +178,23 @@ public class SearchItem{
                         newState.addBeenPosition(p);
                         statePQ.add(newState);
                         break;
+                    case Constants.KEY:
+                        newState = currentState.deepCopy();
+                        newState.setgCost(currentState.getgCost() + 1);
+                        newState.setKey(true);
+                        newState.removeItemInBoard(p.getRow(), p.getCol());
+                        newState.setTypeInBoard(p.getRow(), p.getCol(), Constants.EMPTY);
+                        newState.setAgentPostion(p);
+                        newState.sethCost(ManhattanHeuristic(p));
+                        newState.addBeenPosition(p);
+                        statePQ.add(newState);
                     default:
                         System.out.println("Unexpected Case during A* ");
                 }
             }
         }
-    	return path;
+    	return convertCoordinates(path);
     }
-
 
     /**
      * @param src
@@ -203,4 +204,17 @@ public class SearchItem{
         return Math.abs(src.getRow() - dest.getRow()) + Math.abs(src.getCol() - dest.getCol());
     }
 
+
+    /**
+     * convert path from snapshot map coordinate to global map coordinate
+     * @param path
+     * @return converted path
+     */
+    public ArrayList<Position> convertCoordinates(ArrayList<Position> path){
+        for (Position pos : path) {
+            pos.setRow(pos.getRow()+originalBoard.getStartRow());
+            pos.setCol(pos.getCol()+originalBoard.getStartCol());
+        }
+        return path;
+    }
 }

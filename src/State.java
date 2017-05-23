@@ -170,6 +170,14 @@ public class State implements Cloneable {
         return newState;
     }
 
+
+    /**
+     * typical getter that gets the position of the agent
+     * @return position of the agent
+     */
+    public Position getCurrentPosition(){
+        return new Position(row, col);
+    }
     /*
      * print the current state info
      */

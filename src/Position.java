@@ -60,15 +60,20 @@ public class Position {
      */
     @Override
     public boolean equals(Object compare){
-        return (this.getRow()+"+"+this.getRow()).equals(compare);
+        if(compare == this){
+            return true;
+        } else {
+            if(compare.getClass().equals(this.getClass())){
+                Position x = (Position) compare;
+                return x.row == this.row && x.col == this.col;
+            } else {
+                return false;
+            }
+        }
     }
 
-    /**
-     * return the hash value of this object
-     * @return the hash value of the object
-     */
     @Override
-    public int hashCode(){
-        return (this.getRow()+"+"+this.getRow()).hashCode();
+    public String toString(){
+        return "[" + row + ", " + col + "]";
     }
 }

@@ -5,7 +5,7 @@ import java.util.HashMap;
 public class SearchState implements Comparable{
     private SearchState preState;
     private Board board;
-    private HashMap<Position, String> been;
+    private HashMap<String, Position> been;
 
     private Position currAgentPosition;
     // if the current state has any of these tools
@@ -25,7 +25,7 @@ public class SearchState implements Comparable{
      * @param currAgent
      * @param gCost
      */
-    public SearchState(Board currBoard, HashMap<Position, String> seen, SearchState pre, int gCost, State currAgent){
+    public SearchState(Board currBoard, HashMap<String, Position> seen, SearchState pre, int gCost, State currAgent){
         preState = pre;
         board = currBoard;
         been = seen;
@@ -45,7 +45,7 @@ public class SearchState implements Comparable{
      * @param pre
      * @param
      */
-    public SearchState(Board currBoard, HashMap<Position, String> seen, SearchState pre, int gCost){
+    public SearchState(Board currBoard, HashMap<String, Position> seen, SearchState pre, int gCost){
         preState = pre;
         board = currBoard;
         been = seen;
@@ -128,13 +128,13 @@ public class SearchState implements Comparable{
      * @param beenTo
      */
     public void addBeenPosition(Position beenTo){
-        been.put(beenTo, "");
+        been.put(beenTo.toString(), beenTo);
     }
 
     /**
      * @return been hashmap
      */
-    public HashMap<Position, String> getBeen(){
+    public HashMap<String, Position> getBeen(){
         return been;
     }
 
@@ -143,7 +143,7 @@ public class SearchState implements Comparable{
      * @return check if we have been to the state, if true we don't want to go there anymore
      */
     public boolean beenThere(Position check){
-        return been.containsKey(check);
+        return been.containsKey(check.toString());
     }
 
     /**
@@ -263,7 +263,7 @@ public class SearchState implements Comparable{
      * @return new state deep copy everything
      */
     public SearchState deepCopy(){
-        return new SearchState(board.clone(), new HashMap<>(), preState, gCost);
+        return new SearchState(board.clone(), new HashMap<>(), this, gCost);
 
     }
 
@@ -272,6 +272,24 @@ public class SearchState implements Comparable{
      * @return
      */
     public SearchState shallowCopy(){
-        return new SearchState(board, been,preState, gCost  );
+        return new SearchState(board, been,this, gCost  );
+    }
+
+    public void printSearchState(){
+        System.out.println("-----------------------------------------------------------------------------------------");
+        board.printExtractMap(currAgentPosition);
+        if(preState != null){
+            System.out.println("PrePosition is: " + preState.getAgentPosition().toString());
+        } else {
+            System.out.println("PrePosition is: null");
+        }
+
+        System.out.println("CurrPosition is: " + currAgentPosition.toString());
+        System.out.println("Raft: " + hasRaft());
+        System.out.println("Key: " + hasKey());
+        System.out.println("Axe: " + hasAxe());
+        System.out.println("Treasure: " + hasTreasure());
+        System.out.println("Dynamite: " + numDynamite());
+        System.out.println("gCost: " + gCost + " hCost: " + hCost);
     }
 }
