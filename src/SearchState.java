@@ -5,30 +5,61 @@ import java.util.HashMap;
 public class SearchState implements Comparable{
     private SearchState preState;
     private Board board;
-    private State agent;
     private HashMap<Position, String> been;
+
     private Position currAgentPosition;
+    // if the current state has any of these tools
+    private boolean axe;
+    private boolean raft;
+    private boolean key;
+    private int dynamite;
+    private boolean treasure;
 
 
     private int gCost;
     private int hCost;
 
     /**
-     * constructor
+     * constructor from beginning of A star
      * @param currBoard
      * @param currAgent
      * @param gCost
      */
-    public SearchState(Board currBoard, State currAgent, int gCost, SearchState pre, HashMap<Position, String> seen){
+    public SearchState(Board currBoard, HashMap<Position, String> seen, SearchState pre, int gCost, State currAgent){
         preState = pre;
         board = currBoard;
-        agent = currAgent;
         been = seen;
         currAgentPosition = new Position(currAgent.getRow(), currAgent.getCol());
         this.gCost = gCost;
-
+        axe = currAgent.getAxe();
+        raft = currAgent.getRaft();
+        key = currAgent.getKey();
+        dynamite = currAgent.getDynamite();
+        treasure = currAgent.getTreasure();
     }
 
+    /**
+     * another constructor construct next state for search
+     * @param currBoard
+     * @param seen
+     * @param pre
+     * @param
+     */
+    public SearchState(Board currBoard, HashMap<Position, String> seen, SearchState pre, int gCost){
+        preState = pre;
+        board = currBoard;
+        been = seen;
+        this.gCost = gCost;
+
+        currAgentPosition = pre.getAgentPosition();
+        axe = pre.hasAxe();
+        raft = pre.hasRaft();
+        key = pre.hasKey();
+        dynamite = pre.numDynamite();
+        treasure = pre.hasTreasure();
+
+
+    }
     /**
      * set g cost
      * @param cost
@@ -54,19 +85,19 @@ public class SearchState implements Comparable{
     }
 
     /**
-     * get h cost
-     * @return return h cost
-     */
-    public int gethCost(){
-        return hCost;
-    }
-
-    /**
      * get Agent's position from currAgent
      * @return A position of the Agent
      */
     public Position getAgentPosition(){
         return currAgentPosition;
+    }
+
+    /**
+     * set Agent's position
+     * @param now
+     */
+    public void setAgentPostion(Position now){
+        currAgentPosition = now;
     }
 
     /**
@@ -86,7 +117,7 @@ public class SearchState implements Comparable{
     public ArrayList<Position> getCurrentPath(){
         ArrayList<Position> returnList = new ArrayList<>();
         for(SearchState x = this; x != null; x = x.preState){
-            returnList.add(x.getAgentCurrentPosition());
+            returnList.add(x.getAgentPosition());
         }
         Collections.reverse(returnList);
         return returnList;
@@ -108,21 +139,11 @@ public class SearchState implements Comparable{
     }
 
     /**
-     *
-     * @param row
-     * @param col
+     * @param check
      * @return check if we have been to the state, if true we don't want to go there anymore
      */
-    public boolean beenThere(int row, int col){
-        return been.containsKey(new Position(row, col));
-    }
-
-    /**
-     * get the agent's position at this searchState
-     * @return return the path from beginning to current
-     */
-    public Position getAgentCurrentPosition(){
-        return new Position(agent.getRow(), agent.getCol());
+    public boolean beenThere(Position check){
+        return been.containsKey(check);
     }
 
     /**
@@ -138,35 +159,74 @@ public class SearchState implements Comparable{
      * @return true if agent has a key, false otherwise
      */
     public boolean hasKey(){
-        return agent.getKey();
+        return key;
+    }
+
+    /**
+     * typical setter set if agent has key
+     * @param b
+     */
+    public void setKey(boolean b){
+        key = b;
     }
 
     /**
      * @return true if agent has a axe, false otherwise
      */
     public boolean hasAxe(){
-        return agent.getAxe();
+        return axe;
+    }
+
+    /**
+     * typical setter set if agent has axe
+     * @param b
+     */
+    public void setAxe(boolean b){
+        axe = b;
     }
 
     /**
      * @return true if agent has a raft, false otherwise
      */
     public boolean hasRaft(){
-        return agent.getRaft();
+        return raft;
     }
 
     /**
-     * agent got a raft by chopping tree
+     * set raft status
+     * @param b
      */
-    public void gainRaft(){
-        agent.setRaft(true);
+    public void setRaft(boolean b){
+        raft = b;
     }
 
     /**
      * @return number of Dynamite agent has
      */
     public int numDynamite(){
-        return agent.getDynamite();
+        return dynamite;
+    }
+
+    /**
+     * set dynamite number
+     * @param num
+     */
+    public void setDynamite(int num){
+        dynamite = num;
+    }
+
+    /**
+     * typical setter set if agent has treasure
+     * @param b
+     */
+    public void setTreasure(boolean b){
+        treasure = b;
+    }
+    /**
+     * @return if agent has treasure return true, false otherwise
+     */
+    public boolean hasTreasure(){
+        return treasure;
     }
 
     /**
@@ -189,11 +249,21 @@ public class SearchState implements Comparable{
     }
 
     /**
+     * get type char at specific index in board
+     * @param row
+     * @param col
+     * @return
+     */
+    public char getTypeInBoard(int row, int col){
+        return board.getType(row, col);
+    }
+
+    /**
      * after action such as open door chop tree etc, we need to create total new state with new board, agent
      * @return new state deep copy everything
      */
     public SearchState deepCopy(){
-        return new SearchState(board.clone(), agent.clone(), gCost, null, new HashMap<>());
+        return new SearchState(board.clone(), new HashMap<>(), preState, gCost);
 
     }
 
@@ -202,6 +272,6 @@ public class SearchState implements Comparable{
      * @return
      */
     public SearchState shallowCopy(){
-        return new SearchState(board, agent, gCost, null, been);
+        return new SearchState(board, been,preState, gCost  );
     }
 }

@@ -78,7 +78,13 @@ public class Board implements Cloneable {
     public char[][] getBoard(){
     	return this.board;
     }
-    
+
+    /**
+     * get type of the given index
+     * @param row
+     * @param col
+     * @return
+     */
     public char getType(int row, int col){
     	return this.board[row][col];
     }
