@@ -193,7 +193,7 @@ public class Explore {
 		
 		if(!seen(exploreSeen,next) && valid(view,next)){
 
-			exploreSeen.add(prv);
+			//exploreSeen.add(prv);
 			returnState = next;
 		   	pathToChar(view, returnState, current, path);
 		}else{
@@ -494,9 +494,12 @@ public class Explore {
 			System.out.println(valid(view,prv));
 			if(!seen(exploreSeen,prv) && valid(view,prv)){
 				//return path
+
 				while(!(next.getCol() == current.getCol() && next.getRow() == current.getRow())){
-					next = next.getPreState();
+					
 					p.add(0,next);
+					next = next.getPreState();
+
 				}
 				p.add(0,next);
 				for(State s : p){
@@ -735,6 +738,8 @@ public class Explore {
 		// it is a door
 		else if(view[current.getRow()][current.getCol()] == Constants.DOOR && !current.getKey()){
 			return false;
+		} else if(view[current.getRow()][current.getCol()] == Constants.DYNAMITE){
+			return true;
 		}
 		
 		return true;
