@@ -190,11 +190,11 @@ public class State implements Cloneable {
             System.out.println("getPreState node getCol: " + this.getPreState().getCol());
         }
 
-        System.out.println("getAxe: " + this.getAxe());
+        /*System.out.println("getAxe: " + this.getAxe());
         System.out.println("getKey: " + this.getKey());
         System.out.println("getRaft: " + this.getRaft());
         System.out.println("getDynamite: " + this.getDynamite());
-        System.out.println("getTreasure: " + this.getTreasure());
+        System.out.println("getTreasure: " + this.getTreasure());*/
     	
     }
 }

@@ -3,6 +3,7 @@ public class Explore {
     
     // queue for explore
     private ArrayList<State> exploreSeen;
+    private ArrayList<State> known;
     private ArrayList<State> waterSeen;
     private ArrayList<Character> path;
     private boolean inWater;
@@ -13,6 +14,7 @@ public class Explore {
 	public Explore(){
 		exploreSeen = new ArrayList<State>();
 		waterSeen = new ArrayList<State>();
+		known = new ArrayList<State>();
         path = new ArrayList<> ();
         inWater = false;
         hasWater = false; 
@@ -189,14 +191,15 @@ public class Explore {
 		}
 		
 		if(!seen(exploreSeen,next) && valid(view,next)){
+
 			exploreSeen.add(next);
 			returnState = next;
 		   	pathToChar(view, returnState, current, path);
 		}else{
 			//find the closest next ? mark
 			if(path.size() == 0){
-				path.addAll(findPoint(view,current, Constants.UNKNOW));
-				//System.out.println("-----------------PATH"+ path +"-----------------");
+				path.addAll(findNoSeen(view,current));
+				System.out.println("-----------------PATH"+ path +"-----------------");
 			}
 
 		}
@@ -329,6 +332,7 @@ public class Explore {
 		ArrayList<State> p = new ArrayList<State>();
 		queue.add(current);
 		visited.add(current);
+
 		while(!queue.isEmpty()) {
 
 			State prv = queue.poll();
@@ -341,14 +345,15 @@ public class Explore {
 				}
 				//p.add(0,next);
 				for(State s : p){
-					exploreSeen.add(s);
-					s.printState();
+					exploreSeen.add(s);	
 				}
 				break;
 			}
+			
 			next.setRow(prv.getRow()-1);
 			next.setCol(prv.getCol());
 			// check if player allow to go forward in north getDirection
+			
 			if(!seen(visited, next)){
 				if(hasWater == true && validWater(view,next)){
 					next.setPreState(prv);
@@ -463,6 +468,155 @@ public class Explore {
 
 		return output;
 	}
+	
+	
+	
+	
+	/*
+	 * Find the closest path to the given target by BFS
+	 */
+	public ArrayList<Character> findNoSeen(char[][] view, State current){
+		ArrayList<Character> output = new ArrayList<Character>();
+		//write a bfs to water from current
+		// BFS uses Queue data structure
+		Queue<State> queue = new LinkedList<State>();
+		ArrayList<State> visited = new ArrayList<State>();
+		ArrayList<State> p = new ArrayList<State>();
+		queue.add(current);
+		visited.add(current);
+
+		while(!queue.isEmpty()) {
+
+			State prv = queue.poll();
+			State next = new State(prv);
+			if(!seen(exploreSeen,prv)){
+				//return path
+				while(!(next.getCol() == current.getCol() && next.getRow() == current.getRow())){
+					next = next.getPreState();
+					p.add(0,next);
+				}
+				p.add(0,next);
+				for(State s : p){
+					exploreSeen.add(s);	
+				}
+				break;
+			}
+			
+			next.setRow(prv.getRow()-1);
+			next.setCol(prv.getCol());
+			// check if player allow to go forward in north getDirection
+			
+			if(!seen(visited, next) && valid(view, next)){
+					next.setPreState(prv);
+					visited.add(next);
+					queue.add(next);
+				
+			}
+			next = new State(prv);
+			next.setRow(prv.getRow()+1);
+			next.setCol(prv.getCol());
+			// check if player allow to go forward in south getDirection
+			if(!seen(visited, next)){
+				if(hasWater == true && valid(view, next)){
+					next.setPreState(prv);
+					visited.add(next);
+					queue.add(next);
+				}
+			}
+			next = new State(prv);
+			next.setRow(prv.getRow());
+			next.setCol(prv.getCol()-1);
+			// check if player allow to go forward in west getDirection
+			if(!seen(visited, next)){
+				if(hasWater == true && valid(view, next)){
+					next.setPreState(prv);
+					visited.add(next);
+					queue.add(next);
+				}
+			}
+			next = new State(prv);
+			next.setRow(prv.getRow());
+			next.setCol(prv.getCol()+1);
+			// check if player allow to go forward in east getDirection
+			if(!seen(visited, next)){
+				if(hasWater == true && valid(view, next)){
+					next.setPreState(prv);
+					visited.add(next);
+					queue.add(next);
+				}
+			}
+			
+		}
+		
+		// translate the path to the target to command
+		for(int i = 0; i < p.size()-1; i++){
+			if(i+1 > p.size()-1){
+				break;
+			}
+			State prv = p.get(i);
+
+			State next = p.get(i+1);
+			//System.out.println("getDirection: " + getPreState.getDirection());
+			//next.printState();
+			if(next.getRow() == prv.getRow()-1 && next.getCol() == prv.getCol()){
+				//go north
+				output.addAll(directionAction(Constants.NORTH, prv.getDirection()));
+				p.get(i+1).updateDirection(Constants.NORTH);
+				
+			}else if(next.getRow() == prv.getRow()+1 && next.getCol() == prv.getCol()){
+				//go south
+				output.addAll(directionAction(Constants.SOUTH,prv.getDirection()));
+				p.get(i+1).updateDirection(Constants.SOUTH);
+
+				
+			}else if(next.getRow() == prv.getRow() && next.getCol() == prv.getCol()-1){
+				//go west
+				output.addAll(directionAction(Constants.WEST,prv.getDirection()));
+				p.get(i+1).updateDirection(Constants.WEST);
+
+
+
+			}else if(next.getRow() == prv.getRow() && next.getCol() == prv.getCol()+1){
+				//go east
+				output.addAll(directionAction(Constants.EAST,prv.getDirection()));
+				p.get(i+1).updateDirection(Constants.EAST);
+
+
+			} else {
+				//bad path
+				System.out.println("bad path");
+				//next.printState();
+
+			}
+			
+	        if(view[next.getRow()][next.getCol()] == Constants.DOOR && next.getKey()){
+	        	output.add(Constants.UNLOCK_DOOR);
+	        }
+	        if(view[next.getRow()][next.getCol()] == Constants.TREE && next.getAxe()){
+	        	output.add(Constants.CHOP_TREE);
+	        }
+	       output.add(Constants.MOVE_FORWARD);
+		}
+		if(output.size() != 0){
+			output.remove(output.size()-1);
+		}
+		
+		
+		//System.out.println(output);
+
+		return output;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	/*
 	 * Known the getDirection which current node need to go
