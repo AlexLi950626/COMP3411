@@ -40,9 +40,10 @@ public class Explore {
 		   	if(path.size() != 0){
 		       	action = path.get(0) ; //get the first element from the path
 		        path.remove(0);
-		   	}/*else{
-		   		//enableWaterExplore(); //should put it to some where else later
-		   	}*/
+		   	}else{
+
+		   		enableWaterExplore(); //should put it to some where else later
+		   	}
 		}
 
    		//explore water if currAgent can get into water
@@ -168,7 +169,7 @@ public class Explore {
 	
 	public void explore(char[][] view, State current){
 		State returnState = null;
-		exploreSeen.add(current);
+		//exploreSeen.add(current);
 		State prv = new State(current);
 		State next = new State(prv);
 		//walk until current direction doesn't have path anymore
@@ -193,14 +194,14 @@ public class Explore {
 		
 		if(!seen(exploreSeen,next) && valid(view,next)){
 
-			//exploreSeen.add(prv);
+			exploreSeen.add(prv);
 			returnState = next;
 		   	pathToChar(view, returnState, current, path);
 		}else{
 			//find the closest next ? mark
 			if(path.size() == 0){
-				path.addAll(findNoSeen(view,current));
-				System.out.println("-----------------PATH"+ path +"-----------------");
+				path.addAll(findPoint(view,current,Constants.UNKNOW));
+				//System.out.println("-----------------PATH"+ path +"-----------------");
 			}
 
 		}
@@ -333,7 +334,7 @@ public class Explore {
 		ArrayList<State> p = new ArrayList<State>();
 		queue.add(current);
 		visited.add(current);
-
+		breakloop:
 		while(!queue.isEmpty()) {
 
 			State prv = queue.poll();
@@ -348,8 +349,24 @@ public class Explore {
 				for(State s : p){
 					exploreSeen.add(s);	
 				}
-				break;
+				break breakloop;
 			}
+			
+			if(!seen(exploreSeen, next) && !(next.getCol() == current.getCol() && next.getRow() == current.getRow()) && hasWater == false){
+				Position pos =  new Position(next.getRow(),next.getCol());
+				if(checkForward(view,pos)){
+					while(!(next.getCol() == current.getCol() && next.getRow() == current.getRow())){
+						p.add(0,next);
+						next = next.getPreState();
+					}
+					p.add(0,next);
+					for(State s : p){
+						exploreSeen.add(s);
+					}
+					break breakloop;
+				}
+			}
+			
 			
 			next.setRow(prv.getRow()-1);
 			next.setCol(prv.getCol());
@@ -423,8 +440,7 @@ public class Explore {
 			State prv = p.get(i);
 
 			State next = p.get(i+1);
-			//System.out.println("getDirection: " + getPreState.getDirection());
-			//next.printState();
+
 			if(next.getRow() == prv.getRow()-1 && next.getCol() == prv.getCol()){
 				//go north
 				output.addAll(directionAction(Constants.NORTH, prv.getDirection()));
@@ -469,151 +485,24 @@ public class Explore {
 
 		return output;
 	}
-	
-	
-	
 	
 	/*
-	 * Find the closest path to the given target by BFS
+	 * check surround allow to go forward or not
 	 */
-	public ArrayList<Character> findNoSeen(char[][] view, State current){
-		ArrayList<Character> output = new ArrayList<Character>();
-		//write a bfs to water from current
-		// BFS uses Queue data structure
-		Queue<State> queue = new LinkedList<State>();
-		ArrayList<State> visited = new ArrayList<State>();
-		ArrayList<State> p = new ArrayList<State>();
-		queue.add(current);
-		visited.add(current);
-
-		while(!queue.isEmpty()) {
-
-			State prv = queue.poll();
-			State next = new State(prv);
-			prv.printState();
-			System.out.println(valid(view,prv));
-			if(!seen(exploreSeen,prv) && valid(view,prv)){
-				//return path
-
-				while(!(next.getCol() == current.getCol() && next.getRow() == current.getRow())){
+	public boolean checkForward(char[][] view, Position origion){
+		for(int row = origion.getRow()-2 ; row <= origion.getCol()+2; row++){
+			for(int col = origion.getRow()-2 ; col <= origion.getCol()+2; col++){
+				if(col > 0 && row >0 && col < Constants.BOARD_SIZE_COL && row < Constants.BOARD_SIZE_ROW){
+					if(view[row][col] == Constants.UNKNOW && view[origion.getRow()][col] != Constants.WATER && view[row][origion.getCol()] != Constants.WATER){
+						return true;
+					}
 					
-					p.add(0,next);
-					next = next.getPreState();
-
 				}
-				p.add(0,next);
-				for(State s : p){
-					exploreSeen.add(s);	
-				}
-				break;
 			}
-			
-			next.setRow(prv.getRow()-1);
-			next.setCol(prv.getCol());
-			// check if player allow to go forward in north getDirection
-			
-			if(!seen(visited, next) && valid(view, next)){
-					next.setPreState(prv);
-					visited.add(next);
-					queue.add(next);
-				
-			}
-			next = new State(prv);
-			next.setRow(prv.getRow()+1);
-			next.setCol(prv.getCol());
-			// check if player allow to go forward in south getDirection
-			if(!seen(visited, next) && valid(view, next)){
-					next.setPreState(prv);
-					visited.add(next);
-					queue.add(next);
-			}
-			next = new State(prv);
-			next.setRow(prv.getRow());
-			next.setCol(prv.getCol()-1);
-			// check if player allow to go forward in west getDirection
-			if(!seen(visited, next) && valid(view, next)){
-					next.setPreState(prv);
-					visited.add(next);
-					queue.add(next);
-			}
-			next = new State(prv);
-			next.setRow(prv.getRow());
-			next.setCol(prv.getCol()+1);
-			// check if player allow to go forward in east getDirection
-			if(!seen(visited, next) && valid(view, next)){
-					next.setPreState(prv);
-					visited.add(next);
-					queue.add(next);
-			}
-			
 		}
 		
-		// translate the path to the target to command
-		for(int i = 0; i < p.size()-1; i++){
-			if(i+1 > p.size()-1){
-				break;
-			}
-			State prv = p.get(i);
-
-			State next = p.get(i+1);
-			//System.out.println("getDirection: " + getPreState.getDirection());
-			//next.printState();
-			if(next.getRow() == prv.getRow()-1 && next.getCol() == prv.getCol()){
-				//go north
-				output.addAll(directionAction(Constants.NORTH, prv.getDirection()));
-				p.get(i+1).updateDirection(Constants.NORTH);
-				
-			}else if(next.getRow() == prv.getRow()+1 && next.getCol() == prv.getCol()){
-				//go south
-				output.addAll(directionAction(Constants.SOUTH,prv.getDirection()));
-				p.get(i+1).updateDirection(Constants.SOUTH);
-
-				
-			}else if(next.getRow() == prv.getRow() && next.getCol() == prv.getCol()-1){
-				//go west
-				output.addAll(directionAction(Constants.WEST,prv.getDirection()));
-				p.get(i+1).updateDirection(Constants.WEST);
-
-
-
-			}else if(next.getRow() == prv.getRow() && next.getCol() == prv.getCol()+1){
-				//go east
-				output.addAll(directionAction(Constants.EAST,prv.getDirection()));
-				p.get(i+1).updateDirection(Constants.EAST);
-
-
-			} else {
-				//bad path
-				System.out.println("bad path");
-				//next.printState();
-
-			}
-			
-	        if(view[next.getRow()][next.getCol()] == Constants.DOOR && next.getKey()){
-	        	output.add(Constants.UNLOCK_DOOR);
-	        }
-	        if(view[next.getRow()][next.getCol()] == Constants.TREE && next.getAxe()){
-	        	output.add(Constants.CHOP_TREE);
-	        }
-	       output.add(Constants.MOVE_FORWARD);
-		}
-
-		
-		
-		//System.out.println(output);
-
-		return output;
+		return false;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	/*
