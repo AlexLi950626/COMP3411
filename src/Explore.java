@@ -38,9 +38,9 @@ public class Explore {
 		   	if(path.size() != 0){
 		       	action = path.get(0) ; //get the first element from the path
 		        path.remove(0);
-		   	}else{
-		   		enableWaterExplore(); //should put it to some where else later
-		   	}
+		   	}/*else{
+		   		//enableWaterExplore(); //should put it to some where else later
+		   	}*/
 		}
 
    		//explore water if currAgent can get into water
@@ -141,9 +141,21 @@ public class Explore {
 	
 	/*
 	 * Enable water search
+	 * Need to call exploreCheck after enable
 	 */
 	public void enableWaterExplore(){
 		this.inWater = true;
+	}
+	
+	
+	/*
+	 * Enable water search
+	 */
+	public void disableWaterExplore(){
+        inWater = false;
+        hasWater = false; 
+        once = false;
+        waterFlag = false;
 	}
 	
 	/*
@@ -328,9 +340,10 @@ public class Explore {
 					p.add(0,next);
 				}
 				//p.add(0,next);
-//				for(State s : p){
-//					s.printState();
-//				}
+				for(State s : p){
+					exploreSeen.add(s);
+					s.printState();
+				}
 				break;
 			}
 			next.setRow(prv.getRow()-1);
@@ -402,7 +415,7 @@ public class Explore {
 				break;
 			}
 			State prv = p.get(i);
-			exploreSeen.add(prv);
+
 			State next = p.get(i+1);
 			//System.out.println("getDirection: " + getPreState.getDirection());
 			//next.printState();
