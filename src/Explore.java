@@ -732,7 +732,11 @@ public class Explore {
 			return true;
 		}
 		// it is a door
-		else return view[current.getRow()][current.getCol()] != Constants.DOOR || current.getKey();
+		else if(view[current.getRow()][current.getCol()] == Constants.DOOR && !current.getKey()){
+			return false;
+		}
+		
+		return true;
 	}
 	
 	/*
