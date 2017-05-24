@@ -19,7 +19,8 @@ public class Agent {
     private State currAgent;
     private State prv;
     
-    
+    private Boolean firstLandExplore;
+
     // Explore phase
     // search
     private Explore e;
@@ -37,6 +38,7 @@ public class Agent {
         prv = new State(Constants.START_ROW, Constants.START_COL, Constants.NORTH);
         e = new Explore();
         getToItemPath = null;
+        firstLandExplore = false;
     }
 
    public static void main( String[] args )
@@ -111,20 +113,25 @@ public class Agent {
 
        //updateBoardFromGivenView the view from what we have seen
        currBoard.updateBoardFromGivenView(view, currAgent);
+       char action = ' ';
 
-       char action = e.checkExplore(currBoard.getBoard(), currAgent);
-       if(action != '0'){
-           currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
-           currAgent.setPreState(prv);
-           prv = new State(currAgent);
-           return action;
+       if (!firstLandExplore) {
+           action = e.checkExplore(currBoard.getBoard(), currAgent);
+           if (action != '0') {
+               currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
+               currAgent.setPreState(prv);
+               prv = new State(currAgent);
+               return action;
+           } else {
+               firstLandExplore = true;
+           }
        } else {
            currBoard.printMap(currAgent);
            currAgent.printState();
            // there is no path currently
-           if(getToItemPath == null || getToItemPath.isEmpty()){
+           if (getToItemPath == null || getToItemPath.isEmpty()) {
                //if agent has the goal just find the way back to original
-               if(currAgent.getTreasure()){
+               if (currAgent.getTreasure()) {
                    searchProcedure(new Position(Constants.START_ROW, Constants.START_COL));
                    action = getToItemPath.get(0);
                    getToItemPath.remove(0);
@@ -133,22 +140,22 @@ public class Agent {
                }
 
                // Axe and key are first priority we want to get
-               if(currBoard.axe_positions != null && !currBoard.axe_positions.isEmpty()){
-                   if(searchProcedure(currBoard.axe_positions.get(0))){
+               if (currBoard.axe_positions != null && !currBoard.axe_positions.isEmpty()) {
+                   if (searchProcedure(currBoard.axe_positions.get(0))) {
                        action = getToItemPath.get(0);
                        getToItemPath.remove(0);
                        currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
                        return action;
                    }
-               } else if(currBoard.key_positions != null && !currBoard.key_positions.isEmpty()){
-                   if(searchProcedure(currBoard.key_positions.get(0))){
+               } else if (currBoard.key_positions != null && !currBoard.key_positions.isEmpty()) {
+                   if (searchProcedure(currBoard.key_positions.get(0))) {
                        action = getToItemPath.get(0);
                        getToItemPath.remove(0);
                        currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
                        return action;
                    }
-               } else if(currBoard.treasure_positions != null && !currBoard.treasure_positions.isEmpty()){
-                   if(searchProcedure(currBoard.treasure_positions.get(0))){
+               } else if (currBoard.treasure_positions != null && !currBoard.treasure_positions.isEmpty()) {
+                   if (searchProcedure(currBoard.treasure_positions.get(0))) {
                        action = getToItemPath.get(0);
                        getToItemPath.remove(0);
                        currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
