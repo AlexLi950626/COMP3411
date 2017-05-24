@@ -28,7 +28,7 @@ public class SearchItem{
     	ArrayList<Position> path = null;
         PriorityQueue<SearchState> statePQ = new PriorityQueue<>();
         // push the first state into the Queue
-        SearchState initialState = new SearchState(originalBoard, new HashMap<>(), null, 0, originalState);
+        SearchState initialState = new SearchState(originalBoard, new HashMap<String,Position>(), null, 0, originalState);
         initialState.sethCost(ManhattanHeuristic(initialState.getAgentPosition()));
         statePQ.add(initialState);
 

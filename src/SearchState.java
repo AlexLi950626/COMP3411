@@ -263,7 +263,7 @@ public class SearchState implements Comparable{
      * @return new state deep copy everything
      */
     public SearchState deepCopy(){
-        return new SearchState(board.clone(), new HashMap<>(), this, gCost);
+        return new SearchState(board.clone(), new HashMap<String,Position>(), this, gCost);
 
     }
 
