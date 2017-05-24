@@ -138,7 +138,6 @@ public class Agent {
                    currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
                    return action;
                }
-
                // Axe and key are first priority we want to get
                if (currBoard.axe_positions != null && !currBoard.axe_positions.isEmpty()) {
                    if (searchProcedure(currBoard.axe_positions.get(0))) {
