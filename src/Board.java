@@ -196,14 +196,10 @@ public class Board implements Cloneable {
                 }
 
                 // TODO
-                // going to water cause explore bug
-                if(getType(agentCurrRow, agentCurrCol) == Constants.EMPTY
-                        && getType(nextMoveRow, nextMoveCol) == Constants.WATER){
-                    if(currAgent.getRaft()){
-                        currAgent.setRaft(false);
-                    } else {
-                        throw new RuntimeException();
-                    }
+                // go to land from water set raft to false
+                if(getType(agentCurrRow, agentCurrCol) == Constants.WATER
+                        && getType(nextMoveRow, nextMoveCol) == Constants.EMPTY){
+                    currAgent.setRaft(false);
                 }
                 //pick up things
                 interact(currAgent);
