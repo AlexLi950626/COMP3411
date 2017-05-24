@@ -114,7 +114,7 @@ public class Agent {
        //updateBoardFromGivenView the view from what we have seen
        currBoard.updateBoardFromGivenView(view, currAgent);
        char action = ' ';
-
+       currBoard.printMap(currAgent);
        if (!firstLandExplore) {
            action = e.checkExplore(currBoard.getBoard(), currAgent);
            if (action != '0') {
@@ -125,8 +125,9 @@ public class Agent {
            } else {
                firstLandExplore = true;
            }
+
        } else {
-           currBoard.printMap(currAgent);
+           /*currBoard.printMap(currAgent);
            currAgent.printState();
            // there is no path currently
            if (getToItemPath == null || getToItemPath.isEmpty()) {
@@ -168,7 +169,7 @@ public class Agent {
            }
            currBoard.printMap(currAgent);
            currAgent.printState();
-           printActionPath();
+           printActionPath();*/
        }
        return action;
    }
