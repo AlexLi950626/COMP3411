@@ -127,7 +127,7 @@ public class Agent {
            }
 
        } else {
-           /*currBoard.printMap(currAgent);
+           currBoard.printMap(currAgent);
            currAgent.printState();
            // there is no path currently
            if (getToItemPath == null || getToItemPath.isEmpty()) {
@@ -169,7 +169,7 @@ public class Agent {
            }
            currBoard.printMap(currAgent);
            currAgent.printState();
-           printActionPath();*/
+           printActionPath();
        }
        return action;
    }

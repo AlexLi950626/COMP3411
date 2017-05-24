@@ -597,9 +597,7 @@ public class Explore {
 	        }
 	       output.add(Constants.MOVE_FORWARD);
 		}
-		if(output.size() != 0){
-			output.remove(output.size()-1);
-		}
+
 		
 		
 		//System.out.println(output);
