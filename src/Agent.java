@@ -5,9 +5,9 @@
  *  UNSW Session 1, 2017
 */
 
-import javax.security.auth.callback.CallbackHandler;
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
+
 import java.io.*;
-import java.lang.reflect.Array;
 import java.net.*;
 import java.util.ArrayList;
 
@@ -47,7 +47,7 @@ public class Agent {
        Agent  agent    = new Agent();
        
        char view[][] = new char[5][5];
-       char action   = 'F';
+       char action;
        int port;
        int ch;
        int i,j;
@@ -104,8 +104,8 @@ public class Agent {
    
    /**
     * method to search the best action for agent to find the goal
-    * @param view
-    * @return
+    * @param view which is given by server
+    * @return a action that control the agent to achieve goal
     */
    public char get_action( char view[][] ) {
 
@@ -120,38 +120,62 @@ public class Agent {
            return action;
        } else {
            currBoard.printMap(currAgent);
-           if(getToItemPath.isEmpty()){
+           currAgent.printState();
+           // there is no path currently
+           if(getToItemPath == null || getToItemPath.isEmpty()){
+               //if agent has the goal just find the way back to original
+               if(currAgent.getTreasure()){
+                   searchProcedure(new Position(Constants.START_ROW, Constants.START_COL));
+                   action = getToItemPath.get(0);
+                   getToItemPath.remove(0);
+                   currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
+                   return action;
+               }
 
-               Board snapshotBoard = currBoard.extractBoard();
-               State snapshotAgent = new State(currAgent);
-               snapshotAgent.setRow(currAgent.getRow()-snapshotBoard.getStartRow());
-               snapshotAgent.setCol(currAgent.getCol()-snapshotBoard.getStartCol());
-               snapshotAgent.setPreState(null);
-
-               SearchItem SI = new SearchItem(snapshotBoard, snapshotAgent, snapshotBoard.axe_positions.get(0));
-               ArrayList<Position> path = SI.AStar();
-               getToItemPath = getActionPathFromPosPath(path);
-
+               // Axe and key are first priority we want to get
+               if(currBoard.axe_positions != null && !currBoard.axe_positions.isEmpty()){
+                   if(searchProcedure(currBoard.axe_positions.get(0))){
+                       action = getToItemPath.get(0);
+                       getToItemPath.remove(0);
+                       currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
+                       return action;
+                   }
+               } else if(currBoard.key_positions != null && !currBoard.key_positions.isEmpty()){
+                   if(searchProcedure(currBoard.key_positions.get(0))){
+                       action = getToItemPath.get(0);
+                       getToItemPath.remove(0);
+                       currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
+                       return action;
+                   }
+               } else if(currBoard.treasure_positions != null && !currBoard.treasure_positions.isEmpty()){
+                   if(searchProcedure(currBoard.treasure_positions.get(0))){
+                       action = getToItemPath.get(0);
+                       getToItemPath.remove(0);
+                       currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
+                       return action;
+                   }
+               }
+           } else { // currently there is a path
                action = getToItemPath.get(0);
                getToItemPath.remove(0);
-           } else {
-               action = getToItemPath.get(0);
-               getToItemPath.remove(0);
+               currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
            }
-
+           currBoard.printMap(currAgent);
+           currAgent.printState();
+           printActionPath();
        }
        return action;
    }
 
    /**
     * print the view that is returned from the server
-    * @param view
+    * @param view give by server
     */
    void print_view( char view[][] )
-   {
+   {System.out.println("\n+-----+");
+
        int i,j;
 
-       System.out.println("\n+-----+");
        for( i=0; i < 5; i++ ) {
            System.out.print("|");
            for( j=0; j < 5; j++ ) {
@@ -200,7 +224,6 @@ public class Agent {
                } else {
                    //bad path
                    System.out.println("bad path");
-                   //next.printState();
                }
 
                //depend on the type of where we going do different action
@@ -233,6 +256,28 @@ public class Agent {
        }
 
        return actionPath;
+   }
+
+    /**
+     * do all thing need to do a A star search and to the path for that search
+     * @param dest where the destination is for this search
+     * @return a boolean represent if there is a path or not
+     */
+   public boolean searchProcedure(Position dest){
+       Board snapshotBoard = currBoard.extractBoard();
+       State snapshotAgent = new State(currAgent);
+       snapshotAgent.setRow(currAgent.getRow()-snapshotBoard.getStartRow());
+       snapshotAgent.setCol(currAgent.getCol()-snapshotBoard.getStartCol());
+       snapshotAgent.setPreState(null);
+
+       // convert destination coordinate to snapshot coordinate
+       dest.setRow(dest.getRow()-snapshotBoard.getStartRow());
+       dest.setCol(dest.getCol()-snapshotBoard.getStartCol());
+
+       SearchItem SI = new SearchItem(snapshotBoard, snapshotAgent, dest);
+       ArrayList<Position> path = SI.AStar();
+       getToItemPath = getActionPathFromPosPath(path);
+       return getToItemPath != null;
    }
 
    public void printPath(ArrayList<Position> pos){

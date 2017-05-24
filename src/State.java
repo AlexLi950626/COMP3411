@@ -182,7 +182,7 @@ public class State implements Cloneable {
      * print the current state info
      */
     public void printState(){
-        System.out.println("player info:");
+        System.out.println("--------------------------player info--------------------------");
         System.out.println("getRow: " + this.getRow());
         System.out.println("getCol: " + this.getCol());
         if(this.getPreState() != null){

@@ -1,3 +1,6 @@
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
+
+import javax.management.RuntimeErrorException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -160,26 +163,47 @@ public class Board implements Cloneable {
                 currAgent.updateDirection(currAgent.getDirection()+1);
                 break;
             case Constants.MOVE_FORWARD:
+                int agentCurrRow = currAgent.getRow(), agentCurrCol = currAgent.getCol();
+                int nextMoveRow = agentCurrRow, nextMoveCol = agentCurrCol;
                 switch (currAgent.getDirection()){
                     case Constants.NORTH:
                         if(this.isBoardUpdate(currAgent.getRow()-1, currAgent.getCol())){
+                            nextMoveRow = currAgent.getRow()-1;
                             currAgent.setRow(currAgent.getRow()-1);
                         }
                         break;
                     case Constants.SOUTH:
                         if(this.isBoardUpdate(currAgent.getRow()+1, currAgent.getCol())){
+                            nextMoveRow = currAgent.getRow()+1;
                             currAgent.setRow(currAgent.getRow()+1);
                         }
                         break;
                     case Constants.WEST:
                         if(this.isBoardUpdate(currAgent.getRow(), currAgent.getCol()-1)){
+                            nextMoveCol = currAgent.getCol()-1;
                             currAgent.setCol(currAgent.getCol()-1);
                         }
                         break;
                     case Constants.EAST:
                         if(this.isBoardUpdate(currAgent.getRow(), currAgent.getCol()+1)){
+                            nextMoveCol = currAgent.getCol()+1;
                             currAgent.setCol(currAgent.getCol()+1);
                         }
+                        break;
+                    default:
+                        throw new RuntimeException();
+
+                }
+
+                // TODO
+                // going to water cause explore bug
+                if(getType(agentCurrRow, agentCurrCol) == Constants.EMPTY
+                        && getType(nextMoveRow, nextMoveCol) == Constants.WATER){
+                    if(currAgent.getRaft()){
+                        currAgent.setRaft(false);
+                    } else {
+                        throw new RuntimeException();
+                    }
                 }
                 //pick up things
                 interact(currAgent);
@@ -352,9 +376,10 @@ public class Board implements Cloneable {
 
     public void printMap(State player){
         boolean flag;
-        for(int row = 40; row < 120; row++){
+        System.out.println("-------------------------------board info-------------------------------");
+        for(int row = 50; row < 140; row++){
             flag = false;
-            for(int col = 40; col < 120; col++){
+            for(int col = 70; col < 120; col++){
                 if(row == player.getRow() && col == player.getCol()){
                     System.out.print(player.getDirectionChar());
                 } else {
@@ -366,7 +391,7 @@ public class Board implements Cloneable {
                 System.out.print('\n');
             }
         }
-        System.out.println("board info:");
+        System.out.print('\n');
         System.out.println("board_axe: " + board_axe);
         System.out.println("board_key: " + board_key);
         System.out.println("board_tree: " + board_tree);
