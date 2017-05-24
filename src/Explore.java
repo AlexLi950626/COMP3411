@@ -168,6 +168,7 @@ public class Explore {
 	
 	public void explore(char[][] view, State current){
 		State returnState = null;
+		exploreSeen.add(current);
 		State prv = new State(current);
 		State next = new State(prv);
 		//walk until current direction doesn't have path anymore
@@ -192,7 +193,7 @@ public class Explore {
 		
 		if(!seen(exploreSeen,next) && valid(view,next)){
 
-			exploreSeen.add(next);
+			exploreSeen.add(prv);
 			returnState = next;
 		   	pathToChar(view, returnState, current, path);
 		}else{
