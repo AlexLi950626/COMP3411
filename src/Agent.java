@@ -277,10 +277,11 @@ public class Agent {
        snapshotAgent.setPreState(null);
 
        // convert destination coordinate to snapshot coordinate
-       dest.setRow(dest.getRow()-snapshotBoard.getStartRow());
-       dest.setCol(dest.getCol()-snapshotBoard.getStartCol());
+       Position newDest = dest.clone();
+       newDest.setRow(dest.getRow()-snapshotBoard.getStartRow());
+       newDest.setCol(dest.getCol()-snapshotBoard.getStartCol());
 
-       SearchItem SI = new SearchItem(snapshotBoard, snapshotAgent, dest);
+       SearchItem SI = new SearchItem(snapshotBoard, snapshotAgent, newDest);
        ArrayList<Position> path = SI.AStar();
        getToItemPath = getActionPathFromPosPath(path);
        return getToItemPath != null;

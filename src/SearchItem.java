@@ -49,7 +49,7 @@ public class SearchItem{
 
             ArrayList<Position> pos = currentState.possiblePositions(currPosition);
 
-            SearchState newState;
+            SearchState newState = null;
 
             for(Position p : pos){
                 char movePositionType = currentState.getTypeInBoard(p.getRow(), p.getCol());
@@ -190,6 +190,9 @@ public class SearchItem{
                         statePQ.add(newState);
                     default:
                         System.out.println("Unexpected Case during A* ");
+                }
+                if(newState != null){
+                    newState.printSearchState();
                 }
             }
         }

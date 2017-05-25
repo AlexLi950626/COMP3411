@@ -1,4 +1,4 @@
-public class Position {
+public class Position implements Cloneable {
     private int row;
     private int col;
 
@@ -73,7 +73,19 @@ public class Position {
     }
 
     @Override
+    /**
+     * return string format of the object
+     */
     public String toString(){
         return "[" + row + ", " + col + "]";
     }
+
+    @Override
+    /**
+     * return cloned object
+     */
+    public Position clone(){
+        return new Position(this.getRow(), this.getCol());
+    }
+
 }
