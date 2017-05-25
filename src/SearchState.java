@@ -1,10 +1,14 @@
+import com.sun.corba.se.impl.orbutil.closure.Constant;
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
+
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 
 public class SearchState implements Comparable{
     private SearchState preState;
-    private Board board;
+    public Board board;
     private HashMap<String, Position> been;
 
     private Position currAgentPosition;
@@ -275,6 +279,39 @@ public class SearchState implements Comparable{
         return new SearchState(board, been,this, gCost  );
     }
 
+
+    /**
+     * check if we should blow up this position
+     * @param blowSpot
+     * @return boolean determine if we should add this state to priority queue
+     */
+    public boolean shouldIBlowUp(Position blowSpot){
+        int range = 3 + dynamite*2;
+        char[][] tempBoard = board.getBoard();
+        int startRangeCol = blowSpot.getCol() - (range - 1)/2;
+        int startRangeRow = blowSpot.getRow() - (range - 1)/2;
+        int endRangeCol = blowSpot.getCol() + (range - 1)/2;
+        int endRangeRow = blowSpot.getRow() + (range - 1)/2;
+
+        if(startRangeCol < 0) startRangeCol = 0;
+        if(startRangeRow < 0) startRangeRow = 0;
+        if(endRangeCol > tempBoard[0].length - 1) endRangeCol = tempBoard[0].length - 1;
+        if(endRangeRow > tempBoard.length - 1) endRangeRow = tempBoard.length - 1;
+
+        for(int i = startRangeRow; i <= endRangeRow; i++){
+            for(int j = startRangeCol; j <= endRangeCol; j++){
+                if(tempBoard[i][j] == Constants.AXE ||
+                        tempBoard[i][j] == Constants.DOOR ||
+                        tempBoard[i][j] == Constants.DYNAMITE ||
+                        tempBoard[i][j] == Constants.KEY ||
+                        tempBoard[i][j] == Constants.TREASURE){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public void printSearchState(){
         System.out.println("-----------------------------------------------------------------------------------------");
         board.printExtractMap(currAgentPosition);
@@ -291,5 +328,16 @@ public class SearchState implements Comparable{
         System.out.println("Treasure: " + hasTreasure());
         System.out.println("Dynamite: " + numDynamite());
         System.out.println("gCost: " + gCost + " hCost: " + hCost);
+    }
+
+    public void printStatePath(){
+        ArrayList<SearchState> ss = new ArrayList<>();
+        for(SearchState s = this; s != null; s = s.preState){
+            ss.add(s);
+        }
+        Collections.reverse(ss);
+        for(SearchState k : ss){
+            k.printSearchState();
+        }
     }
 }

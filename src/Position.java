@@ -3,15 +3,6 @@ public class Position implements Cloneable {
     private int col;
 
     /**
-     * return new position object
-     * -1 means not valid
-     */
-    public Position(){
-        row = -1;
-        col = -1;
-    }
-
-    /**
      * another constructor used to take getRow and getCol input and make new coordinates
      * @param row
      * @param col

@@ -195,10 +195,9 @@ public class Board implements Cloneable {
 
                 }
 
-                // TODO
                 // go to land from water set raft to false
                 if(getType(agentCurrRow, agentCurrCol) == Constants.WATER
-                        && getType(nextMoveRow, nextMoveCol) == Constants.EMPTY){
+                        && getType(nextMoveRow, nextMoveCol) != Constants.WATER){
                     currAgent.setRaft(false);
                 }
                 //pick up things

@@ -1,16 +1,16 @@
 public class Constants {
     //board type
+    public static final char EMPTY = ' ';
+    public static final char WATER = '~';
     public static final char TREE = 'T';
     public static final char DOOR = '-';
     public static final char WALL = '*';
-    public static final char WATER = '~';
     public static final char AXE = 'a';
     public static final char KEY = 'k';
     public static final char DYNAMITE = 'd';
     public static final char TREASURE = '$';
     public static final char UNKNOW = '?';
     public static final char BOUNDARY = '.';
-    public static final char EMPTY = ' ';
 
     // read directions
     public static final char NORTH = 0;

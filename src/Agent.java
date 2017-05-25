@@ -126,35 +126,19 @@ public class Agent {
            }
 
        } else {
-           currBoard.printMap(currAgent);
-           currAgent.printState();
+//           currBoard.printMap(currAgent);
+//           currAgent.printState();
            // there is no path currently
            if (getToItemPath == null || getToItemPath.isEmpty()) {
-               //if agent has the goal just find the way back to original
-               if (currAgent.getTreasure()) {
-                   searchProcedure(new Position(Constants.START_ROW, Constants.START_COL));
-                   action = getToItemPath.get(0);
-                   getToItemPath.remove(0);
-                   currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
-                   return action;
-               }
-               // Axe and key are first priority we want to get
-               if (currBoard.axe_positions != null && !currBoard.axe_positions.isEmpty()) {
-                   if (searchProcedure(currBoard.axe_positions.get(0))) {
+               if(currBoard.treasure_positions != null && !currBoard.treasure_positions.isEmpty()){
+                   if(searchProcedure(currBoard.treasure_positions.get(0))){
                        action = getToItemPath.get(0);
                        getToItemPath.remove(0);
                        currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
                        return action;
                    }
-               } else if (currBoard.key_positions != null && !currBoard.key_positions.isEmpty()) {
-                   if (searchProcedure(currBoard.key_positions.get(0))) {
-                       action = getToItemPath.get(0);
-                       getToItemPath.remove(0);
-                       currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
-                       return action;
-                   }
-               } else if (currBoard.treasure_positions != null && !currBoard.treasure_positions.isEmpty()) {
-                   if (searchProcedure(currBoard.treasure_positions.get(0))) {
+               } else if(currAgent.getTreasure()){
+                   if(searchProcedure(new Position(Constants.START_ROW, Constants.START_ROW))){
                        action = getToItemPath.get(0);
                        getToItemPath.remove(0);
                        currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
@@ -166,9 +150,9 @@ public class Agent {
                getToItemPath.remove(0);
                currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
            }
-           currBoard.printMap(currAgent);
-           currAgent.printState();
-           printActionPath();
+//           currBoard.printMap(currAgent);
+//           currAgent.printState();
+//           printActionPath();
        }
        return action;
    }
