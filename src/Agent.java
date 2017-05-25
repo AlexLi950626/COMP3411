@@ -114,7 +114,6 @@ public class Agent {
        //updateBoardFromGivenView the view from what we have seen
        currBoard.updateBoardFromGivenView(view, currAgent);
        char action = ' ';
-       currBoard.printMap(currAgent);
        if (!firstLandExplore) {
            action = e.checkExplore(currBoard.getBoard(), currAgent);
            if (action != '0') {
