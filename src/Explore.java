@@ -34,7 +34,7 @@ public class Explore {
 		if(inWater == false){
 		   	explore(board, player);
 
-		   	System.out.println("command: " + path);
+		   	//System.out.println("command: " + path);
 
 		   	//if the path is null then the explore is done do some other search
 		   	if(path.size() != 0){
