@@ -19,7 +19,9 @@ public class Agent {
     private State currAgent;
     private State prv;
     
-    private Boolean firstLandExplore;
+    private Boolean firstExplore;
+    private Boolean waterExplore;
+    private Boolean landExplore;
 
     // Explore phase
     // search
@@ -38,7 +40,9 @@ public class Agent {
         prv = new State(Constants.START_ROW, Constants.START_COL, Constants.NORTH);
         e = new Explore();
         getToItemPath = null;
-        firstLandExplore = false;
+        firstExplore = false;
+        landExplore= true;
+        waterExplore = false;
     }
 
    public static void main( String[] args )
@@ -114,17 +118,46 @@ public class Agent {
        //updateBoardFromGivenView the view from what we have seen
        currBoard.updateBoardFromGivenView(view, currAgent);
        char action = ' ';
-       if (!firstLandExplore) {
+       if (!firstExplore) {
+    	   //try to explore the whole graph, including land and water
+    	   //first search valid land then water
+    	   //finished water then search valid land again
            action = e.checkExplore(currBoard.getBoard(), currAgent);
-           if (action != '0') {
+           if (action != ' ') {
                currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
+               currBoard.printMap(currAgent);
                currAgent.setPreState(prv);
                prv = new State(currAgent);
                return action;
            } else {
-               firstLandExplore = true;
+        	   //check anything can search
+        	   //if there is nothing to search
+        	   //set the firstExplore up
+        	   //firstExplore == true;
+        	   
+               //firstLandExplore = true;
+        	   if(waterExplore == true){
+        		   //end of the water explore
+        		   System.out.println("disable water");
+        		   action = e.disableWaterExplore(currBoard.getBoard(),currAgent);
+        		   if(action != ' '){
+            		   currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
+                       currAgent.setPreState(prv);
+                       prv = new State(currAgent);
+            		   waterExplore = false;
+            		   landExplore = true;
+        		   }else{
+        			   firstExplore = true;
+        			   waterExplore = false;
+        		   }
+        		   return action;
+        	   } else if(landExplore == true){
+        		   //end of the land explore
+                   e.enableWaterExplore();
+                   waterExplore = true;
+                   landExplore = false;
+        	   }
            }
-
        } else {
 //           currBoard.printMap(currAgent);
 //           currAgent.printState();

@@ -30,19 +30,16 @@ public class Explore {
 		//explore graph 
 	   	//only the environment surrounding the current position, Using BFS
 	   	//Currently, it won't explore the water or the graph in the other side
-	   	char action = '0';
+	   	char action = ' ';
 		if(inWater == false){
 		   	explore(board, player);
 
-		   	//System.out.println("command: " + path);
+		   	System.out.println("command: " + path);
 
 		   	//if the path is null then the explore is done do some other search
 		   	if(path.size() != 0){
 		       	action = path.get(0) ; //get the first element from the path
 		        path.remove(0);
-		   	}else{
-
-		   		enableWaterExplore(); //should put it to some where else later
 		   	}
 		}
 
@@ -154,12 +151,114 @@ public class Explore {
 	/*
 	 * Enable water search
 	 */
-	public void disableWaterExplore(){
-        inWater = false;
-        hasWater = false; 
-        once = false;
-        waterFlag = false;
+	public Character disableWaterExplore(char[][] view, State current){
+		char action = ' ';
+		if(inWater == true && current.getRaft() == true){
+			Queue<State> queue = new LinkedList<State>();
+			ArrayList<State> visited = new ArrayList<State>();
+			ArrayList<State> p = new ArrayList<State>();
+			queue.add(current);
+			visited.add(current);
+			while(!queue.isEmpty()){
+				State prv = queue.poll();
+				State next = new State(prv);
+				if(!seen(exploreSeen, prv) && (view[prv.getRow()][prv.getCol()] == Constants.EMPTY || view[prv.getRow()][prv.getCol()] == Constants.TREE )){
+					//check the surrounding evn of this empty entry
+					//it should have unknown mark 
+					boolean entry = false;
+					for(int row = prv.getRow()-2; row <= prv.getRow()+2; row ++){
+						for(int col = prv.getCol()-2; col <= prv.getCol()+2; col ++){
+							if(view[row][col] == Constants.UNKNOW){
+								entry = true;
+								break;
+							}
+						}
+					}
+					
+					//check neighbor has water
+					boolean any_water = false;
+					if(view[prv.getRow()-1][prv.getCol()] == Constants.WATER){
+						any_water = true;
+					} else if (view[prv.getRow()+1][prv.getCol()] == Constants.WATER){
+						any_water = true;
+					} else if(view[prv.getRow()][prv.getCol()+1] == Constants.WATER){
+						any_water = true;
+
+					} else if (view[prv.getRow()][prv.getCol()-1] == Constants.WATER){
+						any_water = true;
+
+					}
+					
+					if(entry == true && any_water == true){
+						while(!(next.getCol() == current.getCol() && next.getRow() == current.getRow())){
+							next.printState();
+							p.add(0,next);
+							next = next.getPreState();
+
+						}
+						p.add(0,next);
+						break;
+					}
+					
+				}
+
+				next.setRow(prv.getRow()-1);
+				next.setCol(prv.getCol());
+				// check if player allow to go forward in north getDirection
+				if(!seen(visited, next) && (validWater(view,next) || valid(view,next))){
+					next.setPreState(prv);
+					visited.add(next);
+					queue.add(next);
+				}
+				next = new State(prv);
+				next.setRow(prv.getRow()+1);
+				next.setCol(prv.getCol());
+				// check if player allow to go forward in south getDirection
+				if(!seen(visited, next)&& (validWater(view,next) || valid(view,next))){
+					next.setPreState(prv);
+					visited.add(next);
+					queue.add(next);
+				}
+				next = new State(prv);
+				next.setRow(prv.getRow());
+				next.setCol(prv.getCol()-1);
+				// check if player allow to go forward in west getDirection
+				if(!seen(visited, next)&& (validWater(view,next) || valid(view,next))){
+					next.setPreState(prv);
+					visited.add(next);
+					queue.add(next);
+				}
+				next = new State(prv);
+				next.setRow(prv.getRow());
+				next.setCol(prv.getCol()+1);
+				// check if player allow to go forward in east getDirection
+				if(!seen(visited, next)&& (validWater(view,next) || valid(view,next))){
+					next.setPreState(prv);
+					visited.add(next);
+					queue.add(next);
+				}
+			}
+
+			path.addAll(BFSpath(view,p));
+			if(path.size() != 0){
+				action = path.get(0) ; //get the first element from the path
+		        path.remove(0);
+			}
+			System.out.println("path -----------------------: " + path);
+	    	/* Find the closest place which not explore yet to the land*/
+	        inWater = false;
+	        hasWater = false; 
+	        once = false;
+	        waterFlag = false;
+		}
+
+        
+        return action;
 	}
+	
+
+	
+	
 	
 	/*
 	 * This method is trying to explore the unknown node in the board
@@ -352,7 +451,7 @@ public class Explore {
 				break breakloop;
 			}
 			
-			if(!seen(exploreSeen, next) && !(next.getCol() == current.getCol() && next.getRow() == current.getRow()) && hasWater == false){
+			if(!seen(exploreSeen, next) && !(next.getCol() == current.getCol() && next.getRow() == current.getRow())){
 				Position pos =  new Position(next.getRow(),next.getCol());
 				if(checkForward(view,pos)){
 					while(!(next.getCol() == current.getCol() && next.getRow() == current.getRow())){
@@ -432,15 +531,26 @@ public class Explore {
 			
 		}
 		
+
+		output = BFSpath(view, p);
+		//System.out.println(output);
+
+		return output;
+	}
+	
+	/*
+	 * BFS path translate
+	 */
+	
+	public ArrayList<Character> BFSpath(char[][] view, ArrayList<State> p){
+		ArrayList<Character> output = new ArrayList<Character>();
 		// translate the path to the target to command
 		for(int i = 0; i < p.size()-1; i++){
 			if(i+1 > p.size()-1){
 				break;
 			}
 			State prv = p.get(i);
-
 			State next = p.get(i+1);
-
 			if(next.getRow() == prv.getRow()-1 && next.getCol() == prv.getCol()){
 				//go north
 				output.addAll(directionAction(Constants.NORTH, prv.getDirection()));
@@ -480,11 +590,12 @@ public class Explore {
 	        }
 	       output.add(Constants.MOVE_FORWARD);
 		}
-		
-		//System.out.println(output);
-
 		return output;
 	}
+	
+	
+	
+	
 	
 	/*
 	 * check surround allow to go forward or not
