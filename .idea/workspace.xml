@@ -2,14 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="57b9cd26-5f57-434e-a713-7b976fe33745" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/COMP3411/Agent.class" afterPath="$PROJECT_DIR$/out/production/COMP3411/Agent.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/COMP3411/Explore.class" afterPath="$PROJECT_DIR$/out/production/COMP3411/Explore.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/COMP3411/SearchItem.class" afterPath="$PROJECT_DIR$/out/production/COMP3411/SearchItem.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/COMP3411/SearchState.class" afterPath="$PROJECT_DIR$/out/production/COMP3411/SearchState.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Agent.java" afterPath="$PROJECT_DIR$/src/Agent.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Explore.java" afterPath="$PROJECT_DIR$/src/Explore.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/SearchItem.java" afterPath="$PROJECT_DIR$/src/SearchItem.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/SearchState.java" afterPath="$PROJECT_DIR$/src/SearchState.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -24,7 +20,7 @@
       <file leaf-file-name="Agent.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Agent.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="18">
+            <state relative-caret-position="2029">
               <caret line="164" column="31" lean-forward="false" selection-start-line="164" selection-start-column="31" selection-end-line="164" selection-end-column="31" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -36,8 +32,8 @@
       <file leaf-file-name="Explore.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Explore.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="18">
-              <caret line="36" column="14" lean-forward="false" selection-start-line="36" selection-start-column="14" selection-end-line="36" selection-end-column="14" />
+            <state relative-caret-position="3438">
+              <caret line="193" column="30" lean-forward="false" selection-start-line="193" selection-start-column="30" selection-end-line="193" selection-end-column="30" />
               <folding />
             </state>
           </provider>
@@ -46,7 +42,7 @@
       <file leaf-file-name="Board.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Board.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="142">
+            <state relative-caret-position="4369">
               <caret line="585" column="0" lean-forward="false" selection-start-line="585" selection-start-column="0" selection-end-line="585" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -58,7 +54,7 @@
       <file leaf-file-name="SearchState.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/SearchState.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="88">
+            <state relative-caret-position="-2237">
               <caret line="180" column="0" lean-forward="false" selection-start-line="180" selection-start-column="0" selection-end-line="180" selection-end-column="0" />
               <folding>
                 <element signature="e#4193#4194#0" expanded="true" />
@@ -72,8 +68,8 @@
       <file leaf-file-name="SearchItem.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/SearchItem.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="302">
-              <caret line="38" column="54" lean-forward="false" selection-start-line="38" selection-start-column="54" selection-end-line="38" selection-end-column="54" />
+            <state relative-caret-position="-4766">
+              <caret line="39" column="14" lean-forward="false" selection-start-line="39" selection-start-column="14" selection-end-line="39" selection-end-column="14" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -84,7 +80,7 @@
       <file leaf-file-name="Constants.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Constants.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="180">
+            <state relative-caret-position="148">
               <caret line="10" column="33" lean-forward="false" selection-start-line="10" selection-start-column="33" selection-end-line="10" selection-end-column="33" />
               <folding />
             </state>
@@ -104,9 +100,10 @@
       <file leaf-file-name="State.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/State.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1458">
-              <caret line="111" column="0" lean-forward="false" selection-start-line="111" selection-start-column="0" selection-end-line="111" selection-end-column="0" />
+            <state relative-caret-position="105">
+              <caret line="183" column="21" lean-forward="true" selection-start-line="183" selection-start-column="21" selection-end-line="183" selection-end-column="21" />
               <folding>
+                <element signature="e#2387#2388#0" expanded="true" />
                 <element signature="e#2420#2421#0" expanded="true" />
               </folding>
             </state>
@@ -124,8 +121,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>setDynamite</find>
-      <find>getType</find>
       <find>u</find>
       <find>wall</find>
       <find>updateDirection</find>
@@ -154,6 +149,8 @@
       <find>origin</find>
       <find>command</find>
       <find>print</find>
+      <find>player</find>
+      <find>player info</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -178,9 +175,9 @@
         <option value="$PROJECT_DIR$/src/Board.java" />
         <option value="$PROJECT_DIR$/src/Position.java" />
         <option value="$PROJECT_DIR$/src/Constants.java" />
-        <option value="$PROJECT_DIR$/src/Explore.java" />
         <option value="$PROJECT_DIR$/src/Agent.java" />
         <option value="$PROJECT_DIR$/src/SearchState.java" />
+        <option value="$PROJECT_DIR$/src/Explore.java" />
         <option value="$PROJECT_DIR$/src/SearchItem.java" />
       </list>
     </option>
@@ -410,7 +407,7 @@
       <workItem from="1495760573523" duration="96000" />
       <workItem from="1495781778621" duration="685000" />
       <workItem from="1495799274548" duration="847000" />
-      <workItem from="1495800367073" duration="1218000" />
+      <workItem from="1495800367073" duration="4184000" />
     </task>
     <task id="LOCAL-00001" summary="tests">
       <created>1495339190742</created>
@@ -503,11 +500,18 @@
       <option name="project" value="LOCAL" />
       <updated>1495727248484</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="A* debug, because didn't add to queue">
+      <created>1495801661585</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1495801661585</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="152412000" />
+    <option name="totallyTimeSpent" value="155378000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="706" y="-4" width="1321" height="780" extended-state="6" />
@@ -521,7 +525,7 @@
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.9309309" sideWeight="0.50265354" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.6696697" sideWeight="0.49734646" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.7207207" sideWeight="0.49734646" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32882884" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -590,14 +594,25 @@
     <MESSAGE value="not sure about explore&#10;now we only explore once" />
     <MESSAGE value="fixed search bug, because I was using the dest reference from the arraylist, rather than create a new position and search on this" />
     <MESSAGE value="second A* prototype, use different non admissible heuristic, with different method, now it search for whole complete path" />
-    <option name="LAST_COMMIT_MESSAGE" value="second A* prototype, use different non admissible heuristic, with different method, now it search for whole complete path" />
+    <MESSAGE value="A* debug, because didn't add to queue" />
+    <option name="LAST_COMMIT_MESSAGE" value="A* debug, because didn't add to queue" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/SearchItem.java</url>
+          <line>26</line>
+          <properties class="SearchItem" method="AStar">
+            <option name="EMULATED" value="true" />
+          </properties>
+          <option name="timeStamp" value="90" />
+        </line-breakpoint>
+      </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="90" />
+      <option name="time" value="91" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -611,6 +626,7 @@
         <state relative-caret-position="54">
           <caret line="3" column="18" lean-forward="false" selection-start-line="3" selection-start-column="18" selection-end-line="3" selection-end-column="18" />
           <folding>
+            <element signature="e#2387#2388#0" expanded="true" />
             <element signature="e#2420#2421#0" expanded="true" />
           </folding>
         </state>
@@ -634,6 +650,7 @@
         <state relative-caret-position="54">
           <caret line="3" column="18" lean-forward="false" selection-start-line="3" selection-start-column="18" selection-end-line="3" selection-end-column="18" />
           <folding>
+            <element signature="e#2387#2388#0" expanded="true" />
             <element signature="e#2420#2421#0" expanded="true" />
           </folding>
         </state>
@@ -657,6 +674,7 @@
         <state relative-caret-position="54">
           <caret line="3" column="18" lean-forward="false" selection-start-line="3" selection-start-column="18" selection-end-line="3" selection-end-column="18" />
           <folding>
+            <element signature="e#2387#2388#0" expanded="true" />
             <element signature="e#2420#2421#0" expanded="true" />
           </folding>
         </state>
@@ -680,6 +698,7 @@
         <state relative-caret-position="54">
           <caret line="3" column="18" lean-forward="false" selection-start-line="3" selection-start-column="18" selection-end-line="3" selection-end-column="18" />
           <folding>
+            <element signature="e#2387#2388#0" expanded="true" />
             <element signature="e#2420#2421#0" expanded="true" />
           </folding>
         </state>
@@ -703,6 +722,7 @@
         <state relative-caret-position="54">
           <caret line="3" column="18" lean-forward="false" selection-start-line="3" selection-start-column="18" selection-end-line="3" selection-end-column="18" />
           <folding>
+            <element signature="e#2387#2388#0" expanded="true" />
             <element signature="e#2420#2421#0" expanded="true" />
           </folding>
         </state>
@@ -726,6 +746,7 @@
         <state relative-caret-position="54">
           <caret line="3" column="18" lean-forward="false" selection-start-line="3" selection-start-column="18" selection-end-line="3" selection-end-column="18" />
           <folding>
+            <element signature="e#2387#2388#0" expanded="true" />
             <element signature="e#2420#2421#0" expanded="true" />
           </folding>
         </state>
@@ -749,6 +770,7 @@
         <state relative-caret-position="54">
           <caret line="3" column="18" lean-forward="false" selection-start-line="3" selection-start-column="18" selection-end-line="3" selection-end-column="18" />
           <folding>
+            <element signature="e#2387#2388#0" expanded="true" />
             <element signature="e#2420#2421#0" expanded="true" />
           </folding>
         </state>
@@ -802,16 +824,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/State.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1458">
-          <caret line="111" column="0" lean-forward="false" selection-start-line="111" selection-start-column="0" selection-end-line="111" selection-end-column="0" />
-          <folding>
-            <element signature="e#2420#2421#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Position.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="36">
@@ -820,25 +832,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Constants.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="10" column="33" lean-forward="false" selection-start-line="10" selection-start-column="33" selection-end-line="10" selection-end-column="33" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/Explore.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
-          <caret line="36" column="14" lean-forward="false" selection-start-line="36" selection-start-column="14" selection-end-line="36" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Agent.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18">
+        <state relative-caret-position="2029">
           <caret line="164" column="31" lean-forward="false" selection-start-line="164" selection-start-column="31" selection-end-line="164" selection-end-column="31" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -848,7 +844,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Board.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="142">
+        <state relative-caret-position="4369">
           <caret line="585" column="0" lean-forward="false" selection-start-line="585" selection-start-column="0" selection-end-line="585" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -856,9 +852,28 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/State.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="183" column="21" lean-forward="true" selection-start-line="183" selection-start-column="21" selection-end-line="183" selection-end-column="21" />
+          <folding>
+            <element signature="e#2387#2388#0" expanded="true" />
+            <element signature="e#2420#2421#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Constants.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="148">
+          <caret line="10" column="33" lean-forward="false" selection-start-line="10" selection-start-column="33" selection-end-line="10" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/SearchState.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="88">
+        <state relative-caret-position="-2237">
           <caret line="180" column="0" lean-forward="false" selection-start-line="180" selection-start-column="0" selection-end-line="180" selection-end-column="0" />
           <folding>
             <element signature="e#4193#4194#0" expanded="true" />
@@ -868,10 +883,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/Explore.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3438">
+          <caret line="193" column="30" lean-forward="false" selection-start-line="193" selection-start-column="30" selection-end-line="193" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/SearchItem.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="302">
-          <caret line="38" column="54" lean-forward="false" selection-start-line="38" selection-start-column="54" selection-end-line="38" selection-end-column="54" />
+        <state relative-caret-position="-4766">
+          <caret line="39" column="14" lean-forward="false" selection-start-line="39" selection-start-column="14" selection-end-line="39" selection-end-column="14" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

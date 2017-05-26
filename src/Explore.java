@@ -191,7 +191,7 @@ public class Explore {
 					
 					if(entry == true && any_water == true){
 						while(!(next.getCol() == current.getCol() && next.getRow() == current.getRow())){
-							next.printState();
+							//next.printState();
 							p.add(0,next);
 							next = next.getPreState();
 
