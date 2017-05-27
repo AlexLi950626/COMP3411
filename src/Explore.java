@@ -378,53 +378,31 @@ public class Explore {
 		//exploreSeen.add(current);
 		State prv = new State(current);
 		State next = new State(prv);
-		State go = null;
 		//walk until current direction doesn't have path anymore
 
+		switch(current.getDirection()){
+		case Constants.NORTH:
 			next.setRow(prv.getRow()-1);
 			next.setCol(prv.getCol());
-			if(current.getDirection() == Constants.NORTH){
-				go = next;
-			}else{
-				if(!seen(exploreSeen,next) && valid(view,next)){
-					exploreQ.add(next);
-				}
-			}
-			next = new State(prv);
+			break;
+		case Constants.SOUTH:
 			next.setRow(prv.getRow()+1);
 			next.setCol(prv.getCol());
-			if(current.getDirection() == Constants.SOUTH){
-				go = next;
-			}else{
-				if(!seen(exploreSeen,next) && valid(view,next)){
-					exploreQ.add(next);
-				}
-			}
-			next = new State(prv);
+			break;
+		case Constants.WEST:
 			next.setRow(prv.getRow());
 			next.setCol(prv.getCol()-1);
-			if(current.getDirection() == Constants.WEST){
-				go = next;
-			}else{
-				if(!seen(exploreSeen,next) && valid(view,next)){
-					exploreQ.add(next);
-				}
-			}
-			next = new State(prv);
+			break;
+		case Constants.EAST:
 			next.setRow(prv.getRow());
 			next.setCol(prv.getCol()+1);
-			if(current.getDirection() == Constants.EAST){
-				go = next;
-			}else{
-				if(!seen(exploreSeen,next) && valid(view,next)){
-					exploreQ.add(next);
-				}
-			}
+			break;
+		}
 
 		
-		if(!seen(exploreSeen,go) && valid(view,go)){
+		if(!seen(exploreSeen,next) && valid(view,next)){
 			exploreSeen.add(prv);
-			returnState = go;
+			returnState = next;
 			//check forward and put node to quque
 		   	pathToChar(view, returnState, current, path);
 		}else{
@@ -547,11 +525,20 @@ public class Explore {
 
 			}
 
-			if(view[next.getRow()][next.getCol()] == Constants.DOOR && next.getKey()){
-				output.add(Constants.UNLOCK_DOOR);
+			if(view[next.getRow()][next.getCol()] == Constants.DOOR){
+				if(next.getKey()){
+					output.add(Constants.UNLOCK_DOOR);
+				}else if (next.getDynamite()>0){
+					output.add(Constants.BLAST_WALL_TREE);
+				}
 			}
-			if(view[next.getRow()][next.getCol()] == Constants.TREE && next.getAxe()){
-				output.add(Constants.CHOP_TREE);
+			if(view[next.getRow()][next.getCol()] == Constants.TREE){
+				if(next.getAxe()){
+					output.add(Constants.CHOP_TREE);
+				}else if (next.getDynamite()>0){
+					output.add(Constants.BLAST_WALL_TREE);
+				}
+
 			}
 		   	output.add(Constants.MOVE_FORWARD);
 		}
@@ -782,14 +769,18 @@ public class Explore {
 	        if(view[next.getRow()][next.getCol()] == Constants.DOOR){
 	        	if(next.getKey()){
 		        	output.add(Constants.UNLOCK_DOOR);
-	        	}else if(next.getDynamite() >1){
+	        	}else if(next.getDynamite() >0){
 		        	output.add(Constants.BLAST_WALL_TREE);
 	        	}
 
 	        }
 
 	        if(view[next.getRow()][next.getCol()] == Constants.TREE && next.getAxe()){
-	        	output.add(Constants.CHOP_TREE);
+	        	if(next.getAxe()){
+		        	output.add(Constants.CHOP_TREE);
+	        	}else if(next.getDynamite() >0){
+		        	output.add(Constants.BLAST_WALL_TREE);
+	        	}
 	        }
 	       output.add(Constants.MOVE_FORWARD);
 		}
@@ -955,13 +946,14 @@ public class Explore {
 		// it is tree
 		else if (view[current.getRow()][current.getCol()] == Constants.TREE){
 			//check getAxe or dynamite
-			return current.getAxe() || current.getDynamite() > 1;
+			//return false;
+			return current.getAxe() || current.getDynamite() > 0;
 		} else if(view[current.getRow()][current.getCol()] == Constants.UNKNOW){
 			return true;
 		}
 		// it is a door
 		else if(view[current.getRow()][current.getCol()] == Constants.DOOR){
-			if(current.getKey() == true || current.getDynamite() > 1){
+			if(current.getKey() == true || current.getDynamite() > 0){
 				return true;
 			}else{
 				return false;
