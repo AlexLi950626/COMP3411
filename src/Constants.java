@@ -38,4 +38,7 @@ public class Constants {
 
     //Max number
     public static final int CHAR_MAX = 10000;
+    
+    //Max queue size for stop BFS
+    public static final int QUEUE_MAX_SIZE = 9999;
 }

@@ -125,8 +125,9 @@ public class Agent {
            action = e.checkExplore(currBoard.getBoard(), currAgent);
            if (action != ' ') {
                currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
-               //currBoard.printMap(currAgent);
-               //currAgent.setPreState(prv);
+               currBoard.printMap(currAgent);
+               currAgent.setPreState(prv);
+
                prv = new State(currAgent);
                return action;
            } else {
@@ -160,8 +161,7 @@ public class Agent {
            }
        } else {
            // there is no path currently
-    	   	/*
-           if (getToItemPath == null || getToItemPath.isEmpty()) {
+           /*if (getToItemPath == null || getToItemPath.isEmpty()) {
                currBoard.printMap(currAgent);
                currAgent.printState();
                if(currBoard.treasure_positions != null && !currBoard.treasure_positions.isEmpty()){
