@@ -34,7 +34,7 @@ public class Explore {
 		if(inWater == false){
 		   	explore(board, player);
 
-		   	System.out.println("command: " + path);
+		   	//System.out.println("command: " + path);
 
 		   	//if the path is null then the explore is done do some other search
 		   	if(path.size() != 0){
@@ -60,7 +60,7 @@ public class Explore {
 			   		if(player.getAxe() == false){
 			   			path.addAll(findPoint(board,player,Constants.AXE));
 
-		   				State prv = new State(player);
+		   				/*State prv = new State(player);
 		   				State next = new State(prv);
 		   				//walk until current direction doesn't have path anymore
    						next.setRow(prv.getRow()-1);
@@ -91,14 +91,14 @@ public class Explore {
    						if(board[next.getRow()][next.getCol()] == Constants.AXE){
    							path.addAll(directionAction(Constants.EAST,prv.getDirection()));
    							path.add(Constants.MOVE_FORWARD);
-   						}
+   						}*/
 			   			if(path.size() != 0){
 					       	action = path.get(0) ; //get the first element from the path
 					        path.remove(0);
 					   	}
 			   		}else{
 				   		path.addAll(findPoint(board,player,Constants.TREE));
-				   		State prv = new State(player);
+				   		/*State prv = new State(player);
 		   				State next = new State(prv);
 		   				//walk until current direction doesn't have path anymore
    						next.setRow(prv.getRow()-1);
@@ -129,7 +129,7 @@ public class Explore {
    						if(board[next.getRow()][next.getCol()] == Constants.TREE){
    							path.addAll(directionAction(Constants.EAST,prv.getDirection()));
    							path.add(Constants.CHOP_TREE);
-   						}
+   						}*/
    						if(path.size() != 0){
    					       	action = path.get(0) ; //get the first element from the path
    					        path.remove(0);
@@ -197,7 +197,7 @@ public class Explore {
 					
 					if(entry == true && any_water == true){
 						while(!(next.getCol() == current.getCol() && next.getRow() == current.getRow())){
-							next.printState();
+							//next.printState();
 							p.add(0,next);
 							next = next.getPreState();
 
@@ -371,9 +371,9 @@ public class Explore {
 		//check player's forward position has water or not
 		//find somewhere is water
 		if(hasWater == false && once == false){
-			ArrayList<Character> wayToWater = findPoint(board,current, Constants.WATER);
+			ArrayList<Character> wayToWater = findPoint(board,current, Constants.UNKNOW);
 			hasWater = true;
-			once = false;
+			once = true;
 			output.addAll(wayToWater);
 		}
 		
@@ -466,7 +466,6 @@ public class Explore {
 		while(!queue.isEmpty()) {
 			State prv = new State(queue.poll());
 			State next = new State(prv);
-
 			if(view[next.getRow()][next.getCol()] == target && !(next.getCol() == current.getCol() && next.getRow() == current.getRow())){
 				//return path
 				while(!(next.getCol() == current.getCol() && next.getRow() == current.getRow())){
@@ -475,7 +474,11 @@ public class Explore {
 				}
 				p.add(0,next);
 				for(State s : p){
-					exploreSeen.add(s);	
+					if(inWater == false){
+						exploreSeen.add(s);
+					}else if(view[s.getRow()][s.getCol()] == Constants.WATER && inWater == true){
+						waterSeen.add(s);
+					}
 				}
 				break breakloop;
 			}
@@ -487,7 +490,7 @@ public class Explore {
 					while(!(next.getCol() == current.getCol() && next.getRow() == current.getRow())){
 						p.add(0,next);
 						next = next.getPreState();
-						next.printState();
+						//next.printState();
 					}
 					 p.add(0,next);
 					for(State s : p){
@@ -497,18 +500,20 @@ public class Explore {
 				}
 			}
 			
-			if(!(next.getCol() == current.getCol() && next.getRow() == current.getRow()) && inWater == true){
+			if(!seen(waterSeen, next) && !(next.getCol() == current.getCol() && next.getRow() == current.getRow()) && inWater == true){
 				Position pos =  new Position(next.getRow(),next.getCol());
 				char t = Constants.BOUNDARY;
 				if(checkForward(view,pos,t)){
 					while(!(next.getCol() == current.getCol() && next.getRow() == current.getRow())){
 						p.add(0,next);
 						next = next.getPreState();
-						next.printState();
+						//next.printState();
 					}
 					 p.add(0,next);
 					for(State s : p){
-						exploreSeen.add(s);
+						 if(view[s.getRow()][s.getCol()] == Constants.WATER){
+							 waterSeen.add(s);
+						 }
 					}
 					break breakloop;
 				}
@@ -518,7 +523,6 @@ public class Explore {
 			next.setRow(prv.getRow()-1);
 			next.setCol(prv.getCol());
 			// check if player allow to go forward in north getDirection
-			
 			if(!seen(visited, next)){
 				if(hasWater == true && validWater(view,next)){
 					next.setPreState(prv);
