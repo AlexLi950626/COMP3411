@@ -211,7 +211,7 @@ public class Explore {
 				next.setRow(prv.getRow()-1);
 				next.setCol(prv.getCol());
 				// check if player allow to go forward in north getDirection
-				if(!seen(visited, next) && (validWater(view,next))){
+				if(!seen(visited, next) && (validWater(view,next) || valid(view,next))){
 					next.setPreState(prv);
 					visited.add(next);
 					queue.add(next);
@@ -220,7 +220,7 @@ public class Explore {
 				next.setRow(prv.getRow()+1);
 				next.setCol(prv.getCol());
 				// check if player allow to go forward in south getDirection
-				if(!seen(visited, next)&& (validWater(view,next))){
+				if(!seen(visited, next)&& (validWater(view,next) || valid(view,next))){
 					next.setPreState(prv);
 					visited.add(next);
 					queue.add(next);
@@ -229,7 +229,7 @@ public class Explore {
 				next.setRow(prv.getRow());
 				next.setCol(prv.getCol()-1);
 				// check if player allow to go forward in west getDirection
-				if(!seen(visited, next)&& (validWater(view,next))){
+				if(!seen(visited, next)&& (validWater(view,next)|| valid(view,next))){
 					next.setPreState(prv);
 					visited.add(next);
 					queue.add(next);
@@ -238,7 +238,7 @@ public class Explore {
 				next.setRow(prv.getRow());
 				next.setCol(prv.getCol()+1);
 				// check if player allow to go forward in east getDirection
-				if(!seen(visited, next)&& (validWater(view,next))){
+				if(!seen(visited, next)&& (validWater(view,next)|| valid(view,next))){
 					next.setPreState(prv);
 					visited.add(next);
 					queue.add(next);
@@ -370,9 +370,10 @@ public class Explore {
 		}
 		//check player's forward position has water or not
 		//find somewhere is water
-		if(hasWater == false){
+		if(hasWater == false && once == false){
 			ArrayList<Character> wayToWater = findPoint(board,current, Constants.WATER);
 			hasWater = true;
+			once = false;
 			output.addAll(wayToWater);
 		}
 		
@@ -386,7 +387,7 @@ public class Explore {
 				//find the closest next ? mark
 				if(path.size() == 0){
 					path.addAll(findPoint(board,current, Constants.UNKNOW));
-					//System.out.println("-----------------PATH"+ path +"-----------------");
+					System.out.println("-----------------PATH"+ path +"-----------------");
 				}
 		
 			}
