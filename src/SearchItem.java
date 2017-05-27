@@ -37,7 +37,7 @@ public class SearchItem{
         while(!statePQ.isEmpty()){
             // get a state from queue
             SearchState currentState = statePQ.poll();
-
+            //currentState.printSearchState();
             // if destination is reached return path
             Position currPosition = currentState.getAgentPosition();
             char currPositionType = currentState.getTypeInBoard(currPosition.getRow(), currPosition.getCol());
@@ -172,6 +172,7 @@ public class SearchItem{
                                 if(currentState.hasAxe()) {
                                     newState = initialiseDeepCopyNewState(currentState, p);
                                     newState.setRaft(true);
+                                    statePQ.add(newState);
                                 }  else if(currentState.numDynamite() > 0 && currentState.shouldIBlowUp(p)){
                                     //curr empty, next tree, if has dynamite can blow up, but check should we blow up first
                                     // and if we have enough dynamite

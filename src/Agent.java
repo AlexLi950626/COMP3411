@@ -125,8 +125,8 @@ public class Agent {
            action = e.checkExplore(currBoard.getBoard(), currAgent);
            if (action != ' ') {
                currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
-               currBoard.printMap(currAgent);
-               currAgent.setPreState(prv);
+               //currBoard.printMap(currAgent);
+               //currAgent.setPreState(prv);
                prv = new State(currAgent);
                return action;
            } else {
@@ -136,7 +136,7 @@ public class Agent {
         	   //firstExplore == true;
         	   
                //firstLandExplore = true;
-        	   if(waterExplore == true){
+        	   if(waterExplore){
         		   //end of the water explore
         		   System.out.println("disable water");
         		   action = e.disableWaterExplore(currBoard.getBoard(),currAgent);
@@ -151,7 +151,7 @@ public class Agent {
         			   waterExplore = false;
         		   }
         		   return action;
-        	   } else if(landExplore == true){
+        	   } else if(landExplore){
         		   //end of the land explore
                    e.enableWaterExplore();
                    waterExplore = true;
@@ -159,10 +159,11 @@ public class Agent {
         	  }
            }
        } else {
-//           currBoard.printMap(currAgent);
-//           currAgent.printState();
            // there is no path currently
-          /*if (getToItemPath == null || getToItemPath.isEmpty()) {
+    	   	/*
+           if (getToItemPath == null || getToItemPath.isEmpty()) {
+               currBoard.printMap(currAgent);
+               currAgent.printState();
                if(currBoard.treasure_positions != null && !currBoard.treasure_positions.isEmpty()){
                    if(searchProcedure(currBoard.treasure_positions.get(0))){
                        action = getToItemPath.get(0);

@@ -328,6 +328,10 @@ public class SearchState implements Comparable{
         System.out.println("Treasure: " + hasTreasure());
         System.out.println("Dynamite: " + numDynamite());
         System.out.println("gCost: " + gCost + " hCost: " + hCost);
+        for(String s : been.keySet()){
+            System.out.print(s + " ");
+        }
+        System.out.println("");
     }
 
     public void printStatePath(){
