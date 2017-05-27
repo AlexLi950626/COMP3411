@@ -88,7 +88,7 @@ public class Agent {
                        }
                    }
                }
-
+               //agent.print_view(view);
                action = agent.get_action( view );
                out.write( action );
            }
@@ -156,13 +156,13 @@ public class Agent {
                    e.enableWaterExplore();
                    waterExplore = true;
                    landExplore = false;
-        	   }
+        	  }
            }
        } else {
 //           currBoard.printMap(currAgent);
 //           currAgent.printState();
            // there is no path currently
-           if (getToItemPath == null || getToItemPath.isEmpty()) {
+          /*if (getToItemPath == null || getToItemPath.isEmpty()) {
                if(currBoard.treasure_positions != null && !currBoard.treasure_positions.isEmpty()){
                    if(searchProcedure(currBoard.treasure_positions.get(0))){
                        action = getToItemPath.get(0);
@@ -185,7 +185,7 @@ public class Agent {
            }
 //           currBoard.printMap(currAgent);
 //           currAgent.printState();
-//           printActionPath();
+//           printActionPath();*/
        }
        return action;
    }

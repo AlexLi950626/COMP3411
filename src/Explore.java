@@ -3,7 +3,7 @@ public class Explore {
     
     // queue for explore
     private ArrayList<State> exploreSeen;
-    private ArrayList<State> known;
+	Queue<State> exploreQ;
     private ArrayList<State> waterSeen;
     private ArrayList<Character> path;
     private boolean inWater;
@@ -14,7 +14,7 @@ public class Explore {
 	public Explore(){
 		exploreSeen = new ArrayList<State>();
 		waterSeen = new ArrayList<State>();
-		known = new ArrayList<State>();
+		exploreQ = new LinkedList<State>();
         path = new ArrayList<> ();
         inWater = false;
         hasWater = false; 
@@ -34,7 +34,7 @@ public class Explore {
 		if(inWater == false){
 		   	explore(board, player);
 
-		   	System.out.println("command: " + path);
+		   	//System.out.println("command: " + path);
 
 		   	//if the path is null then the explore is done do some other search
 		   	if(path.size() != 0){
@@ -92,8 +92,11 @@ public class Explore {
    							path.addAll(directionAction(Constants.EAST,prv.getDirection()));
    							path.add(Constants.MOVE_FORWARD);
    						}
-			   					
-			   			
+			   			System.out.println(path);
+			   			if(path.size() != 0){
+					       	action = path.get(0) ; //get the first element from the path
+					        path.remove(0);
+					   	}
 			   		}else{
 				   		path.addAll(findPoint(board,player,Constants.TREE));
 				   		State prv = new State(player);
@@ -128,8 +131,12 @@ public class Explore {
    							path.addAll(directionAction(Constants.EAST,prv.getDirection()));
    							path.add(Constants.CHOP_TREE);
    						}
+   						if(path.size() != 0){
+   					       	action = path.get(0) ; //get the first element from the path
+   					        path.remove(0);
+   					   	}
 			   		}
-
+			   		
 			   	
 		   	}
    			
@@ -153,6 +160,7 @@ public class Explore {
 	 */
 	public Character disableWaterExplore(char[][] view, State current){
 		char action = ' ';
+		System.out.println("explore!");
 		if(inWater == true && current.getRaft() == true){
 			Queue<State> queue = new LinkedList<State>();
 			ArrayList<State> visited = new ArrayList<State>();
@@ -271,30 +279,54 @@ public class Explore {
 		//exploreSeen.add(current);
 		State prv = new State(current);
 		State next = new State(prv);
+		State go = null;
 		//walk until current direction doesn't have path anymore
-		switch(current.getDirection()){
-			case Constants.NORTH:
-				next.setRow(prv.getRow()-1);
-				next.setCol(prv.getCol());
-				break;
-			case Constants.SOUTH:
-				next.setRow(prv.getRow()+1);
-				next.setCol(prv.getCol());
-				break;
-			case Constants.WEST:
-				next.setRow(prv.getRow());
-				next.setCol(prv.getCol()-1);
-				break;
-			case Constants.EAST:
-				next.setRow(prv.getRow());
-				next.setCol(prv.getCol()+1);
-				break;
-		}
-		
-		if(!seen(exploreSeen,next) && valid(view,next)){
 
+			next.setRow(prv.getRow()-1);
+			next.setCol(prv.getCol());
+			if(current.getDirection() == Constants.NORTH){
+				go = next;
+			}else{
+				if(!seen(exploreSeen,next) && valid(view,next)){
+					exploreQ.add(next);
+				}
+			}
+			next = new State(prv);
+			next.setRow(prv.getRow()+1);
+			next.setCol(prv.getCol());
+			if(current.getDirection() == Constants.SOUTH){
+				go = next;
+			}else{
+				if(!seen(exploreSeen,next) && valid(view,next)){
+					exploreQ.add(next);
+				}
+			}
+			next = new State(prv);
+			next.setRow(prv.getRow());
+			next.setCol(prv.getCol()-1);
+			if(current.getDirection() == Constants.WEST){
+				go = next;
+			}else{
+				if(!seen(exploreSeen,next) && valid(view,next)){
+					exploreQ.add(next);
+				}
+			}
+			next = new State(prv);
+			next.setRow(prv.getRow());
+			next.setCol(prv.getCol()+1);
+			if(current.getDirection() == Constants.EAST){
+				go = next;
+			}else{
+				if(!seen(exploreSeen,next) && valid(view,next)){
+					exploreQ.add(next);
+				}
+			}
+
+		
+		if(!seen(exploreSeen,go) && valid(view,go)){
 			exploreSeen.add(prv);
-			returnState = next;
+			returnState = go;
+			//check forward and put node to quque
 		   	pathToChar(view, returnState, current, path);
 		}else{
 			//find the closest next ? mark
@@ -428,9 +460,9 @@ public class Explore {
 		ArrayList<Character> output = new ArrayList<Character>();
 		//write a bfs to water from current
 		// BFS uses Queue data structure
-		Queue<State> queue = new LinkedList<State>();
 		ArrayList<State> visited = new ArrayList<State>();
 		ArrayList<State> p = new ArrayList<State>();
+		Queue<State> queue = new LinkedList<State>();
 		queue.add(current);
 		visited.add(current);
 		breakloop:
@@ -457,8 +489,9 @@ public class Explore {
 					while(!(next.getCol() == current.getCol() && next.getRow() == current.getRow())){
 						p.add(0,next);
 						next = next.getPreState();
+						next.printState();
 					}
-					p.add(0,next);
+					 p.add(0,next);
 					for(State s : p){
 						exploreSeen.add(s);
 					}
@@ -601,16 +634,39 @@ public class Explore {
 	 * check surround allow to go forward or not
 	 */
 	public boolean checkForward(char[][] view, Position origion){
+		//boolean unknow = false;
+		/*int any_water = 0;
+		if(view[origion.getRow()-1][origion.getCol()] == Constants.WATER){
+			any_water++;
+		} else if (view[origion.getRow()+1][origion.getCol()] == Constants.WATER){
+			any_water++;
+		} else if(view[origion.getRow()][origion.getCol()+1] == Constants.WATER){
+			any_water++;
+
+		} else if (view[origion.getRow()][origion.getCol()-1] == Constants.WATER){
+			any_water++;
+		}*/
+		
 		for(int row = origion.getRow()-2 ; row <= origion.getCol()+2; row++){
 			for(int col = origion.getRow()-2 ; col <= origion.getCol()+2; col++){
 				if(col > 0 && row >0 && col < Constants.BOARD_SIZE_COL && row < Constants.BOARD_SIZE_ROW){
 					if(view[row][col] == Constants.UNKNOW && view[origion.getRow()][col] != Constants.WATER && view[row][origion.getCol()] != Constants.WATER){
+						//unknow =  true;
+						//check neighbor has water
+						//break;
 						return true;
 					}
 					
 				}
 			}
 		}
+		
+
+		/*if(any_water < 2 && unknow == true){
+			return true;
+		}*/
+
+
 		
 		return false;
 	}
