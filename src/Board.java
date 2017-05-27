@@ -1,6 +1,5 @@
 //import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 
-import javax.management.RuntimeErrorException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -8,52 +7,26 @@ import java.util.Arrays;
  * Created by shiyun on 11/05/17.
  */
 public class Board implements Cloneable {
-    // if the known board has any of these tools
-    private boolean board_axe;
-    private boolean board_key;
-    private int board_dynamite;
-    private int board_tree;
-    private int board_door;
-    private boolean board_treasure;
 
     // these position variables are used to store the positions of items agent can interact with
+    private int numTree;
     public ArrayList<Position> axe_positions;
     public ArrayList<Position> key_positions;
     public ArrayList<Position> dynamite_positions;
     public ArrayList<Position> door_positions;
     public ArrayList<Position> treasure_positions;
-    public ArrayList<Position> tree_positions;
 
     // board information;
     private char[][] board;
-    private int startCol;
-    private int startRow;
-    private int endCol;
-    private int endRow;
 
-//    /**
-//     * constructor for A star search board
-//     * @param currBoard
-//     */
-//    public Board(Board currBoard){
-//    }
 
     public Board(int rowSize, int colSize){
-    	//initialize the board info
-        board_axe = false;
-        board_key = false;
-        board_tree = 0;
-        board_door = 0;
-        board_dynamite = 0;
-        board_treasure = false;
-
-        // A* use
+        numTree = 0;
         axe_positions = new ArrayList<>();
         key_positions = new ArrayList<>();
         dynamite_positions = new ArrayList<>();
         door_positions = new ArrayList<>();
         treasure_positions = new ArrayList<>();
-        tree_positions = new ArrayList<>();
 
         board = new char[rowSize][colSize];
 
@@ -263,37 +236,29 @@ public class Board implements Cloneable {
         Position k = new Position(row, col);
     	switch(board[row][col]){
     	case Constants.AXE:
-    		board_axe = true;
             if(!containPosition(axe_positions, k)){
                 axe_positions.add(k);
             }
     		break;
     	case Constants.KEY:
-    		board_key = true;
     		if(!containPosition(key_positions, k)){
     		    key_positions.add(k);
             }
     		break;
     	case Constants.TREE:
-    		board_tree ++;
-    		if(!containPosition(tree_positions, k)){
-    		    tree_positions.add(k);
-            }
+    		numTree ++;
     		break;
     	case Constants.DYNAMITE:
-    		board_dynamite ++;
             if(!containPosition(dynamite_positions, k)){
                 dynamite_positions.add(k);
             }
     		break;
     	case Constants.TREASURE:
-    		board_treasure = true;
             if(!containPosition(treasure_positions, k)){
                 treasure_positions.add(k);
             }
     		break;
     	case Constants.DOOR:
-    		board_door++;
             if(!containPosition(door_positions, k)){
                 door_positions.add(k);
             }
@@ -313,27 +278,21 @@ public class Board implements Cloneable {
         Position k = new Position(row, col);
     	switch(board[row][col]){
     	case Constants.AXE:
-    		board_axe = false;
             axe_positions.remove(k);
     		break;
     	case Constants.KEY:
-    		board_key = false;
     		key_positions.remove(k);
     		break;
     	case Constants.TREE:
-    		board_tree --;
-    		tree_positions.remove(k);
+    		numTree --;
     		break;
     	case Constants.DYNAMITE:
-    		board_dynamite --;
             dynamite_positions.remove(k);
     		break;
     	case Constants.TREASURE:
-    		board_treasure = false;
             treasure_positions.remove(k);
     		break;
     	case Constants.DOOR:
-    		board_door--;
             door_positions.remove(k);
     		break;
     	default:
@@ -387,12 +346,11 @@ public class Board implements Cloneable {
             }
         }
         System.out.print('\n');
-        System.out.println("board_axe: " + board_axe);
-        System.out.println("board_key: " + board_key);
-        System.out.println("board_tree: " + board_tree);
-        System.out.println("board_door: " + board_door);
-        System.out.println("board_dynamite: " + board_dynamite);
-        System.out.println("board_treasure: " + board_treasure);
+        System.out.println("board_axe: " + axe_positions.size());
+        System.out.println("board_key: " + key_positions.size());
+        System.out.println("board_tree: " + numTree);
+        System.out.println("board_door: " + door_positions.size());
+        System.out.println("board_dynamite: " + dynamite_positions.size());
     }
 
     /**
@@ -402,31 +360,18 @@ public class Board implements Cloneable {
     public Board clone(){
         Board newBoard = new Board(this.board.length, this.board[0].length);
 
-        newBoard.board_axe = this.board_axe;
-        newBoard.board_key = this.board_key;
-        newBoard.board_dynamite = this.board_dynamite;
-        newBoard.board_tree = this.board_tree;
-        newBoard.board_door = this.board_door;
-        newBoard.board_treasure = this.board_treasure;
-
+        newBoard.numTree = this.numTree;
         newBoard.axe_positions = new ArrayList<>();
         newBoard.key_positions = new ArrayList<>();
         newBoard.dynamite_positions = new ArrayList<>();
         newBoard.door_positions = new ArrayList<>();
         newBoard.treasure_positions = new ArrayList<>();
-        newBoard.tree_positions = new ArrayList<>();
 
         newBoard.axe_positions.addAll(this.axe_positions);
         newBoard.key_positions.addAll(this.key_positions);
         newBoard.dynamite_positions.addAll(this.dynamite_positions);
         newBoard.door_positions.addAll(this.door_positions);
         newBoard.treasure_positions.addAll(this.treasure_positions);
-        newBoard.tree_positions.addAll(this.tree_positions);
-
-        newBoard.startCol = this.startCol;
-        newBoard.startRow = this.startRow;
-        newBoard.endCol = this.endCol;
-        newBoard.endRow = this.endRow;
 
         newBoard.board = new char[this.board.length][this.board[0].length];
 
@@ -440,7 +385,7 @@ public class Board implements Cloneable {
     /**
      * @return extract snapshot of the board and return that board
      */
-    public Board extractBoard(){
+    public Board extractBoard(SearchCompletedPath SCP){
         //find left bound col
         int leftCol = 0;
         for(int col = 0; col < this.board[0].length; col++){
@@ -497,66 +442,41 @@ public class Board implements Cloneable {
 
         Board newBoard = new Board(bottomRow - upRow + 1, rightCol - leftCol + 1);
 
-        newBoard.board_axe = this.board_axe;
-        newBoard.board_key = this.board_key;
-        newBoard.board_dynamite = this.board_dynamite;
-        newBoard.board_tree = this.board_tree;
-        newBoard.board_door = this.board_door;
-        newBoard.board_treasure = this.board_treasure;
+        newBoard.numTree = this.numTree;
 
         newBoard.axe_positions = new ArrayList<>();
         newBoard.key_positions = new ArrayList<>();
         newBoard.dynamite_positions = new ArrayList<>();
         newBoard.door_positions = new ArrayList<>();
         newBoard.treasure_positions = new ArrayList<>();
-        newBoard.tree_positions = new ArrayList<>();
 
-        newBoard.startRow = upRow;
-        newBoard.startCol = leftCol;
-        newBoard.endRow = bottomRow;
-        newBoard.endCol = rightCol;
+        SCP.setStartRow(upRow);
+        SCP.setStartCol(leftCol);
+        SCP.setEndRow(bottomRow);
+        SCP.setEndCol(rightCol);
 
         for(Position p : this.axe_positions){
-            newBoard.axe_positions.add(new Position(p.getRow()-newBoard.startRow, p.getCol()-newBoard.startCol));
+            newBoard.axe_positions.add(new Position(p.getRow()-SCP.getStartRow(), p.getCol()-SCP.getStartCol()));
         }
         for(Position p : this.key_positions){
-            newBoard.key_positions.add(new Position(p.getRow()-newBoard.startRow, p.getCol()-newBoard.startCol));
+            newBoard.key_positions.add(new Position(p.getRow()-SCP.getStartRow(), p.getCol()-SCP.getStartCol()));
         }
         for(Position p : this.dynamite_positions){
-            newBoard.dynamite_positions.add(new Position(p.getRow()-newBoard.startRow, p.getCol()-newBoard.startCol));
+            newBoard.dynamite_positions.add(new Position(p.getRow()-SCP.getStartRow(), p.getCol()-SCP.getStartCol()));
         }
         for(Position p : this.door_positions){
-            newBoard.door_positions.add(new Position(p.getRow()-newBoard.startRow, p.getCol()-newBoard.startCol));
+            newBoard.door_positions.add(new Position(p.getRow()-SCP.getStartRow(), p.getCol()-SCP.getStartCol()));
         }
         for(Position p : this.treasure_positions){
-            newBoard.treasure_positions.add(new Position(p.getRow()-newBoard.startRow, p.getCol()-newBoard.startCol));
-        }
-        for(Position p : this.tree_positions){
-            newBoard.tree_positions.add(new Position(p.getRow()-newBoard.startRow, p.getCol()-newBoard.startCol));
+            newBoard.treasure_positions.add(new Position(p.getRow()-SCP.getStartRow(), p.getCol()-SCP.getStartCol()));
         }
 
         for(int row = 0; row < newBoard.board.length; row++){
             for(int col = 0; col < newBoard.board[row].length; col++){
-                newBoard.board[row][col] = this.board[row + newBoard.startRow][col + newBoard.startCol];
+                newBoard.board[row][col] = this.board[row + SCP.getStartRow()][col + SCP.getStartCol()];
             }
         }
         return newBoard;
-    }
-
-    /**
-     * start col represent where this snapshot of board begin
-     * @return startCol of the board
-     */
-    public int getStartCol() {
-        return startCol;
-    }
-
-    /**
-     * start row represent where this snapshot of board begin
-     * @return startRow
-     */
-    public int getStartRow() {
-        return startRow;
     }
 
     /**
@@ -607,11 +527,38 @@ public class Board implements Cloneable {
             }
         }
         System.out.println("board info:");
-        System.out.println("board_axe: " + board_axe);
-        System.out.println("board_key: " + board_key);
-        System.out.println("board_tree: " + board_tree);
-        System.out.println("board_door: " + board_door);
-        System.out.println("board_dynamite: " + board_dynamite);
-        System.out.println("board_treasure: " + board_treasure);
+        System.out.println("board_axe: " + axe_positions.size());
+        System.out.println("board_key: " + key_positions.size());
+        System.out.println("board_tree: " + numTree);
+        System.out.println("board_door: " + door_positions.size());
+        System.out.println("board_dynamite: " + dynamite_positions.size());
+        System.out.println("board_treasure: " + treasure_positions.size());
+    }
+
+    public String itemsToString(){
+        StringBuilder s = new StringBuilder();
+        s.append("Axe: ");
+        for(Position a : axe_positions){
+            s.append(a.toString()).append(" ");
+        }
+        s.append("Key : ");
+        for(Position k : key_positions){
+            s.append(k.toString()).append(" ");
+        }
+        s.append("Dynamite: ");
+        for(Position d : dynamite_positions){
+            s.append(d.toString()).append(" ");
+        }
+        s.append("Door: ");
+        for(Position dd : door_positions){
+            s.append(dd.toString()).append(" ");
+        }
+        s.append("Treasure: ");
+        for(Position t : treasure_positions){
+            s.append(t).append(" ");
+        }
+        s.append("Num Tree: ");
+        s.append(numTree);
+        return s.toString();
     }
 }

@@ -2,14 +2,11 @@
 //import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 
 public class SearchState implements Comparable{
     private SearchState preState;
     public Board board;
-    private HashMap<String, Position> been;
 
     private Position currAgentPosition;
     // if the current state has any of these tools
@@ -19,6 +16,7 @@ public class SearchState implements Comparable{
     private int dynamite;
     private boolean treasure;
 
+    public ArrayList<Position> usedDynamite;
 
     private int gCost;
     private int hCost;
@@ -29,10 +27,9 @@ public class SearchState implements Comparable{
      * @param currAgent
      * @param gCost
      */
-    public SearchState(Board currBoard, HashMap<String, Position> seen, SearchState pre, int gCost, State currAgent){
+    public SearchState(Board currBoard, SearchState pre, int gCost, State currAgent){
         preState = pre;
         board = currBoard;
-        been = seen;
         currAgentPosition = new Position(currAgent.getRow(), currAgent.getCol());
         this.gCost = gCost;
         axe = currAgent.getAxe();
@@ -40,19 +37,18 @@ public class SearchState implements Comparable{
         key = currAgent.getKey();
         dynamite = currAgent.getDynamite();
         treasure = currAgent.getTreasure();
+        usedDynamite = new ArrayList<>();
     }
 
     /**
      * another constructor construct next state for search
      * @param currBoard
-     * @param seen
      * @param pre
      * @param
      */
-    public SearchState(Board currBoard, HashMap<String, Position> seen, SearchState pre, int gCost){
+    public SearchState(Board currBoard, SearchState pre, int gCost){
         preState = pre;
         board = currBoard;
-        been = seen;
         this.gCost = gCost;
 
         currAgentPosition = pre.getAgentPosition();
@@ -61,8 +57,6 @@ public class SearchState implements Comparable{
         key = pre.hasKey();
         dynamite = pre.numDynamite();
         treasure = pre.hasTreasure();
-
-
     }
     /**
      * set g cost
@@ -111,7 +105,9 @@ public class SearchState implements Comparable{
      */
     public int compareTo(Object o) {
         SearchState x = (SearchState) o ;
-        return (this.hCost + this.gCost) - (x.hCost + x.gCost);
+        //return this.hCost - x.hCost;
+        return (4*this.hCost + 2*this.gCost) - (4*x.hCost + 2*x.gCost);
+        //return (this.hCost + this.gCost) - (x.hCost + x.gCost);
     }
 
     /**
@@ -125,29 +121,6 @@ public class SearchState implements Comparable{
         }
         Collections.reverse(returnList);
         return returnList;
-    }
-
-    /**
-     * add position to been hashmap
-     * @param beenTo
-     */
-    public void addBeenPosition(Position beenTo){
-        been.put(beenTo.toString(), beenTo);
-    }
-
-    /**
-     * @return been hashmap
-     */
-    public HashMap<String, Position> getBeen(){
-        return been;
-    }
-
-    /**
-     * @param check
-     * @return check if we have been to the state, if true we don't want to go there anymore
-     */
-    public boolean beenThere(Position check){
-        return been.containsKey(check.toString());
     }
 
     /**
@@ -267,7 +240,7 @@ public class SearchState implements Comparable{
      * @return new state deep copy everything
      */
     public SearchState deepCopy(){
-        return new SearchState(board.clone(), new HashMap<String,Position>(), this, gCost);
+        return new SearchState(board.clone(), this, gCost);
 
     }
 
@@ -276,7 +249,7 @@ public class SearchState implements Comparable{
      * @return
      */
     public SearchState shallowCopy(){
-        return new SearchState(board, been,this, gCost  );
+        return new SearchState(board,this, gCost);
     }
 
 
@@ -312,6 +285,23 @@ public class SearchState implements Comparable{
         return false;
     }
 
+    public String toString(){
+        StringBuilder s = new StringBuilder();
+        s.append("currentPos: ").append(currAgentPosition.toString()).append(" ");
+        s.append("hasAxe: ").append(axe).append(" ");
+        s.append("hasRaft: ").append(raft).append(" ");
+        s.append("hasKey: ").append(key).append(" ");
+        s.append("numDynamite: ").append(dynamite).append(" ");
+        s.append("usedDynamite: ");
+        for(Position p : usedDynamite){
+            s.append(p.toString()).append(" ");
+        }
+        s.append("Treasure: ").append(treasure).append(" ");
+        s.append(board.itemsToString());
+
+        return s.toString();
+    }
+
     public void printSearchState(){
         System.out.println("-----------------------------------------------------------------------------------------");
         board.printExtractMap(currAgentPosition);
@@ -328,9 +318,8 @@ public class SearchState implements Comparable{
         System.out.println("Treasure: " + hasTreasure());
         System.out.println("Dynamite: " + numDynamite());
         System.out.println("gCost: " + gCost + " hCost: " + hCost);
-        for(String s : been.keySet()){
-            System.out.print(s + " ");
-        }
+
+
         System.out.println("");
     }
 

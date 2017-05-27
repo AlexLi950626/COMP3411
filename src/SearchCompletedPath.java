@@ -2,22 +2,72 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 
-public class SearchItem{
+public class SearchCompletedPath{
     private Board originalBoard;
     private State originalState;
-    private Position dest;
     private Position origin;
+
+    private int startCol;
+    private int startRow;
+    private int endCol;
+    private int endRow;
+
+    private HashMap<String, String> beenState;
 
     /**
      * constructor for the search item object to do path finding
-     * @param currBoard
-     * @param currAgent
-     * @param dest
      */
-    public SearchItem(Board currBoard, State currAgent, Position dest){
-        originalBoard = currBoard;
-        originalState = currAgent;
-        this.dest = dest;
+    public SearchCompletedPath(){
+        beenState = new HashMap<>();
+    }
+
+
+    public void setOriginalBoard(Board snapshotBoard){
+        originalBoard = snapshotBoard;
+    }
+
+    public void setOriginalState(State snapshotState){
+        originalState = snapshotState;
+    }
+
+    public void setStartCol(int col){
+        startCol = col;
+    }
+
+    public void setStartRow(int row){
+        startRow = row;
+    }
+
+    public void setEndCol(int col){
+        endCol = col;
+    }
+
+    public void setEndRow(int row){
+        endRow = row;
+    }
+
+    public int getStartCol(){
+        return startCol;
+    }
+
+    public int getStartRow(){
+        return startRow;
+    }
+
+    public int getEndCol(){
+        return endCol;
+    }
+
+    public int getEndRow(){
+        return endRow;
+    }
+
+    private void addBeenState(SearchState sState){
+        beenState.put(sState.toString(), "");
+    }
+
+    private boolean hasBeenState(SearchState sState){
+        return beenState.containsKey(sState.toString());
     }
 
     /**
@@ -28,9 +78,9 @@ public class SearchItem{
     	ArrayList<Position> path = null;
         PriorityQueue<SearchState> statePQ = new PriorityQueue<>();
         // push the first state into the Queue
-        origin = new Position(Constants.START_ROW - originalBoard.getStartRow(),
-                Constants.START_COL - originalBoard.getStartCol());
-        SearchState initialState = new SearchState(originalBoard, new HashMap<String,Position>(), null, 0, originalState);
+        origin = new Position(Constants.START_ROW - startRow,
+                Constants.START_COL - startCol);
+        SearchState initialState = new SearchState(originalBoard, null, 0, originalState);
         initialState.sethCost(ManhattanHeuristic(initialState));
         statePQ.add(initialState);
 
@@ -47,8 +97,8 @@ public class SearchItem{
                 break;
             }
 
-            //put currPosition to been represent we been this position
-            currentState.addBeenPosition(currPosition);
+            //put currState to been represent we been this state
+            addBeenState(currentState);
 
             ArrayList<Position> pos = currentState.possiblePositions(currPosition);
 
@@ -62,8 +112,9 @@ public class SearchItem{
                             case Constants.WATER:
                                 // curr water, next water, check if been
                                 // if hasn't been add to queue shallow copy add been list
-                                if(!currentState.beenThere(p)){
-                                    newState = initialiseShallowCopyNewState(currentState, p);
+                                newState = initialiseShallowCopyNewState(currentState, p);
+                                if(!hasBeenState(newState)){
+                                    addBeenState(newState);
                                     statePQ.add(newState);
                                 }
                                 break;
@@ -73,24 +124,35 @@ public class SearchItem{
                                 newState = currentState.deepCopy();
                                 newState.setgCost(currentState.getgCost() + 1);
                                 newState.setAgentPostion(p);
-                                newState.addBeenPosition(p);
                                 newState.setRaft(false);
+                                newState.usedDynamite = new ArrayList<>();
+                                newState.usedDynamite.addAll(currentState.usedDynamite);
                                 newState.sethCost(ManhattanHeuristic(newState));
-                                statePQ.add(newState);
+                                if(!hasBeenState(newState)){
+                                    addBeenState(newState);
+                                    statePQ.add(newState);
+                                }
                                 break;
                             case Constants.TREE:
                                 //curr water, next tree, if has axe can chop the tree, but can't add raft, set raft to false
                                 if(currentState.hasAxe()){
                                     newState = initialiseDeepCopyNewState(currentState, p);
                                     newState.setRaft(false);
-                                    statePQ.add(newState);
-                                } else if(currentState.numDynamite() > 0 && currentState.shouldIBlowUp(p)){
+                                    if(!hasBeenState(newState)){
+                                        addBeenState(newState);
+                                        statePQ.add(newState);
+                                    }
+                                } else if(currentState.numDynamite() > 0 && (currentState.shouldIBlowUp(p))){
                                     //curr water, next tree, if has dynamite can blow up, but check should we blow up first
                                     // and if we have enough dynamite, set raft to false
                                     newState = initialiseDeepCopyNewState(currentState, p);
                                     newState.setDynamite(newState.numDynamite()-1);
+                                    newState.usedDynamite.add(p);
                                     newState.setRaft(false);
-                                    statePQ.add(newState);
+                                    if(!hasBeenState(newState)){
+                                        addBeenState(newState);
+                                        statePQ.add(newState);
+                                    }
                                 }
                                 break;
                             case Constants.DOOR:
@@ -98,16 +160,32 @@ public class SearchItem{
                                 if(currentState.hasKey()){
                                     newState = initialiseDeepCopyNewState(currentState, p);
                                     newState.setRaft(false);
-                                    statePQ.add(newState);
+                                    if(!hasBeenState(newState)){
+                                        addBeenState(newState);
+                                        statePQ.add(newState);
+                                    }
+                                } else if(currentState.numDynamite() > 0  && currentState.shouldIBlowUp(p)){
+                                    newState = initialiseDeepCopyNewState(currentState, p);
+                                    newState.setRaft(false);
+                                    newState.setDynamite(newState.numDynamite()-1);
+                                    newState.usedDynamite.add(p);
+                                    if(!hasBeenState(newState)){
+                                        addBeenState(newState);
+                                        statePQ.add(newState);
+                                    }
                                 }
                                 break;
                             case Constants.WALL:
                                 //curr water, next Wall, if has enough dynamite check should we blow up, set raft to false
                                 if(currentState.numDynamite() > 0 && currentState.shouldIBlowUp(p)){
                                     newState = initialiseDeepCopyNewState(currentState, p);
-                                    newState.setRaft(false);
+                                    newState.usedDynamite.add(p);
                                     newState.setDynamite(newState.numDynamite()-1);
-                                    statePQ.add(newState);
+                                    newState.setRaft(false);
+                                    if(!hasBeenState(newState)){
+                                        addBeenState(newState);
+                                        statePQ.add(newState);
+                                    }
                                 }
                                 break;
                             case Constants.AXE:
@@ -115,28 +193,40 @@ public class SearchItem{
                                 newState = initialiseDeepCopyNewState(currentState, p);
                                 newState.setRaft(false);
                                 newState.setAxe(true);
-                                statePQ.add(newState);
+                                if(!hasBeenState(newState)){
+                                    addBeenState(newState);
+                                    statePQ.add(newState);
+                                }
                                 break;
                             case Constants.KEY:
                                 //curr water, next key, deep copy, set raft false, get key
                                 newState = initialiseDeepCopyNewState(currentState, p);
                                 newState.setRaft(false);
                                 newState.setKey(true);
-                                statePQ.add(newState);
+                                if(!hasBeenState(newState)){
+                                    addBeenState(newState);
+                                    statePQ.add(newState);
+                                }
                                 break;
                             case Constants.DYNAMITE:
                                 //curr water, next dynamite, deep copy, set raft false, get dynamite
                                 newState = initialiseDeepCopyNewState(currentState, p);
                                 newState.setRaft(false);
                                 newState.setDynamite(newState.numDynamite()+1);
-                                statePQ.add(newState);
+                                if(!hasBeenState(newState)){
+                                    addBeenState(newState);
+                                    statePQ.add(newState);
+                                }
                                 break;
                             case Constants.TREASURE:
                                 //curr water, next treasure, deep copy, set raft false, get treasure
                                 newState = initialiseDeepCopyNewState(currentState, p);
                                 newState.setRaft(false);
                                 newState.setTreasure(true);
-                                statePQ.add(newState);
+                                if(!hasBeenState(newState)){
+                                    addBeenState(newState);
+                                    statePQ.add(newState);
+                                }
                                 break;
                             default:
                                 System.out.println("Unexpected movePositionType: " + movePositionType);
@@ -153,16 +243,21 @@ public class SearchItem{
                                     newState = currentState.deepCopy();
                                     newState.setgCost(currentState.getgCost() + 1);
                                     newState.setAgentPostion(p);
-                                    newState.addBeenPosition(p);
                                     newState.sethCost(ManhattanHeuristic(newState));
-                                    statePQ.add(newState);
+                                    newState.usedDynamite = new ArrayList<>();
+                                    newState.usedDynamite.addAll(currentState.usedDynamite);
+                                    if(!hasBeenState(newState)){
+                                        addBeenState(newState);
+                                        statePQ.add(newState);
+                                    }
                                 }
                                 break;
                             case Constants.EMPTY:
                                 //curr Empty, next empty
                                 //shallow copy check if been
-                                if(!currentState.beenThere(p)){
-                                    newState = initialiseShallowCopyNewState(currentState, p);
+                                newState = initialiseShallowCopyNewState(currentState, p);
+                                if(!hasBeenState(newState)){
+                                    addBeenState(newState);
                                     statePQ.add(newState);
                                 }
                                 break;
@@ -172,20 +267,38 @@ public class SearchItem{
                                 if(currentState.hasAxe()) {
                                     newState = initialiseDeepCopyNewState(currentState, p);
                                     newState.setRaft(true);
-                                    statePQ.add(newState);
+                                    if(!hasBeenState(newState)){
+                                        addBeenState(newState);
+                                        statePQ.add(newState);
+                                    }
                                 }  else if(currentState.numDynamite() > 0 && currentState.shouldIBlowUp(p)){
                                     //curr empty, next tree, if has dynamite can blow up, but check should we blow up first
                                     // and if we have enough dynamite
                                     newState = initialiseDeepCopyNewState(currentState, p);
                                     newState.setDynamite(newState.numDynamite()-1);
-                                    statePQ.add(newState);
+                                    newState.usedDynamite.add(p);
+                                    if(!hasBeenState(newState)){
+                                        addBeenState(newState);
+                                        statePQ.add(newState);
+                                    }
                                 }
                                 break;
                             case Constants.DOOR:
-                                //curr empty, next door, check if has key,
+                                //curr empty, next door, check if has key, or dynamite
                                 if(currentState.hasKey()){
                                     newState = initialiseDeepCopyNewState(currentState, p);
-                                    statePQ.add(newState);
+                                    if(!hasBeenState(newState)){
+                                        addBeenState(newState);
+                                        statePQ.add(newState);
+                                    }
+                                } else if(currentState.numDynamite() > 0 && currentState.shouldIBlowUp(p)){
+                                    newState = initialiseDeepCopyNewState(currentState, p);
+                                    newState.usedDynamite.add(p);
+                                    newState.setDynamite(newState.numDynamite()-1);
+                                    if(!hasBeenState(newState)){
+                                        addBeenState(newState);
+                                        statePQ.add(newState);
+                                    }
                                 }
                                 break;
                             case Constants.WALL:
@@ -193,33 +306,49 @@ public class SearchItem{
                                 //check if has enough dynamite, should we blow up?
                                 if(currentState.numDynamite() > 0 && currentState.shouldIBlowUp(p)){
                                     newState = initialiseDeepCopyNewState(currentState, p);
+                                    newState.usedDynamite.add(p);
                                     newState.setDynamite(newState.numDynamite()-1);
-                                    statePQ.add(newState);
+                                    if(!hasBeenState(newState)){
+                                        addBeenState(newState);
+                                        statePQ.add(newState);
+                                    }
                                 }
                                 break;
                             case Constants.AXE:
                                 //curr empty, next axe
                                 newState = initialiseDeepCopyNewState(currentState, p);
                                 newState.setAxe(true);
-                                statePQ.add(newState);
+                                if(!hasBeenState(newState)){
+                                    addBeenState(newState);
+                                    statePQ.add(newState);
+                                }
                                 break;
                             case Constants.KEY:
                                 //curr empty, next key
                                 newState = initialiseDeepCopyNewState(currentState, p);
                                 newState.setKey(true);
-                                statePQ.add(newState);
+                                if(!hasBeenState(newState)){
+                                    addBeenState(newState);
+                                    statePQ.add(newState);
+                                }
                                 break;
                             case Constants.DYNAMITE:
                                 //curr empty, next dynamite
                                 newState = initialiseDeepCopyNewState(currentState, p);
                                 newState.setDynamite(newState.numDynamite()+1);
-                                statePQ.add(newState);
+                                if(!hasBeenState(newState)){
+                                    addBeenState(newState);
+                                    statePQ.add(newState);
+                                }
                                 break;
                             case Constants.TREASURE:
                                 //curr empty, next treasure
                                 newState = initialiseDeepCopyNewState(currentState, p);
                                 newState.setTreasure(true);
-                                statePQ.add(newState);
+                                if(!hasBeenState(newState)){
+                                    addBeenState(newState);
+                                    statePQ.add(newState);
+                                }
                                 break;
                             default:
                                 System.out.println("Unexpected movePositionType: " + movePositionType);
@@ -242,7 +371,8 @@ public class SearchItem{
         newState.removeItemInBoard(nextMove.getRow(),nextMove.getCol()); //remove tree
         newState.setTypeInBoard(nextMove.getRow(), nextMove.getCol(), Constants.EMPTY); //replace by EMPTY
         newState.setAgentPostion(nextMove);
-        newState.addBeenPosition(nextMove);
+        newState.usedDynamite = new ArrayList<>();
+        newState.usedDynamite.addAll(currentState.usedDynamite);
         newState.sethCost(ManhattanHeuristic(newState));
         return newState;
     }
@@ -251,7 +381,7 @@ public class SearchItem{
         SearchState newState = currentState.shallowCopy();
         newState.setgCost(currentState.getgCost() + 1);
         newState.setAgentPostion(nextMove);
-        newState.addBeenPosition(nextMove);
+        newState.usedDynamite = currentState.usedDynamite;
         newState.sethCost(ManhattanHeuristic(newState));
         return newState;
     }
@@ -268,66 +398,43 @@ public class SearchItem{
             return Math.abs(currPosition.getRow() - origin.getRow()) + Math.abs(currPosition.getCol() - origin.getCol());
         } else {
             int h = 0;
+
+            ArrayList<Position> allItems = new ArrayList<>();
             // first go to axe
-            if(!state.board.axe_positions.isEmpty()){
-                Position axe = state.board.axe_positions.get(0);
-                h += Math.abs(currPosition.getRow() - axe.getRow()) + Math.abs(currPosition.getCol() - axe.getCol());
-                currPosition = axe;
-            }
+            allItems.addAll(state.board.axe_positions);
             //second find the keys
-            if(!state.board.key_positions.isEmpty()){
-                Position key = state.board.key_positions.get(0);
-                h += Math.abs(currPosition.getRow() - key.getRow()) + Math.abs(currPosition.getCol() - key.getCol());
-                currPosition = key;
-            }
+            allItems.addAll(state.board.key_positions);
             //thrid find the doors
-            if(!state.board.door_positions.isEmpty()){
-                ArrayList<Position> doors = new ArrayList<>();
-                doors.addAll(state.board.door_positions);
-                while(!doors.isEmpty()){
-                    int minIndex = 0;
-                    int minDis = Math.abs(currPosition.getRow() - doors.get(0).getRow()) + Math.abs(currPosition.getCol() - doors.get(0).getCol());
-                    int tempDist;
-                    for(int i = 0; i < doors.size(); i++){
-                        tempDist = Math.abs(currPosition.getRow() - doors.get(i).getRow()) + Math.abs(currPosition.getCol() - doors.get(i).getCol());
-                        if(minDis > tempDist){
-                            minIndex = i;
-                            minDis = tempDist;
-                        }
-                    }
-                    h += minDis;
-                    currPosition = doors.get(minIndex);
-
-                    doors.remove(minIndex);
-                }
-            }
+            allItems.addAll(state.board.door_positions);
             //fourth find the dynamites
-            if(!state.board.dynamite_positions.isEmpty()){
-                ArrayList<Position> dynamite = new ArrayList<>();
-                dynamite.addAll(state.board.dynamite_positions);
-                while(!dynamite.isEmpty()){
-                    int minDis = Math.abs(currPosition.getRow() - dynamite.get(0).getRow())
-                            + Math.abs(currPosition.getCol() - dynamite.get(0).getCol());
+            allItems.addAll(state.board.dynamite_positions);
+
+            if(!allItems.isEmpty()){
+                while(!allItems.isEmpty()){
+                    int minDis = Math.abs(currPosition.getRow() - allItems.get(0).getRow())
+                            + Math.abs(currPosition.getCol() - allItems.get(0).getCol());
                     int minIndex = 0;
                     int tempDist;
-                    for(int i = 0; i < dynamite.size(); i++){
-                        tempDist = Math.abs(currPosition.getRow() - dynamite.get(i).getRow())
-                                + Math.abs(currPosition.getCol() - dynamite.get(i).getCol());
+                    for(int i = 0; i < allItems.size(); i++){
+                        tempDist = Math.abs(currPosition.getRow() - allItems.get(i).getRow())
+                                + Math.abs(currPosition.getCol() - allItems.get(i).getCol());
                         if(minDis > tempDist){
                             minIndex = i;
                             minDis = tempDist;
                         }
                     }
                     h += minDis;
-                    currPosition = dynamite.get(minIndex);
+                    currPosition = allItems.get(minIndex);
 
-                    dynamite.remove(minIndex);
+                    allItems.remove(minIndex);
                 }
             }
             // treasure to original spot
             if(!state.board.treasure_positions.isEmpty()){
                 Position treas = state.board.treasure_positions.get(0);
+                //from current point to treasure
                 h += Math.abs(treas.getRow() - currPosition.getRow()) + Math.abs(treas.getCol() - currPosition.getCol());
+                //from treasure to origin
                 h += Math.abs(treas.getRow() - origin.getRow()) + Math.abs(treas.getCol() - origin.getCol());
             }
             return h;
@@ -340,8 +447,8 @@ public class SearchItem{
      */
     private ArrayList<Position> convertCoordinates(ArrayList<Position> path){
         for (Position pos : path) {
-            pos.setRow(pos.getRow()+originalBoard.getStartRow());
-            pos.setCol(pos.getCol()+originalBoard.getStartCol());
+            pos.setRow(pos.getRow()+ startRow);
+            pos.setCol(pos.getCol()+ startCol);
         }
         return path;
     }

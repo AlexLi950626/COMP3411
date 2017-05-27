@@ -36,6 +36,10 @@ public class Constants {
     public static final int VIEW_ROW = 5;
     public static final int VIEW_COL = 5;
 
+    // queue threshold
+    public static final int PQ_THRESHOLD = 100;
+
+    // heuristic weight
     //Max number
     public static final int CHAR_MAX = 10000;
     

@@ -125,9 +125,8 @@ public class Agent {
            action = e.checkExplore(currBoard.getBoard(), currAgent);
            if (action != ' ') {
                currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
-               currBoard.printMap(currAgent);
-               currAgent.setPreState(prv);
-
+               //currBoard.printMap(currAgent);
+               //currAgent.setPreState(prv);
                prv = new State(currAgent);
                return action;
            } else {
@@ -161,18 +160,12 @@ public class Agent {
            }
        } else {
            // there is no path currently
-           /*if (getToItemPath == null || getToItemPath.isEmpty()) {
+           if (getToItemPath == null || getToItemPath.isEmpty()) {
                currBoard.printMap(currAgent);
                currAgent.printState();
-               if(currBoard.treasure_positions != null && !currBoard.treasure_positions.isEmpty()){
-                   if(searchProcedure(currBoard.treasure_positions.get(0))){
-                       action = getToItemPath.get(0);
-                       getToItemPath.remove(0);
-                       currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
-                       return action;
-                   }
-               } else if(currAgent.getTreasure()){
-                   if(searchProcedure(new Position(Constants.START_ROW, Constants.START_ROW))){
+               if((currBoard.treasure_positions != null && !currBoard.treasure_positions.isEmpty())
+                       || currAgent.getTreasure()) {
+                   if (searchCompletedPathProcedure()) {
                        action = getToItemPath.get(0);
                        getToItemPath.remove(0);
                        currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
@@ -284,23 +277,20 @@ public class Agent {
 
     /**
      * do all thing need to do a A star search and to the path for that search
-     * @param dest where the destination is for this search
      * @return a boolean represent if there is a path or not
      */
-   public boolean searchProcedure(Position dest){
-       Board snapshotBoard = currBoard.extractBoard();
+   public boolean searchCompletedPathProcedure(){
+       SearchCompletedPath SCP = new SearchCompletedPath();
+       Board snapshotBoard = currBoard.extractBoard(SCP);
        State snapshotAgent = new State(currAgent);
-       snapshotAgent.setRow(currAgent.getRow()-snapshotBoard.getStartRow());
-       snapshotAgent.setCol(currAgent.getCol()-snapshotBoard.getStartCol());
+       snapshotAgent.setRow(currAgent.getRow()-SCP.getStartRow());
+       snapshotAgent.setCol(currAgent.getCol()-SCP.getStartCol());
        snapshotAgent.setPreState(null);
 
-       // convert destination coordinate to snapshot coordinate
-       Position newDest = dest.clone();
-       newDest.setRow(dest.getRow()-snapshotBoard.getStartRow());
-       newDest.setCol(dest.getCol()-snapshotBoard.getStartCol());
+       SCP.setOriginalBoard(snapshotBoard);
+       SCP.setOriginalState(snapshotAgent);
 
-       SearchItem SI = new SearchItem(snapshotBoard, snapshotAgent, newDest);
-       ArrayList<Position> path = SI.AStar();
+       ArrayList<Position> path = SCP.AStar();
        getToItemPath = getActionPathFromPosPath(path);
        return getToItemPath != null;
    }
