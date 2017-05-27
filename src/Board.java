@@ -192,7 +192,7 @@ public class Board implements Cloneable {
             case Constants.BLAST_WALL_TREE:
                 int wall_col = currAgent.getForwardCol();
                 int wall_row = currAgent.getForwardRow();
-                if(this.getType(wall_row,wall_col) == Constants.TREE){
+                if(this.getType(wall_row,wall_col) == Constants.TREE || this.getType(wall_row, wall_col) == Constants.DOOR){
                     this.removeItem(wall_row,wall_col);
                 }
                 this.setType(wall_row, wall_col,Constants.EMPTY);

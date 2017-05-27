@@ -177,9 +177,6 @@ public class Agent {
                getToItemPath.remove(0);
                currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
            }
-//           currBoard.printMap(currAgent);
-//           currAgent.printState();
-//           printActionPath();*/
        }
        return action;
    }
@@ -264,6 +261,9 @@ public class Agent {
                        if (copyState.getKey()) {
                            copyBoard.updateBoardAndStateFromGivenAction(Constants.UNLOCK_DOOR, copyState);
                            actionPath.add(Constants.UNLOCK_DOOR);
+                       } else if (copyState.getDynamite() > 0) {
+                           copyBoard.updateBoardAndStateFromGivenAction(Constants.BLAST_WALL_TREE, copyState);
+                           actionPath.add(Constants.BLAST_WALL_TREE);
                        } else throw new RuntimeException();
                        break;
                }
