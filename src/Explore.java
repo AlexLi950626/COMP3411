@@ -168,48 +168,55 @@ public class Explore {
 			while(!queue.isEmpty() ){
 				State prv = new State(queue.poll());
 				State next = new State(prv);
-				if(!seen(exploreSeen, prv) && (view[prv.getRow()][prv.getCol()] == Constants.EMPTY || view[prv.getRow()][prv.getCol()] == Constants.TREE )){
+				if(!seen(exploreSeen, prv) && !(next.getCol() == current.getCol() && next.getRow() == current.getRow())){
 					//check the surrounding evn of this empty entry
 					//it should have unknown mark 
-					boolean entry = false;
-					for(int row = prv.getRow()-2; row <= prv.getRow()+2; row ++){
-						for(int col = prv.getCol()-2; col <= prv.getCol()+2; col ++){
-							if(view[row][col] == Constants.UNKNOW){
-								entry = true;
-								break;
+					if(view[prv.getRow()][prv.getCol()] == Constants.EMPTY || view[prv.getRow()][prv.getCol()] == Constants.TREE ){
+						boolean entry = false;
+						breakLoop:
+						for(int row = prv.getRow()-2; row <= prv.getRow()+2; row ++){
+							for(int col = prv.getCol()-2; col <= prv.getCol()+2; col ++){
+								if(view[row][col] == Constants.UNKNOW){
+									entry = true;
+									break breakLoop;
+								}
 							}
 						}
-					}
-					
-					//check neighbor has water
-					boolean any_water = false;
-					if(view[prv.getRow()-1][prv.getCol()] == Constants.WATER){
-						any_water = true;
-					} else if (view[prv.getRow()+1][prv.getCol()] == Constants.WATER){
-						any_water = true;
-					} else if(view[prv.getRow()][prv.getCol()+1] == Constants.WATER){
-						any_water = true;
+						
+						//check neighbor has water
+						char any_water = ' ';
+						if(view[prv.getRow()-1][prv.getCol()] == Constants.WATER){
+							any_water = Constants.NORTH;
+							next.setRow(next.getRow()-1);
+						} else if (view[prv.getRow()+1][prv.getCol()] == Constants.WATER){
+							any_water = Constants.SOUTH;
+							next.setRow(next.getRow()+1);
 
-					} else if (view[prv.getRow()][prv.getCol()-1] == Constants.WATER){
-						any_water = true;
+						} else if(view[prv.getRow()][prv.getCol()+1] == Constants.WATER){
+							any_water = Constants.WEST;
+							next.setCol(next.getCol()-1);
 
-					}
-					
-					if(entry == true && any_water == true){
-						while(!(next.getCol() == current.getCol() && next.getRow() == current.getRow())){
-							//next.printState();
-							p.add(0,next);
-							next = next.getPreState();
+						} else if (view[prv.getRow()][prv.getCol()-1] == Constants.WATER){
+							any_water = Constants.EAST;
+							next.setCol(next.getCol()+1);
+
 
 						}
-						p.add(0,next);
-						break;
+						
+						if(entry == true && any_water != ' '){
+							//current is not water
+							p = toNode(view,current,next,Constants.WATER);
+							p.add(prv);
+							
+							break;
+						}
 					}
-					
+
 				}
 
 				next.setRow(prv.getRow()-1);
 				next.setCol(prv.getCol());
+
 				// check if player allow to go forward in north getDirection
 				if(!seen(visited, next) && (validWater(view,next) || valid(view,next))){
 					next.setPreState(prv);
@@ -219,6 +226,8 @@ public class Explore {
 				next = new State(prv);
 				next.setRow(prv.getRow()+1);
 				next.setCol(prv.getCol());
+
+
 				// check if player allow to go forward in south getDirection
 				if(!seen(visited, next)&& (validWater(view,next) || valid(view,next))){
 					next.setPreState(prv);
@@ -228,6 +237,7 @@ public class Explore {
 				next = new State(prv);
 				next.setRow(prv.getRow());
 				next.setCol(prv.getCol()-1);
+
 				// check if player allow to go forward in west getDirection
 				if(!seen(visited, next)&& (validWater(view,next)|| valid(view,next))){
 					next.setPreState(prv);
@@ -237,6 +247,7 @@ public class Explore {
 				next = new State(prv);
 				next.setRow(prv.getRow());
 				next.setCol(prv.getCol()+1);
+
 				// check if player allow to go forward in east getDirection
 				if(!seen(visited, next)&& (validWater(view,next)|| valid(view,next))){
 					next.setPreState(prv);
@@ -263,6 +274,96 @@ public class Explore {
 	}
 	
 
+	public ArrayList<State> toNode(char[][] view, State start, State target, char mode){
+		Queue<State> queue = new LinkedList<State>();
+		ArrayList<State> visited = new ArrayList<State>();
+		ArrayList<State> p = new ArrayList<State>();
+		
+		queue.add(start);
+		while(!queue.isEmpty() ){
+			State prv = new State(queue.poll());
+			State next = new State(prv);
+			
+			if(next.getRow() == target.getRow() && next.getCol() == target.getCol()){
+				while(!(next.getCol() == start.getCol() && next.getRow() == start.getRow())){
+					//next.printState();
+					p.add(0,next);
+					next = next.getPreState();
+				}
+				p.add(0,next);
+			
+			break;	
+			}
+			
+			
+			
+
+			next.setRow(prv.getRow()-1);
+			next.setCol(prv.getCol());
+			// check if player allow to go forward in north getDirection
+			if(!seen(visited, next)){
+				if(mode == Constants.WATER && validWater(view,next)){
+					next.setPreState(prv);
+					visited.add(next);
+					queue.add(next);
+				}else if(mode != Constants.WATER && valid(view,next)){
+					next.setPreState(prv);
+					visited.add(next);
+					queue.add(next);
+				}
+				
+			}
+			next = new State(prv);
+			next.setRow(prv.getRow()+1);
+			next.setCol(prv.getCol());
+
+			// check if player allow to go forward in south getDirection
+			if(!seen(visited, next)){
+				if(mode == Constants.WATER && validWater(view,next)){
+					next.setPreState(prv);
+					visited.add(next);
+					queue.add(next);
+				}else if(mode != Constants.WATER && valid(view,next)){
+					next.setPreState(prv);
+					visited.add(next);
+					queue.add(next);
+				}
+			}
+			next = new State(prv);
+			next.setRow(prv.getRow());
+			next.setCol(prv.getCol()-1);
+
+			// check if player allow to go forward in west getDirection
+			if(!seen(visited, next)){
+				if(mode == Constants.WATER && validWater(view,next)){
+					next.setPreState(prv);
+					visited.add(next);
+					queue.add(next);
+				}else if(mode != Constants.WATER && valid(view,next)){
+					next.setPreState(prv);
+					visited.add(next);
+					queue.add(next);
+				}
+			}
+			next = new State(prv);
+			next.setRow(prv.getRow());
+			next.setCol(prv.getCol()+1);
+
+			// check if player allow to go forward in east getDirection
+			if(!seen(visited, next)){
+				if(mode == Constants.WATER && validWater(view,next)){
+					next.setPreState(prv);
+					visited.add(next);
+					queue.add(next);
+				}else if(mode != Constants.WATER && valid(view,next)){
+					next.setPreState(prv);
+					visited.add(next);
+					queue.add(next);
+				}
+			}
+		}
+		return p;
+	}
 	
 	
 	
@@ -364,34 +465,40 @@ public class Explore {
 				next.setCol(prv.getCol()+1);
 				break;
 			}
+		if(output.size() == 0){
+			if(once == true && board[next.getRow()][next.getCol()] == Constants.WATER){
+				hasWater = true;
+			}
+			//check player's forward position has water or not
+			//find somewhere is water
+			if(hasWater == false){
+				ArrayList<Character> wayToWater = findPoint(board,current, Constants.WATER);
+				hasWater = true;
+				output.addAll(wayToWater);
+			}
 			
-		if(board[next.getRow()][next.getCol()] == Constants.WATER){
-			hasWater = true;
-		}
-		//check player's forward position has water or not
-		//find somewhere is water
-		if(hasWater == false && once == false){
-			ArrayList<Character> wayToWater = findPoint(board,current, Constants.UNKNOW);
-			hasWater = true;
-			once = true;
-			output.addAll(wayToWater);
-		}
-		
-
-		if(hasWater == true){
-			if(!seen(waterSeen,next) && validWater(board,next)){
-				waterSeen.add(next);
-				returnState = next;
-			   	pathToChar(board, returnState, current, path);
-			}else{
-				//find the closest next ? mark
-				if(path.size() == 0){
-					path.addAll(findPoint(board,current, Constants.UNKNOW));
-					System.out.println("-----------------PATH"+ path +"-----------------");
+			if(once == false){
+				if(output.size() == 0){
+					once = true;
 				}
-		
+			}
+			
+			if(hasWater == true && once == true){
+				if(!seen(waterSeen,next) && validWater(board,next)){
+					waterSeen.add(next);
+					returnState = next;
+				   	pathToChar(board, returnState, current, path);
+				}else{
+					//find the closest next ? mark
+					if(path.size() == 0){
+						path.addAll(findPoint(board,current, Constants.UNKNOW));
+						System.out.println("-----------------PATH"+ path +"-----------------");
+					}
+			
+				}
 			}
 		}
+
 		
 
 	}
@@ -468,19 +575,55 @@ public class Explore {
 			State next = new State(prv);
 			if(view[next.getRow()][next.getCol()] == target && !(next.getCol() == current.getCol() && next.getRow() == current.getRow())){
 				//return path
-				while(!(next.getCol() == current.getCol() && next.getRow() == current.getRow())){
-					p.add(0,next);
-					next = next.getPreState();
-				}
-				p.add(0,next);
-				for(State s : p){
-					if(inWater == false){
-						exploreSeen.add(s);
-					}else if(view[s.getRow()][s.getCol()] == Constants.WATER && inWater == true){
-						waterSeen.add(s);
+				if(target == Constants.WATER){
+					boolean checkQuestion = false;
+					Position origion =  new Position(next.getRow(),next.getCol());
+					questionLoop:
+					for(int row = origion.getRow()-2 ; row <= origion.getRow()+2; row++){
+						for(int col = origion.getCol()-2 ; col <= origion.getCol()+2; col++){
+							if(col > 0 && row >0 && col < Constants.BOARD_SIZE_COL && row < Constants.BOARD_SIZE_ROW){
+								if(view[row][col] == Constants.UNKNOW && view[origion.getRow()][col] == Constants.WATER && view[row][origion.getCol()] != Constants.WATER){
+									char t = Constants.BOUNDARY;
+									if(checkForward(view,origion,t)){
+										checkQuestion = true;
+									}
+									break questionLoop;
+									
+								}
+								
+							}
+						}
 					}
+					if(checkQuestion){
+						while(!(next.getCol() == current.getCol() && next.getRow() == current.getRow())){
+							p.add(0,next);
+							next = next.getPreState();
+							//next.printState();
+						}
+						 p.add(0,next);
+						for(State s : p){
+							 if(view[s.getRow()][s.getCol()] == Constants.WATER){
+								 waterSeen.add(s);
+							 }
+						}
+						break breakloop;
+					}
+					
+				} else {
+					while(!(next.getCol() == current.getCol() && next.getRow() == current.getRow())){
+						p.add(0,next);
+						next = next.getPreState();
+					}
+					p.add(0,next);
+					for(State s : p){
+						if(inWater == false){
+							exploreSeen.add(s);
+						}else if(view[s.getRow()][s.getCol()] == Constants.WATER && inWater == true){
+							waterSeen.add(s);
+						}
+					}
+					break breakloop;
 				}
-				break breakloop;
 			}
 			
 			if(!seen(exploreSeen, next) && !(next.getCol() == current.getCol() && next.getRow() == current.getRow()) && inWater == false){
@@ -500,7 +643,7 @@ public class Explore {
 				}
 			}
 			
-			if(!seen(waterSeen, next) && !(next.getCol() == current.getCol() && next.getRow() == current.getRow()) && inWater == true){
+			if(!seen(waterSeen, next) && !(next.getCol() == current.getCol() && next.getRow() == current.getRow()) && hasWater == true){
 				Position pos =  new Position(next.getRow(),next.getCol());
 				char t = Constants.BOUNDARY;
 				if(checkForward(view,pos,t)){
@@ -554,6 +697,7 @@ public class Explore {
 			next.setRow(prv.getRow());
 			next.setCol(prv.getCol()-1);
 			// check if player allow to go forward in west getDirection
+
 			if(!seen(visited, next)){
 				if(hasWater == true && validWater(view,next)){
 					next.setPreState(prv);
@@ -569,6 +713,7 @@ public class Explore {
 			next.setRow(prv.getRow());
 			next.setCol(prv.getCol()+1);
 			// check if player allow to go forward in east getDirection
+
 			if(!seen(visited, next)){
 				if(hasWater == true && validWater(view,next)){
 					next.setPreState(prv);
@@ -634,9 +779,15 @@ public class Explore {
 
 			}
 			
-	        if(view[next.getRow()][next.getCol()] == Constants.DOOR && next.getKey()){
-	        	output.add(Constants.UNLOCK_DOOR);
+	        if(view[next.getRow()][next.getCol()] == Constants.DOOR){
+	        	if(next.getKey()){
+		        	output.add(Constants.UNLOCK_DOOR);
+	        	}else if(next.getDynamite() >1){
+		        	output.add(Constants.BLAST_WALL_TREE);
+	        	}
+
 	        }
+
 	        if(view[next.getRow()][next.getCol()] == Constants.TREE && next.getAxe()){
 	        	output.add(Constants.CHOP_TREE);
 	        }
@@ -809,8 +960,12 @@ public class Explore {
 			return true;
 		}
 		// it is a door
-		else if(view[current.getRow()][current.getCol()] == Constants.DOOR && !current.getKey()){
-			return false;
+		else if(view[current.getRow()][current.getCol()] == Constants.DOOR){
+			if(current.getKey() == true || current.getDynamite() > 1){
+				return true;
+			}else{
+				return false;
+			}
 		} else if(view[current.getRow()][current.getCol()] == Constants.DYNAMITE){
 			return true;
 		}
@@ -822,6 +977,20 @@ public class Explore {
 	 * Check current position is valid or not in the water mode
 	 */
 	public boolean validWater(char[][] view, State current){
+		// view overflow or not
+		if(current.getRow() >  Constants.BOARD_SIZE_ROW-1 || current.getCol() > Constants.BOARD_SIZE_COL-1){
+			return false;
+		}
+		if(current.getRow() < 0 || current.getCol() < 0){
+			return false;
+		}
+		//check boundary 5X% area
+		if(current.getRow()+2 >  Constants.BOARD_SIZE_ROW-1 || current.getRow()-2 < 0){
+			return false;
+		}
+		if(current.getCol()+2 >  Constants.BOARD_SIZE_COL-1 || current.getCol()-2 < 0){
+			return false;
+		}
 		if(view[current.getRow()][current.getCol()] == Constants.WATER && current.getRaft() == true){
 			return true;
 		} else if(view[current.getRow()][current.getCol()] == Constants.UNKNOW){
