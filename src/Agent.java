@@ -161,8 +161,7 @@ public class Agent {
        } else {
            // there is no path currently
            if (getToItemPath == null || getToItemPath.isEmpty()) {
-               currBoard.printMap(currAgent);
-               currAgent.printState();
+               currBoard.updateNumTree();
                if((currBoard.treasure_positions != null && !currBoard.treasure_positions.isEmpty())
                        || currAgent.getTreasure()) {
                    if (searchCompletedPathProcedure()) {
@@ -276,7 +275,7 @@ public class Agent {
    }
 
     /**
-     * do all thing need to do a A star search and to the path for that search
+     * do all thing need to do a greedy A star search and to the path for that search
      * @return a boolean represent if there is a path or not
      */
    public boolean searchCompletedPathProcedure(){

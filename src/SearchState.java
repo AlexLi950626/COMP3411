@@ -287,18 +287,16 @@ public class SearchState implements Comparable{
 
     public String toString(){
         StringBuilder s = new StringBuilder();
-        s.append("currentPos: ").append(currAgentPosition.toString()).append(" ");
-        s.append("hasAxe: ").append(axe).append(" ");
-        s.append("hasRaft: ").append(raft).append(" ");
-        s.append("hasKey: ").append(key).append(" ");
-        s.append("numDynamite: ").append(dynamite).append(" ");
-        s.append("usedDynamite: ");
+        s.append(currAgentPosition.toString());
+        s.append(axe);
+        s.append(raft);
+        s.append(key);
+        s.append(dynamite);
         for(Position p : usedDynamite){
-            s.append(p.toString()).append(" ");
+            s.append(p.toString());
         }
-        s.append("Treasure: ").append(treasure).append(" ");
+        s.append(treasure);
         s.append(board.itemsToString());
-
         return s.toString();
     }
 

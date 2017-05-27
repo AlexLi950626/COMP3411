@@ -267,7 +267,21 @@ public class Board implements Cloneable {
     		break;
     	}
     }
-    
+
+    /**
+     * update number of tree in current map
+     */
+    public void updateNumTree(){
+        int i = 0;
+        for(int row = 0; row < board.length; row++){
+            for(int col = 0; col < board[0].length; col++){
+                if(getType(row, col) == Constants.TREE){
+                    i++;
+                }
+            }
+        }
+         numTree = i;
+    }
     /**
      * player get the item
      * board need to remove number of items in the board and store the positions of these items
@@ -537,27 +551,21 @@ public class Board implements Cloneable {
 
     public String itemsToString(){
         StringBuilder s = new StringBuilder();
-        s.append("Axe: ");
         for(Position a : axe_positions){
-            s.append(a.toString()).append(" ");
+            s.append(a.toString());
         }
-        s.append("Key : ");
         for(Position k : key_positions){
-            s.append(k.toString()).append(" ");
+            s.append(k.toString());
         }
-        s.append("Dynamite: ");
         for(Position d : dynamite_positions){
-            s.append(d.toString()).append(" ");
+            s.append(d.toString());
         }
-        s.append("Door: ");
         for(Position dd : door_positions){
-            s.append(dd.toString()).append(" ");
+            s.append(dd.toString());
         }
-        s.append("Treasure: ");
         for(Position t : treasure_positions){
-            s.append(t).append(" ");
+            s.append(t);
         }
-        s.append("Num Tree: ");
         s.append(numTree);
         return s.toString();
     }
