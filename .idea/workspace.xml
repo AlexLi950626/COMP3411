@@ -1,19 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="57b9cd26-5f57-434e-a713-7b976fe33745" name="Default" comment="A* debug, because didn't add to queue">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/COMP3411/SearchItem.class" afterPath="" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/SearchItem.java" afterPath="$PROJECT_DIR$/src/SearchCompletedPath.java" />
+    <list default="true" id="57b9cd26-5f57-434e-a713-7b976fe33745" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/COMP3411/Agent.class" afterPath="$PROJECT_DIR$/out/production/COMP3411/Agent.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/COMP3411/Board.class" afterPath="$PROJECT_DIR$/out/production/COMP3411/Board.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/COMP3411/Constants.class" afterPath="$PROJECT_DIR$/out/production/COMP3411/Constants.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/COMP3411/Explore.class" afterPath="$PROJECT_DIR$/out/production/COMP3411/Explore.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/COMP3411/SearchState.class" afterPath="$PROJECT_DIR$/out/production/COMP3411/SearchState.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Agent.java" afterPath="$PROJECT_DIR$/src/Agent.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Board.java" afterPath="$PROJECT_DIR$/src/Board.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Constants.java" afterPath="$PROJECT_DIR$/src/Constants.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/SearchState.java" afterPath="$PROJECT_DIR$/src/SearchState.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -28,8 +20,8 @@
       <file leaf-file-name="Agent.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Agent.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="328">
-              <caret line="172" column="20" lean-forward="true" selection-start-line="172" selection-start-column="20" selection-end-line="172" selection-end-column="20" />
+            <state relative-caret-position="395">
+              <caret line="181" column="33" lean-forward="false" selection-start-line="181" selection-start-column="33" selection-end-line="181" selection-end-column="33" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -40,8 +32,8 @@
       <file leaf-file-name="Board.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Board.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="325">
-              <caret line="547" column="27" lean-forward="false" selection-start-line="547" selection-start-column="27" selection-end-line="547" selection-end-column="27" />
+            <state relative-caret-position="-9087">
+              <caret line="31" column="0" lean-forward="true" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -52,8 +44,8 @@
       <file leaf-file-name="SearchState.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/SearchState.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="72">
-              <caret line="108" column="17" lean-forward="false" selection-start-line="108" selection-start-column="17" selection-end-line="108" selection-end-column="17" />
+            <state relative-caret-position="413">
+              <caret line="335" column="1" lean-forward="true" selection-start-line="335" selection-start-column="1" selection-end-line="335" selection-end-column="1" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -64,36 +56,10 @@
       <file leaf-file-name="SearchCompletedPath.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/SearchCompletedPath.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1476">
-              <caret line="97" column="13" lean-forward="false" selection-start-line="97" selection-start-column="13" selection-end-line="97" selection-end-column="13" />
+            <state relative-caret-position="324">
+              <caret line="98" column="0" lean-forward="true" selection-start-line="98" selection-start-column="0" selection-end-line="98" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#479#480#0" expanded="true" />
-                <element signature="e#522#523#0" expanded="true" />
-                <element signature="e#579#580#0" expanded="true" />
-                <element signature="e#624#625#0" expanded="true" />
-                <element signature="e#680#681#0" expanded="true" />
-                <element signature="e#725#726#0" expanded="true" />
-                <element signature="e#764#765#0" expanded="true" />
-                <element signature="e#794#795#0" expanded="true" />
-                <element signature="e#833#834#0" expanded="true" />
-                <element signature="e#863#864#0" expanded="true" />
-                <element signature="e#900#901#0" expanded="true" />
-                <element signature="e#928#929#0" expanded="true" />
-                <element signature="e#965#966#0" expanded="true" />
-                <element signature="e#993#994#0" expanded="true" />
-                <element signature="e#1024#1025#0" expanded="true" />
-                <element signature="e#1055#1056#0" expanded="true" />
-                <element signature="e#1086#1087#0" expanded="true" />
-                <element signature="e#1117#1118#0" expanded="true" />
-                <element signature="e#1146#1147#0" expanded="true" />
-                <element signature="e#1175#1176#0" expanded="true" />
-                <element signature="e#1204#1205#0" expanded="true" />
-                <element signature="e#1233#1234#0" expanded="true" />
-                <element signature="e#1285#1286#0" expanded="true" />
-                <element signature="e#1337#1338#0" expanded="true" />
-                <element signature="e#1392#1393#0" expanded="true" />
-                <element signature="e#1455#1456#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -272,7 +238,6 @@
           <option name="myCanBeAbsent" value="false" />
           <option name="myId" value="UPDATED" />
           <PATH vcs="Git" revision="">$PROJECT_DIR$/src/Agent.java</PATH>
-          <PATH vcs="Git" revision="">$PROJECT_DIR$/src/Constants.java</PATH>
           <PATH vcs="Git" revision="">$PROJECT_DIR$/src/Explore.java</PATH>
         </FILE-GROUP>
         <FILE-GROUP>
@@ -542,7 +507,7 @@
       <workItem from="1495800367073" duration="5255000" />
       <workItem from="1495846052426" duration="6225000" />
       <workItem from="1495852411579" duration="9764000" />
-      <workItem from="1495863606260" duration="1753000" />
+      <workItem from="1495863606260" duration="4953000" />
     </task>
     <task id="LOCAL-00001" summary="tests">
       <created>1495339190742</created>
@@ -642,15 +607,21 @@
       <option name="project" value="LOCAL" />
       <updated>1495801661585</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="new A *">
+      <created>1495865407235</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1495865407235</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="174191000" />
+    <option name="totallyTimeSpent" value="177391000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="706" y="-4" width="1321" height="780" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -660,7 +631,7 @@
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3763608" sideWeight="0.5058916" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18506998" sideWeight="0.4941084" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.58631414" sideWeight="0.4941084" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32882884" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -730,7 +701,8 @@
     <MESSAGE value="fixed search bug, because I was using the dest reference from the arraylist, rather than create a new position and search on this" />
     <MESSAGE value="second A* prototype, use different non admissible heuristic, with different method, now it search for whole complete path" />
     <MESSAGE value="A* debug, because didn't add to queue" />
-    <option name="LAST_COMMIT_MESSAGE" value="A* debug, because didn't add to queue" />
+    <MESSAGE value="new A *" />
+    <option name="LAST_COMMIT_MESSAGE" value="new A *" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -952,16 +924,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Board.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="325">
-          <caret line="547" column="27" lean-forward="false" selection-start-line="547" selection-start-column="27" selection-end-line="547" selection-end-column="27" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Constants.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="447">
@@ -972,44 +934,28 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/SearchCompletedPath.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1476">
-          <caret line="97" column="13" lean-forward="false" selection-start-line="97" selection-start-column="13" selection-end-line="97" selection-end-column="13" />
+        <state relative-caret-position="324">
+          <caret line="98" column="0" lean-forward="true" selection-start-line="98" selection-start-column="0" selection-end-line="98" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#479#480#0" expanded="true" />
-            <element signature="e#522#523#0" expanded="true" />
-            <element signature="e#579#580#0" expanded="true" />
-            <element signature="e#624#625#0" expanded="true" />
-            <element signature="e#680#681#0" expanded="true" />
-            <element signature="e#725#726#0" expanded="true" />
-            <element signature="e#764#765#0" expanded="true" />
-            <element signature="e#794#795#0" expanded="true" />
-            <element signature="e#833#834#0" expanded="true" />
-            <element signature="e#863#864#0" expanded="true" />
-            <element signature="e#900#901#0" expanded="true" />
-            <element signature="e#928#929#0" expanded="true" />
-            <element signature="e#965#966#0" expanded="true" />
-            <element signature="e#993#994#0" expanded="true" />
-            <element signature="e#1024#1025#0" expanded="true" />
-            <element signature="e#1055#1056#0" expanded="true" />
-            <element signature="e#1086#1087#0" expanded="true" />
-            <element signature="e#1117#1118#0" expanded="true" />
-            <element signature="e#1146#1147#0" expanded="true" />
-            <element signature="e#1175#1176#0" expanded="true" />
-            <element signature="e#1204#1205#0" expanded="true" />
-            <element signature="e#1233#1234#0" expanded="true" />
-            <element signature="e#1285#1286#0" expanded="true" />
-            <element signature="e#1337#1338#0" expanded="true" />
-            <element signature="e#1392#1393#0" expanded="true" />
-            <element signature="e#1455#1456#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/Board.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-9087">
+          <caret line="31" column="0" lean-forward="true" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/SearchState.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="108" column="17" lean-forward="false" selection-start-line="108" selection-start-column="17" selection-end-line="108" selection-end-column="17" />
+        <state relative-caret-position="413">
+          <caret line="335" column="1" lean-forward="true" selection-start-line="335" selection-start-column="1" selection-end-line="335" selection-end-column="1" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -1018,8 +964,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Agent.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="328">
-          <caret line="172" column="20" lean-forward="true" selection-start-line="172" selection-start-column="20" selection-end-line="172" selection-end-column="20" />
+        <state relative-caret-position="395">
+          <caret line="181" column="33" lean-forward="false" selection-start-line="181" selection-start-column="33" selection-end-line="181" selection-end-column="33" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

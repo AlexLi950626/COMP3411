@@ -160,7 +160,7 @@ public class Agent {
            }
        } else {
            // there is no path currently
-           /*if (getToItemPath == null || getToItemPath.isEmpty()) {
+           if (getToItemPath == null || getToItemPath.isEmpty()) {
                currBoard.printMap(currAgent);
                currAgent.printState();
                if((currBoard.treasure_positions != null && !currBoard.treasure_positions.isEmpty())
