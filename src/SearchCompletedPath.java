@@ -87,7 +87,7 @@ public class SearchCompletedPath{
         while(!statePQ.isEmpty()){
             // get a state from queue
             SearchState currentState = statePQ.poll();
-            //currentState.printSearchState();
+            currentState.printSearchState();
             // if destination is reached return path
             Position currPosition = currentState.getAgentPosition();
             char currPositionType = currentState.getTypeInBoard(currPosition.getRow(), currPosition.getCol());
