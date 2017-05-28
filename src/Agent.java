@@ -186,55 +186,42 @@ public class Agent {
     	   //try to explore the whole graph, including land and water
     	   //first search valid land then water
     	   //finished water then search valid land again
-           action = e.checkExplore(currBoard.getBoard(), currAgent);
-           if (action != ' ') {
-               currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
-               currBoard.printMap(currAgent);
-               //currAgent.setPreState(prv);
-               prv = new State(currAgent);
-               return action;
-           } else {
-        	   if(waterExplore){
-        		   //end of the water explore
-        		   System.out.println("disable water");
-        		   action = e.disableWaterExplore(currBoard.getBoard(),currAgent);
-        		   if(action != ' '){
-            		   currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
-                       currAgent.setPreState(prv);
-                       prv = new State(currAgent);
-            		   waterExplore = false;
-            		   landExplore = true;
-        		   }else{
-        			   //check anything can search
-                	   //if there is nothing to search
-                	   //set the firstExplore up
-        			   firstExplore = true;
-        			   waterExplore = false;
-        		   }
-        		   return action;
-        	   } else if(landExplore){
-        		   //check tree
-        		   //check any tree to explore
-        		   //if not tree waiting for explore
-        		   // go water mode
-        		   e.checkTree(currBoard.getBoard());
-
-        		   if(!e.returnCutTree().isEmpty()){
-        			   System.out.println("cut tree list:"  + e.returnCutTree());
-        			   e.enableCutTree();
-        		   }else{
-        			   System.out.println("----------------------------Tree Empty!---------------------------");
-        			   e.disableCutTree();
-        		   }
-        		   
-        		   if(e.returFlag() == false){
-        			   //end of the land explore
-                       e.enableWaterExplore();
-                       waterExplore = true;
-                       landExplore = false;
-        		   }
-        	  }
-           }
+	       action = e.checkExplore(currBoard.getBoard(), currAgent);
+	       if (action != ' ') {
+	           currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
+	           currBoard.printMap(currAgent);
+	           //currAgent.setPreState(prv);
+	           prv = new State(currAgent);
+	           return action;
+	       } else {
+	    	   //check anything can search
+	    	   //if there is nothing to search
+	    	   //set the firstExplore up
+	    	   //firstExplore == true;
+	    	   
+	           //firstLandExplore = true;
+	    	   if(waterExplore){
+	    		   //end of the water explore
+	    		   System.out.println("disable water");
+	    		   action = e.disableWaterExplore(currBoard.getBoard(),currAgent);
+	    		   if(action != ' '){
+	        		   currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
+	                   currAgent.setPreState(prv);
+	                   prv = new State(currAgent);
+	        		   waterExplore = false;
+	        		   landExplore = true;
+	    		   }else{
+	    			   firstExplore = true;
+	    			   waterExplore = false;
+	    		   }
+	    		   return action;
+	    	   } else if(landExplore){
+	    		   //end of the land explore
+	               e.enableWaterExplore();
+	               waterExplore = true;
+	               landExplore = false;
+	    	  }
+	       }
        } else {
            // there is no path currently
            if (getToItemPath == null || getToItemPath.isEmpty()) {
