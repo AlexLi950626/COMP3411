@@ -9,6 +9,7 @@
 
 import java.io.*;
 import java.net.*;
+import java.util.HashMap;
 import java.util.ArrayList;
 
 public class Agent {
@@ -29,6 +30,9 @@ public class Agent {
 
     //the first point is always the place you want to go;
     private ArrayList<Character> getToItemPath;
+    
+    // A hashmap that contain tree position as a string and integer to define the operation
+    private Boolean checkTree;
 
 
     /**
@@ -43,6 +47,7 @@ public class Agent {
         firstExplore = false;
         landExplore= true;
         waterExplore = false;
+        checkTree = false;
     }
 
    public static void main( String[] args )
@@ -130,12 +135,6 @@ public class Agent {
                prv = new State(currAgent);
                return action;
            } else {
-        	   //check anything can search
-        	   //if there is nothing to search
-        	   //set the firstExplore up
-        	   //firstExplore == true;
-        	   
-               //firstLandExplore = true;
         	   if(waterExplore){
         		   //end of the water explore
         		   System.out.println("disable water");
@@ -147,15 +146,32 @@ public class Agent {
             		   waterExplore = false;
             		   landExplore = true;
         		   }else{
+        			   //check anything can search
+                	   //if there is nothing to search
+                	   //set the firstExplore up
         			   firstExplore = true;
         			   waterExplore = false;
         		   }
         		   return action;
         	   } else if(landExplore){
-        		   //end of the land explore
-                   e.enableWaterExplore();
-                   waterExplore = true;
-                   landExplore = false;
+        		   //check tree
+        		   //check any tree to explore
+        		   //if not tree waiting for explore
+        		   // go water mode
+        		   e.checkTree(currBoard.getBoard());
+
+        		   if(!e.returnCutTree().isEmpty()){
+        			   e.enableCutTree();
+        		   }else{
+        			   e.disableCutTree();
+        		   }
+        		   
+        		   if(!e.returnTree().isEmpty() && e.returnCutTree().isEmpty()){
+        			   //end of the land explore
+                       e.enableWaterExplore();
+                       waterExplore = true;
+                       landExplore = false;
+        		   }
         	  }
            }
        } else {

@@ -35,5 +35,10 @@ public class Constants {
     // view size
     public static final int VIEW_ROW = 5;
     public static final int VIEW_COL = 5;
+    
+    //tree mode
+    public static final int SEEN = 0;
+    public static final int CUT = 1;
+    public static final int WAIT = 2;
 
 }

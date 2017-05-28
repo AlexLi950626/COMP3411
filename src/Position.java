@@ -68,7 +68,7 @@ public class Position implements Cloneable {
      * return string format of the object
      */
     public String toString(){
-        return "[" + row + ", " + col + "]";
+        return row + "," + col;
     }
 
     @Override
