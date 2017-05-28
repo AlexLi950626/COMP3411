@@ -508,10 +508,6 @@ public class Explore {
 				//go east
 				output.addAll(directionAction(Constants.EAST, current.getDirection()));
 
-			} else {
-				//bad path
-				//System.out.println("bad path");
-
 			}
 
 			if(view[next.getRow()][next.getCol()] == Constants.DOOR && next.getKey()){
@@ -743,12 +739,6 @@ public class Explore {
 				//go east
 				output.addAll(directionAction(Constants.EAST,prv.getDirection()));
 				p.get(i+1).updateDirection(Constants.EAST);
-
-
-			} else {
-				//bad path
-				//System.out.println("bad path");
-
 			}
 			
 	        if(view[next.getRow()][next.getCol()] == Constants.DOOR){
