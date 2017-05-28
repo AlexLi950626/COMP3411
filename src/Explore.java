@@ -9,6 +9,7 @@ public class Explore {
     private boolean waterFlag;
     private boolean hasWater;
     private boolean once;
+    private boolean exploreLand;
     
 	public Explore(){
 		exploreSeen = new ArrayList<State>();
@@ -18,21 +19,28 @@ public class Explore {
         hasWater = false; 
         once = false;
         waterFlag = false;
+        exploreLand = false;
 	}
 	
-	/*
+	/**
 	 * if current situation is allow the map to explore then it will start explore 
 	 * if the map is finished exploring then it will return char '0' instead
+	 * 
+	 * it will store a path char and return char one by one
+	 * each explore search or bfs search should wait until all
+	 * char in path is finished. It is because it need to search from the agent current state.
+	 * 
+	 * @param view
+	 * @param player
+	 * @return
 	 */
-	public char checkExplore(char[][] board, State player){
+	public char checkExplore(Board view, State player){
 		//explore graph 
 	   	//only the environment surrounding the current position, Using BFS
 	   	//Currently, it won't explore the water or the graph in the other side
 	   	char action = ' ';
 		if(inWater == false){
-		   	explore(board, player);
-
-		   	//System.out.println("command: " + path);
+		   	explore(view, player);
 
 		   	//if the path is null then the explore is done do some other search
 		   	if(path.size() != 0){
@@ -46,7 +54,7 @@ public class Explore {
    			//if the current forward position is going to be water
    			if(player.getRaft() == true){
    				waterFlag = true;
-	   			exploreWater(board,player,path);
+	   			exploreWater(view,player,path);
 		   	}
    			
    			if(path.size() != 0){
@@ -56,14 +64,15 @@ public class Explore {
 		   		// for water testing to get axe and tree 
 		   		// can be delete later
 			   		if(player.getAxe() == false){
-			   			path.addAll(findPoint(board,player,Constants.AXE));
+			   			path.addAll(findPoint(view,player,Constants.AXE));
 
 			   			if(path.size() != 0){
 					       	action = path.get(0) ; //get the first element from the path
 					        path.remove(0);
 					   	}
 			   		}else{
-				   		path.addAll(findPoint(board,player,Constants.TREE));
+			   			//find tree to cut
+				   		path.addAll(findPoint(view,player,Constants.TREE));
 				   		
    						if(path.size() != 0){
    					       	action = path.get(0) ; //get the first element from the path
@@ -78,23 +87,32 @@ public class Explore {
    		return action;
 	}
 	
-	
-	/*
+	/**
 	 * Enable water search
 	 * Need to call exploreCheck after enable
+	 * Set flag on
 	 */
 	public void enableWaterExplore(){
 		this.inWater = true;
 	}
 	
 	
-	/*
-	 * Enable water search
+	/**
+	 * Disable water explore
+	 * Need to find the point which might be tree or empty and contain unknown position
+	 * And use BFS to go there
+	 * If it return ' ' then it means no new island can land on
+	 * 
+	 * @param board
+	 * @param current
+	 * @return
 	 */
-	public Character disableWaterExplore(char[][] view, State current){
+	public Character disableWaterExplore(Board board, State current){
+
+		char[][] view = board.getBoard();
 		char action = ' ';
-		System.out.println("explore!");
-		if(inWater == true && current.getRaft() == true){
+    	/* Find the closest place which not explore yet to the land*/
+		if(inWater == true && current.getRaft() == true){ // agent get into water and still in the water
 			Queue<State> queue = new LinkedList<State>();
 			ArrayList<State> visited = new ArrayList<State>();
 			ArrayList<State> p = new ArrayList<State>();
@@ -105,7 +123,7 @@ public class Explore {
 				if(!seen(exploreSeen, prv) && !(next.getCol() == current.getCol() && next.getRow() == current.getRow())){
 					//check the surrounding evn of this empty entry
 					//it should have unknown mark 
-					if(view[prv.getRow()][prv.getCol()] == Constants.EMPTY || view[prv.getRow()][prv.getCol()] == Constants.TREE ){
+					if(view[prv.getRow()][prv.getCol()] == Constants.TREE || view[prv.getRow()][prv.getCol()] == Constants.EMPTY ){
 						boolean entry = false;
 						breakLoop:
 						for(int row = prv.getRow()-2; row <= prv.getRow()+2; row ++){
@@ -118,28 +136,52 @@ public class Explore {
 						}
 						
 						//check neighbor has water
-						char any_water = ' ';
+						boolean any_water = false;
 						if(view[prv.getRow()-1][prv.getCol()] == Constants.WATER){
-							any_water = Constants.NORTH;
-							next.setRow(next.getRow()-1);
+							any_water = true;
+							//next.setRow(next.getRow()-1);
 						} else if (view[prv.getRow()+1][prv.getCol()] == Constants.WATER){
-							any_water = Constants.SOUTH;
-							next.setRow(next.getRow()+1);
+							any_water = true;
+							//next.setRow(next.getRow()+1);
 
 						} else if(view[prv.getRow()][prv.getCol()+1] == Constants.WATER){
-							any_water = Constants.WEST;
-							next.setCol(next.getCol()-1);
+							any_water = true;
+							//next.setCol(next.getCol()-1);
 
 						} else if (view[prv.getRow()][prv.getCol()-1] == Constants.WATER){
-							any_water = Constants.EAST;
-							next.setCol(next.getCol()+1);
-
-
+							any_water = true;
+							//next.setCol(next.getCol()+1);
 						}
 						
-						if(entry == true && any_water != ' '){
+						if(entry == true && any_water == true){
 							//current is not water
-							p = toNode(view,current,next,Constants.WATER);
+							//have to find the entry close to the current agent pos
+							if(prv.getRow() > current.getRow()){
+								if(view[prv.getRow()-1][prv.getCol()] == Constants.WATER){
+									next.setRow(next.getRow()-1);
+									next.setCol(prv.getCol());
+								}
+							}else{
+								if(view[prv.getRow()+1][prv.getCol()] == Constants.WATER){
+									next.setRow(next.getRow()+1);
+									next.setCol(prv.getCol());
+								}
+							}
+							if(prv.getCol() > current.getCol()){
+								if(view[prv.getRow()][prv.getCol()-1] == Constants.WATER){
+									next.setRow(next.getRow());
+									next.setRow(next.getCol()-1);
+								}
+							}else{
+								if(view[prv.getRow()][prv.getCol()+1] == Constants.WATER){
+									next.setRow(next.getRow());
+									next.setRow(next.getCol()+1);
+								}
+							}
+							
+							//get the water path postion
+							p = toNode(board,current,next,Constants.WATER);
+							//put the land position on
 							p.add(prv);
 							
 							break;
@@ -148,11 +190,13 @@ public class Explore {
 
 				}
 
+				//BFS direction analyze
+
 				next.setRow(prv.getRow()-1);
 				next.setCol(prv.getCol());
 
 				// check if player allow to go forward in north getDirection
-				if(!seen(visited, next) && (validWater(view,next) || valid(view,next))){
+				if(!seen(visited, next) && (validWater(board,next) || valid(board,next))){
 					next.setPreState(prv);
 					visited.add(next);
 					queue.add(next);
@@ -163,7 +207,7 @@ public class Explore {
 
 
 				// check if player allow to go forward in south getDirection
-				if(!seen(visited, next)&& (validWater(view,next) || valid(view,next))){
+				if(!seen(visited, next)&& (validWater(board,next) || valid(board,next))){
 					next.setPreState(prv);
 					visited.add(next);
 					queue.add(next);
@@ -173,7 +217,7 @@ public class Explore {
 				next.setCol(prv.getCol()-1);
 
 				// check if player allow to go forward in west getDirection
-				if(!seen(visited, next)&& (validWater(view,next)|| valid(view,next))){
+				if(!seen(visited, next)&& (validWater(board,next)|| valid(board,next))){
 					next.setPreState(prv);
 					visited.add(next);
 					queue.add(next);
@@ -183,20 +227,20 @@ public class Explore {
 				next.setCol(prv.getCol()+1);
 
 				// check if player allow to go forward in east getDirection
-				if(!seen(visited, next)&& (validWater(view,next)|| valid(view,next))){
+				if(!seen(visited, next)&& (validWater(board,next)|| valid(board,next))){
 					next.setPreState(prv);
 					visited.add(next);
 					queue.add(next);
 				}
 			}
 
-			path.addAll(BFSpath(view,p));
+			path.addAll(BFSpath(board,p));
 			if(path.size() != 0){
 				action = path.get(0) ; //get the first element from the path
 		        path.remove(0);
 			}
-			System.out.println("path -----------------------: " + path);
-	    	/* Find the closest place which not explore yet to the land*/
+
+
 	        inWater = false;
 	        hasWater = false; 
 	        once = false;
@@ -207,8 +251,16 @@ public class Explore {
         return action;
 	}
 	
-
-	public ArrayList<State> toNode(char[][] view, State start, State target, char mode){
+	/**
+	 * Use BFS to find the specific position
+	 * it will return a arraylist contain state path
+	 * @param board
+	 * @param start
+	 * @param target
+	 * @param mode
+	 * @return
+	 */
+	public ArrayList<State> toNode(Board board, State start, State target, char mode){
 		Queue<State> queue = new LinkedList<State>();
 		ArrayList<State> visited = new ArrayList<State>();
 		ArrayList<State> p = new ArrayList<State>();
@@ -217,10 +269,8 @@ public class Explore {
 		while(!queue.isEmpty() ){
 			State prv = new State(queue.poll());
 			State next = new State(prv);
-			
 			if(next.getRow() == target.getRow() && next.getCol() == target.getCol()){
 				while(!(next.getCol() == start.getCol() && next.getRow() == start.getRow())){
-					//next.printState();
 					p.add(0,next);
 					next = next.getPreState();
 				}
@@ -233,11 +283,11 @@ public class Explore {
 			next.setCol(prv.getCol());
 			// check if player allow to go forward in north getDirection
 			if(!seen(visited, next)){
-				if(mode == Constants.WATER && validWater(view,next)){
+				if(mode == Constants.WATER && validWater(board,next)){
 					next.setPreState(prv);
 					visited.add(next);
 					queue.add(next);
-				}else if(mode != Constants.WATER && valid(view,next)){
+				}else if(mode != Constants.WATER && valid(board,next)){
 					next.setPreState(prv);
 					visited.add(next);
 					queue.add(next);
@@ -250,11 +300,11 @@ public class Explore {
 
 			// check if player allow to go forward in south getDirection
 			if(!seen(visited, next)){
-				if(mode == Constants.WATER && validWater(view,next)){
+				if(mode == Constants.WATER && validWater(board,next)){
 					next.setPreState(prv);
 					visited.add(next);
 					queue.add(next);
-				}else if(mode != Constants.WATER && valid(view,next)){
+				}else if(mode != Constants.WATER && valid(board,next)){
 					next.setPreState(prv);
 					visited.add(next);
 					queue.add(next);
@@ -266,11 +316,11 @@ public class Explore {
 
 			// check if player allow to go forward in west getDirection
 			if(!seen(visited, next)){
-				if(mode == Constants.WATER && validWater(view,next)){
+				if(mode == Constants.WATER && validWater(board,next)){
 					next.setPreState(prv);
 					visited.add(next);
 					queue.add(next);
-				}else if(mode != Constants.WATER && valid(view,next)){
+				}else if(mode != Constants.WATER && valid(board,next)){
 					next.setPreState(prv);
 					visited.add(next);
 					queue.add(next);
@@ -279,14 +329,13 @@ public class Explore {
 			next = new State(prv);
 			next.setRow(prv.getRow());
 			next.setCol(prv.getCol()+1);
-
 			// check if player allow to go forward in east getDirection
 			if(!seen(visited, next)){
-				if(mode == Constants.WATER && validWater(view,next)){
+				if(mode == Constants.WATER && validWater(board,next)){
 					next.setPreState(prv);
 					visited.add(next);
 					queue.add(next);
-				}else if(mode != Constants.WATER && valid(view,next)){
+				}else if(mode != Constants.WATER && valid(board,next)){
 					next.setPreState(prv);
 					visited.add(next);
 					queue.add(next);
@@ -296,21 +345,21 @@ public class Explore {
 		return p;
 	}
 	
-	
-	
-	/*
+	/**
 	 * This method is trying to explore the unknown node in the board
 	 * It will try to follow the current direction till some points that cannot move forward anymore
-	 * the it will use BFS to search the closest unknown point
+	 * If it cannot move anymore use BFS to find the next unknown point
+	 * @param board
+	 * @param current
 	 */
 	
-	public void explore(char[][] view, State current){
+	public void explore(Board board, State current){
+		exploreLand = true;
 		State returnState = null;
 		//exploreSeen.add(current);
 		State prv = new State(current);
 		State next = new State(prv);
 		//walk until current direction doesn't have path anymore
-
 		switch(current.getDirection()){
 		case Constants.NORTH:
 			next.setRow(prv.getRow()-1);
@@ -330,26 +379,27 @@ public class Explore {
 			break;
 		}
 		
-		if(!seen(exploreSeen,next) && valid(view,next)){
+		if(!seen(exploreSeen,next) && valid(board,next)){
 			exploreSeen.add(prv);
 			returnState = next;
 			//check forward and put node to quque
-		   	pathToChar(view, returnState, current, path);
+		   	pathToChar(board, returnState, current, path);
 		}else{
 			//find the closest next ? mark
 			if(path.size() == 0){
-				path.addAll(findPoint(view,current,Constants.UNKNOW));
+				path.addAll(findPoint(board,current,Constants.UNKNOW));
 			}
 
 		}
-		
+		exploreLand = false;
 
 	}
 	
 	/*
 	 * Explore water area
 	 */
-	public void exploreWater(char[][] board, State current, ArrayList<Character> output){
+	public void exploreWater(Board view, State current, ArrayList<Character> output){
+		char[][] board = view.getBoard();
 		State prv = new State(current);
 		State next = new State(prv);
 		State returnState = null;
@@ -380,7 +430,7 @@ public class Explore {
 			//check player's forward position has water or not
 			//find somewhere is water
 			if(hasWater == false){
-				ArrayList<Character> wayToWater = findPoint(board,current, Constants.WATER);
+				ArrayList<Character> wayToWater = findPoint(view,current, Constants.WATER);
 				hasWater = true;
 				output.addAll(wayToWater);
 			}
@@ -392,15 +442,14 @@ public class Explore {
 			}
 			
 			if(hasWater == true && once == true){
-				if(!seen(waterSeen,next) && validWater(board,next)){
+				if(!seen(waterSeen,next) && validWater(view,next)){
 					waterSeen.add(next);
 					returnState = next;
-				   	pathToChar(board, returnState, current, path);
+				   	pathToChar(view, returnState, current, path);
 				}else{
-					//find the closest next ? mark
+					//find the closest next ? mark or the place can find question mark
 					if(path.size() == 0){
-						path.addAll(findPoint(board,current, Constants.UNKNOW));
-						System.out.println("-----------------PATH"+ path +"-----------------");
+						path.addAll(findPoint(view,current, Constants.UNKNOW));
 					}
 			
 				}
@@ -411,8 +460,12 @@ public class Explore {
 
 	}
 	
-	/*
+	
+	/**
 	 * check current position is in the array list or not
+	 * @param seen
+	 * @param test
+	 * @return
 	 */
 	public boolean seen(ArrayList<State> seen, State test){
 		for(State s: seen){
@@ -422,13 +475,19 @@ public class Explore {
 		}
 		return false;
 	}
-	
-	/*
+
+	/**
 	 * This method is used to translate the action to next valid point
 	 * However, we are using BFS, the node from the queue will have different getPreState node
 	 * Then we also need to calculate the path to go back to the getPreState node
+	 * It allow to open the door and cut the tree
+	 * @param board
+	 * @param path
+	 * @param current
+	 * @param output
 	 */
-	public void pathToChar(char[][] view, State path, State current, ArrayList<Character> output){
+	public void pathToChar(Board board, State path, State current, ArrayList<Character> output){
+		char[][] view = board.getBoard();
 		if(output.size() == 0){
 			// translate the path to next point to command
 			State next = new State(path);
@@ -451,7 +510,7 @@ public class Explore {
 
 			} else {
 				//bad path
-				System.out.println("bad path");
+				//System.out.println("bad path");
 
 			}
 
@@ -465,11 +524,17 @@ public class Explore {
 		}
 
 	}
-	
-	/*
-	 * Find the closest path to the given target by BFS
+
+	/**
+	 * Find the closest path to the given target by BFS in different mode
+	 * it will try to find the valid point contain unexplore point
+	 * @param board
+	 * @param current
+	 * @param target
+	 * @return
 	 */
-	public ArrayList<Character> findPoint(char[][] view, State current, char target){
+	public ArrayList<Character> findPoint(Board board, State current, char target){
+		char[][] view = board.getBoard();
 		ArrayList<Character> output = new ArrayList<Character>();
 		//write a bfs to water from current
 		// BFS uses Queue data structure
@@ -492,7 +557,7 @@ public class Explore {
 							if(col > 0 && row >0 && col < Constants.BOARD_SIZE_COL && row < Constants.BOARD_SIZE_ROW){
 								if(view[row][col] == Constants.UNKNOW && view[origion.getRow()][col] == Constants.WATER && view[row][origion.getCol()] != Constants.WATER){
 									char t = Constants.BOUNDARY;
-									if(checkForward(view,origion,t)){
+									if(checkForward(board,origion,t)){
 										checkQuestion = true;
 									}
 									break questionLoop;
@@ -506,7 +571,6 @@ public class Explore {
 						while(!(next.getCol() == current.getCol() && next.getRow() == current.getRow())){
 							p.add(0,next);
 							next = next.getPreState();
-							//next.printState();
 						}
 						 p.add(0,next);
 						for(State s : p){
@@ -537,11 +601,10 @@ public class Explore {
 			if(!seen(exploreSeen, next) && !(next.getCol() == current.getCol() && next.getRow() == current.getRow()) && inWater == false){
 				Position pos =  new Position(next.getRow(),next.getCol());
 				char t = Constants.WATER;
-				if(checkForward(view,pos,t)){
+				if(checkForward(board,pos,t)){
 					while(!(next.getCol() == current.getCol() && next.getRow() == current.getRow())){
 						p.add(0,next);
 						next = next.getPreState();
-						//next.printState();
 					}
 					 p.add(0,next);
 					for(State s : p){
@@ -554,11 +617,10 @@ public class Explore {
 			if(!seen(waterSeen, next) && !(next.getCol() == current.getCol() && next.getRow() == current.getRow()) && hasWater == true){
 				Position pos =  new Position(next.getRow(),next.getCol());
 				char t = Constants.BOUNDARY;
-				if(checkForward(view,pos,t)){
+				if(checkForward(board,pos,t)){
 					while(!(next.getCol() == current.getCol() && next.getRow() == current.getRow())){
 						p.add(0,next);
 						next = next.getPreState();
-						//next.printState();
 					}
 					 p.add(0,next);
 					for(State s : p){
@@ -575,11 +637,11 @@ public class Explore {
 			next.setCol(prv.getCol());
 			// check if player allow to go forward in north getDirection
 			if(!seen(visited, next)){
-				if(hasWater == true && validWater(view,next)){
+				if(hasWater == true && validWater(board,next)){
 					next.setPreState(prv);
 					visited.add(next);
 					queue.add(next);
-				}else if(hasWater == false && valid(view, next)){
+				}else if(hasWater == false && valid(board, next)){
 					next.setPreState(prv);
 					visited.add(next);
 					queue.add(next);
@@ -591,11 +653,11 @@ public class Explore {
 			next.setCol(prv.getCol());
 			// check if player allow to go forward in south getDirection
 			if(!seen(visited, next)){
-				if(hasWater == true && validWater(view,next)){
+				if(hasWater == true && validWater(board,next)){
 					next.setPreState(prv);
 					visited.add(next);
 					queue.add(next);
-				}else if(hasWater == false && valid(view, next)){
+				}else if(hasWater == false && valid(board, next)){
 					next.setPreState(prv);
 					visited.add(next);
 					queue.add(next);
@@ -607,11 +669,11 @@ public class Explore {
 			// check if player allow to go forward in west getDirection
 
 			if(!seen(visited, next)){
-				if(hasWater == true && validWater(view,next)){
+				if(hasWater == true && validWater(board,next)){
 					next.setPreState(prv);
 					visited.add(next);
 					queue.add(next);
-				}else if(hasWater == false && valid(view, next)){
+				}else if(hasWater == false && valid(board, next)){
 					next.setPreState(prv);
 					visited.add(next);
 					queue.add(next);
@@ -623,11 +685,11 @@ public class Explore {
 			// check if player allow to go forward in east getDirection
 
 			if(!seen(visited, next)){
-				if(hasWater == true && validWater(view,next)){
+				if(hasWater == true && validWater(board,next)){
 					next.setPreState(prv);
 					visited.add(next);
 					queue.add(next);
-				}else if(hasWater == false && valid(view, next)){
+				}else if(hasWater == false && valid(board, next)){
 					next.setPreState(prv);
 					visited.add(next);
 					queue.add(next);
@@ -637,17 +699,20 @@ public class Explore {
 		}
 		
 
-		output = BFSpath(view, p);
-		//System.out.println(output);
-
+		output = BFSpath(board, p);
 		return output;
 	}
 	
-	/*
-	 * BFS path translate
-	 */
 	
-	public ArrayList<Character> BFSpath(char[][] view, ArrayList<State> p){
+	/**
+	 * BFS path translate
+	 * It will return a long path contain a lot commands
+	 * @param board
+	 * @param p
+	 * @return
+	 */
+	public ArrayList<Character> BFSpath(Board board, ArrayList<State> p){
+		char[][] view = board.getBoard();
 		ArrayList<Character> output = new ArrayList<Character>();
 		// translate the path to the target to command
 		for(int i = 0; i < p.size()-1; i++){
@@ -682,8 +747,7 @@ public class Explore {
 
 			} else {
 				//bad path
-				System.out.println("bad path");
-				//next.printState();
+				//System.out.println("bad path");
 
 			}
 			
@@ -704,25 +768,20 @@ public class Explore {
 		return output;
 	}
 	
-	
-	
-	
-	
-	/*
-	 * check surround allow to go forward or not
+
+	/**
+	 * check 5X5 square surround the origin point
+	 * then define the origin is worth to go 
+	 * for land mode it will check it is a point surround water
+	 * for water mode it will check it is a point surround boundary
+	 * @param board
+	 * @param origion
+	 * @param target
+	 * @return
 	 */
-	public boolean checkForward(char[][] view, Position origion, char target){
-		//boolean unknow = false;
-		/*int any_water = 0;
-		if(view[origion.getRow()-1][origion.getCol()] == Constants.WATER){
-			any_water++;
-		} else if (view[origion.getRow()+1][origion.getCol()] == Constants.WATER){
-			any_water++;
-		} else if(view[origion.getRow()][origion.getCol()+1] == Constants.WATER){
-			any_water++;
-		} else if (view[origion.getRow()][origion.getCol()-1] == Constants.WATER){
-			any_water++;
-		}*/
+	public boolean checkForward(Board board, Position origion, char target){
+		char[][] view = board.getBoard();
+
 		
 		for(int row = origion.getRow()-2 ; row <= origion.getRow()+2; row++){
 			for(int col = origion.getCol()-2 ; col <= origion.getCol()+2; col++){
@@ -737,22 +796,16 @@ public class Explore {
 				}
 			}
 		}
-		
-
-		/*if(any_water < 2 && unknow == true){
-			return true;
-		}*/
-
-
-		
 		return false;
 	}
 	
-	
-	/*
+	/**
 	 * Known the getDirection which current node need to go
 	 * And known current node's getDirection
 	 * Calculating which getDirection current node should turn around
+	 * @param aim
+	 * @param d
+	 * @return
 	 */
 	public ArrayList<Character> directionAction(int aim, int d){
 		ArrayList<Character> output = new ArrayList<>();
@@ -825,10 +878,14 @@ public class Explore {
 		return output;
 	}
 	
-	/*
-	 * Check current position is valid or not
+	/**
+	 *Check current position is valid or not
+	 * @param board
+	 * @param current
+	 * @return
 	 */
-	public boolean valid(char[][]view, State current){
+	public boolean valid(Board board , State current){
+		char[][] view = board.getBoard();
 		// view overflow or not
 		if(current.getRow() >  Constants.BOARD_SIZE_ROW-1 || current.getCol() > Constants.BOARD_SIZE_COL-1){
 			return false;
@@ -862,7 +919,13 @@ public class Explore {
 		// it is tree
 		else if (view[current.getRow()][current.getCol()] == Constants.TREE){
 			//check getAxe or dynamite
-			return current.getAxe() || current.getDynamite() > 1;
+			if(board.returnTreeNum() <=1 && exploreLand == true){
+				return false;
+			}else{
+				return current.getAxe() || current.getDynamite() > 1;
+			}
+
+
 		} else if(view[current.getRow()][current.getCol()] == Constants.UNKNOW){
 			return true;
 		}
@@ -879,11 +942,15 @@ public class Explore {
 		
 		return true;
 	}
-	
-	/*
+
+	/**
 	 * Check current position is valid or not in the water mode
+	 * @param board
+	 * @param current
+	 * @return
 	 */
-	public boolean validWater(char[][] view, State current){
+	public boolean validWater(Board board, State current){
+		char[][] view = board.getBoard();
 		// view overflow or not
 		if(current.getRow() >  Constants.BOARD_SIZE_ROW-1 || current.getCol() > Constants.BOARD_SIZE_COL-1){
 			return false;

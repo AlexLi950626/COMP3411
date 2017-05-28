@@ -524,4 +524,11 @@ public class Board implements Cloneable {
         s.append(numTree);
         return s.toString();
     }
+    
+    /**
+     * return number of tree
+     */
+    public int returnTreeNum(){
+    	return this.numTree;
+    }
 }

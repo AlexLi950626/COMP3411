@@ -28,7 +28,22 @@
  *      - SearchState is the class used to store the information about the board and the agent during searching
  *
  *  1. Explore Phase:
- *
+ *  	-Land Explore:
+ *  	Land explore mainly using greedy and BFS. Firstly Agent will follow current direction to go until it hit some 
+ *  	invalid position like water and wall. Then agent will will find the closest the position which haven't explored 
+ *  	yet OR find the valid position which its 5X5 region has unexplored position using BFS.
+ *     
+ *     -Water Explore:
+ *     After current land exploring is finished which return no more character commands. Agent will check it condition 
+ *    	whether it can go into water or not. Before agent get into water, agent will try to get axe and raft through BFS search. 
+ *      If there is no axe and validable tree in the current view then agent will start A* search. Otherwise, agent will go into 
+ *      water and use the same method to explore all the water. During the water explore, agent will detect the boundary and pruning
+ *      some meaningless case.
+ *      
+ *      -Back to land:
+ *      After water exploring, agent might find another island and try to land on it. So it will try to search the valid position
+ *      or tree which contain unknown position and use BFS to get there. If there is no such position, that means explore is finished.
+ *      Current view should be shown the whole board
  *
  *  2. Planning Phase:
  *  After explore the map, we should have seen all tool's positions and the position of the goal, which means there should
@@ -68,7 +83,6 @@
 
 import java.io.*;
 import java.net.*;
-import java.util.HashMap;
 import java.util.ArrayList;
 
 public class Agent {
@@ -89,9 +103,7 @@ public class Agent {
 
     //the first point is always the place you want to go;
     private ArrayList<Character> getToItemPath;
-    
-    // A hashmap that contain tree position as a string and integer to define the operation
-    private Boolean checkTree;
+
 
 
     /**
@@ -106,7 +118,6 @@ public class Agent {
         firstExplore = false;
         landExplore= true;
         waterExplore = false;
-        checkTree = false;
     }
 
    public static void main( String[] args )
@@ -185,7 +196,7 @@ public class Agent {
     	   //try to explore the whole graph, including land and water
     	   //first search valid land then water
     	   //finished water then search valid land again
-	       action = e.checkExplore(currBoard.getBoard(), currAgent);
+	       action = e.checkExplore(currBoard, currAgent);
 	       if (action != ' ') {
 	           currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
 	           prv = new State(currAgent);
@@ -199,7 +210,7 @@ public class Agent {
 	           //firstLandExplore = true;
 	    	   if(waterExplore){
 	    		   //end of the water explore
-	    		   action = e.disableWaterExplore(currBoard.getBoard(),currAgent);
+	    		   action = e.disableWaterExplore(currBoard,currAgent);
 	    		   if(action != ' '){
 	        		   currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
 	                   currAgent.setPreState(prv);
