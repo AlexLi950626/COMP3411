@@ -3,6 +3,44 @@
  *  Sample Agent for Text-Based Adventure Game
  *  COMP3411 Artificial Intelligence
  *  UNSW Session 1, 2017
+ *
+ *  @Auther Shiyun Zhang(z5055944) && Siying Li(z5011996)
+ *
+ *  In our Agent, There are tow different Phases, the first phase is the explore phase, the whole point of this phase is
+ *  just try to explore as many region as possible, therefore Planning Phase can actually calculate the path to get the
+ *  Treasure and back to origin.
+ *
+ *  We also used different classes to help us to implement our agent:
+ *      - Agent Class is the main class this store the our game view and the current status of the agent and decide what
+ *      to do at current situation
+ *      - Board Class is used to store the actually map of the game, it is responsible for providing all information of
+ *      the game, tell the agent where is certain item and it is also used to update map from the view we received from
+ *      the server, the actual board is stored as matrix, because at beginning we don't know where we are at the map,
+ *      therefore we create a matrix with size 164 X 164 to handle all cases.
+ *      index are row and column it stores the type of specific row and col, all items are stored separately in ArrayList.
+ *      - State Class is used to store the actually information of the agent, e.g current position, does agent has a axe
+ *      does agent has key etc.
+ *      - Constants Class is used to store all the magic number used in other classes
+ *      - Explore is the class used to help agent to check if map is fully explored, can we explore more etc
+ *      - Position is the class used to store Row and Column, as for each method we can only return one variable
+ *      - SearchCompletedPath is the class used to search path from current position to get the goal and also from goal
+ *      to the origin point.
+ *      - SearchState is the class used to store the information about the board and the agent during searching
+ *
+ *  1. Explore Phase:
+ *
+ *  2. Planning Phase:
+ *  After explore the map, we should have seen all tool's positions and the position of the goal, which means there should
+ *  be at least one possible solution.
+ *  In the planning phase, we used state based greedy search algorithm to search the solution, if there is a path from agent's
+ *  current position
+ *  our function for f cost is:
+ *      f cost = 2 * g cost + 4 * h cost
+ *  which means we value our heuristic twice more than the actual current spend cost.
+ *  I used this is because, in order to solve the problem we don't need a shortest path, we just need a path, but we also
+ *  should consider the current cost to avoid that agent just wondering around.
+ *
+ *
 */
 
 //import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;

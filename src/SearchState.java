@@ -44,7 +44,6 @@ public class SearchState implements Comparable{
      * another constructor construct next state for search
      * @param currBoard
      * @param pre
-     * @param
      */
     public SearchState(Board currBoard, SearchState pre, int gCost){
         preState = pre;
