@@ -206,7 +206,7 @@ public class Agent {
         			   e.disableCutTree();
         		   }
         		   
-        		   if(!e.returnTree().isEmpty() && e.returnCutTree().isEmpty()){
+        		   if(e.returFlag() == false){
         			   //end of the land explore
                        e.enableWaterExplore();
                        waterExplore = true;

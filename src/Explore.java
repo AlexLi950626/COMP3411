@@ -46,6 +46,9 @@ public class Explore {
 			} else{
 				if(player.getAxe() == false){
 		   			path.addAll(findPoint(board,player,Constants.AXE));
+		   			if(path.size()  == 0){
+		   				cutTree = false;
+		   			}
 				}else if(treeOnce == false){
 					// next == tree 
 					//BFS find cut once tree
@@ -70,7 +73,7 @@ public class Explore {
 		   	if(path.size() != 0){
 		       	action = path.get(0) ; //get the first element from the path
 		        path.remove(0);
-		        if(path.size() == 1 && action == Constants.CHOP_TREE){
+		        if(path.size() == 0 && cutTree == true){
 		        	//remove the tree first
 		        	
 		        	//find next tree
@@ -84,31 +87,8 @@ public class Explore {
 			        		//tree.remove(cutTreeList.get(0).toString());
 			        		//cutTreeList.remove(0);
 			    			Position p = new Position(player.getRow(),player.getCol());
-			        		switch(player.getDirection()){
-			        			case Constants.NORTH:
-			        				p.setRow(p.getRow() -1);
-					        		tree.remove(p.toString());
-			        				break;
-			        			case Constants.SOUTH:
-			        				p.setRow(p.getRow() +1);
-					        		tree.remove(p.toString());
-			        				break;
-			        			case Constants.WEST:
-			        				p.setCol(p.getCol() -1);
-					        		tree.remove(p.toString());
-			        				break;
-			        			case Constants.EAST:
-			        				p.setCol(p.getCol() +1);
-					        		tree.remove(p.toString());
-			        				break;
-			        		}
-			        		cutTreeList.remove(0);
-			        		//remove 'F'
-				        	path.remove(0);
-				        	if(path.get(0) == Constants.CHOP_TREE){
-				        		//remove 'C' again
-				        		path.remove(0);
-				        	} 
+			        		
+			        		tree.remove(p.toString());
 		        		}else {
 			        		//tree remove by other BFS
 			        		int i = 1;
@@ -125,37 +105,12 @@ public class Explore {
 			        			ArrayList<State> posi = toNode(board,player,treeState,Constants.EMPTY);
 				    			path.addAll(BFSpath(board,posi));
 				    			Position po = new Position(player.getRow(),player.getCol());
-				        		switch(player.getDirection()){
-				        			case Constants.NORTH:
-				        				po.setRow(po.getRow() -1);
-						        		tree.remove(po.toString());
-				        				break;
-				        			case Constants.SOUTH:
-				        				po.setRow(po.getRow() +1);
-						        		tree.remove(po.toString());
-				        				break;
-				        			case Constants.WEST:
-				        				po.setCol(po.getCol() -1);
-						        		tree.remove(po.toString());
-				        				break;
-				        			case Constants.EAST:
-				        				po.setCol(po.getCol() +1);
-						        		tree.remove(po.toString());
-				        				break;
-				        		}
+				    			tree.remove(po.toString());
 			        		}
-			        		
-			        		cutTreeList.remove(0);
-			        		path.remove(0);
-				        	if(path.size() > 0 && path.get(0) == Constants.CHOP_TREE){
-				        		//remove 'C' again
-				        		path.remove(0);
-				        	}
 			        	}
-		    			
-		        	} else{
-		        		cutTreeList.remove(0);
+		        		
 		        	}
+		        	cutTreeList.remove(0);
 		        }
 		   	}
 		}
@@ -827,8 +782,9 @@ public class Explore {
 				//return path
 				if(target == Constants.WATER){
 					boolean checkQuestion = false;
+					boolean speace = false;
 					Position origion =  new Position(next.getRow(),next.getCol());
-					questionLoop:
+					//questionLoop:
 					for(int row = origion.getRow()-2 ; row <= origion.getRow()+2; row++){
 						for(int col = origion.getCol()-2 ; col <= origion.getCol()+2; col++){
 							if(col > 0 && row >0 && col < Constants.BOARD_SIZE_COL && row < Constants.BOARD_SIZE_ROW){
@@ -837,14 +793,14 @@ public class Explore {
 									if(checkForward(view,origion,t)){
 										checkQuestion = true;
 									}
-									break questionLoop;
+									
 									
 								}
 								
 							}
 						}
 					}
-					if(checkQuestion){
+					if(checkQuestion ){
 						while(!(next.getCol() == current.getCol() && next.getRow() == current.getRow())){
 							p.add(0,next);
 							next = next.getPreState();
@@ -893,7 +849,7 @@ public class Explore {
 				}
 			}
 			
-			if(!seen(waterSeen, next) && !(next.getCol() == current.getCol() && next.getRow() == current.getRow()) && hasWater == true){
+			/*if(!seen(waterSeen, next) && !(next.getCol() == current.getCol() && next.getRow() == current.getRow()) && hasWater == true){
 				Position pos =  new Position(next.getRow(),next.getCol());
 				char t = Constants.BOUNDARY;
 				if(checkForward(view,pos,t)){
@@ -910,7 +866,7 @@ public class Explore {
 					}
 					break breakloop;
 				}
-			}
+			}*/
 			
 			
 			next.setRow(prv.getRow()-1);
@@ -1270,5 +1226,9 @@ public class Explore {
 	
 	public ArrayList<Position> returnCutTree(){
 		return this.cutTreeList;
+	}
+	
+	public boolean returFlag(){
+		return cutTree;
 	}
 }
