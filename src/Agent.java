@@ -7,8 +7,8 @@
  *  @Auther Shiyun Zhang(z5055944) && Siying Li(z5011996)
  *
  *  In our Agent, There are tow different Phases, the first phase is the explore phase, the whole point of this phase is
- *  just try to explore as many region as possible, therefore Planning Phase can actually calculate the path to get the
- *  Treasure and back to origin.
+ *  just try to explore as many region as possible, therefore Planning Phase can calculate the path to get the Treasure
+ *  and back to origin.
  *
  *  We also used different classes to help us to implement our agent:
  *      - Agent Class is the main class this store the our game view and the current status of the agent and decide what
@@ -29,18 +29,39 @@
  *
  *  1. Explore Phase:
  *
+ *
  *  2. Planning Phase:
  *  After explore the map, we should have seen all tool's positions and the position of the goal, which means there should
  *  be at least one possible solution.
- *  In the planning phase, we used state based greedy search algorithm to search the solution, if there is a path from agent's
- *  current position
+ *  In the planning phase, we used state based greedy search algorithm to search the solution, to find out if there is a path from agent's
+ *  current position to the goal and from the goal back to the start point.
  *  our function for f cost is:
  *      f cost = 2 * g cost + 4 * h cost
  *  which means we value our heuristic twice more than the actual current spend cost.
  *  I used this is because, in order to solve the problem we don't need a shortest path, we just need a path, but we also
- *  should consider the current cost to avoid that agent just wondering around.
+ *  should consider the current cost to avoid agent just wonder around.
+ *  our heuristic for the algorithm is the manhattan distance from current position to the closest tool (exclude goal),
+ *  and from that closest tool point add the manhattan to the next closest tool position until there is no more tool.
+ *  at end of add closest tool manhattan distance, our current position should be at the last added tool's position.
+ *  then we add the manhattan distance between the current position and goal position, and manhattan distance between
+ *  goal position to the origin.
+ *  our search algorithm eventually simulate all possibilities of actions can be execute to predicate the future environment
+ *  and but because the agent is guided by the heuristic therefore, this is faster than uniform cost search.
  *
+ *  There are several different data structures are used to help in planning:
+ *      - Priority queue is used to make sure the f cost of state are in order during greedy search
+ *      - Hash Map is used to store the search state we have already been in order to avoid repeated state to add to our priority queue
+ *      - ArrayList is also used normally for storing positions of some kind of tools.
+ *      - Primitive types are used to store information such as does agent has raft, how many tree on the map etc.
  *
+ *  design decision:
+ *      - we store the board (reduce size board) to in each of the search state, which means this will take lots of memory, but the advantages will be
+ *      reduce unnecessary computations, which make our greedy search run fast, but easily blow up the memory space, we also tried to reduce the effect, by
+ *      use shallow copy of the board in some case, and uses reduced size board.
+ *      - our heuristic is also another problem, because it is obvious not admissible, currently it add the shortest distance between each tool
+ *      but in some case not all tools need to be used. therefore sometimes it is slower than usually.
+ *      - we also decide when to use dynamite, during search, we check if there is any tool around that block we want to blow, if nothing around
+ *      we don't expand this search state. this speed up our search, but it miss few cases.
 */
 
 //import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
