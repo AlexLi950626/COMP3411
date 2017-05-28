@@ -1,5 +1,6 @@
 /**
  * Created by shiyun on 11/05/17.
+ * this state is used in exploration, it is used to store the state of the agent
  */
 public class State implements Cloneable {
 	//state info
@@ -14,7 +15,13 @@ public class State implements Cloneable {
     private boolean key;
     private int dynamite;
     private boolean treasure;
-    
+
+    /**
+     * constructor
+     * @param row
+     * @param col
+     * @param direction
+     */
     public State(int row, int col, int direction){
     	this.row = row;
     	this.col = col;
@@ -27,7 +34,11 @@ public class State implements Cloneable {
         this.dynamite = 0;
         this.treasure = false;
     }
-    
+
+    /**
+     * another constructor
+     * @param newState
+     */
     public State(State newState){
     	this.row = newState.getRow();
     	this.col = newState.getCol();
@@ -40,11 +51,19 @@ public class State implements Cloneable {
         this.dynamite = newState.getDynamite();
         this.treasure = newState.getTreasure();
     }
-    
+
+    /**
+     * setter which set row
+     * @param newRow
+     */
     public void setRow(int newRow){
     	this.row = newRow;
     }
-    
+
+    /**
+     * setter which set the col
+     * @param newCol
+     */
     public void setCol(int newCol){
     	this.col = newCol;
     }
@@ -55,67 +74,123 @@ public class State implements Cloneable {
             this.direction += 4;
         }
     }
-    
+
+    /**
+     * setter which set if current agent has axe
+     * @param newAxe
+     */
     public void setAxe(boolean newAxe){
     	this.axe = newAxe;
     }
-    
+
+    /**
+     * setter if current agent has raft
+     * @param newRaft
+     */
     public void setRaft(boolean newRaft){
     	this.raft = newRaft;
     }
-    
+
+    /**
+     * setter set if current agent has key
+     * @param newKey
+     */
     public void setKey(boolean newKey){
     	this.key = newKey;
     }
-    
+
+    /**
+     * setter set if current agent has treasure
+     * @param newTreasure
+     */
     public void setTreasure(boolean newTreasure){
     	this.treasure = newTreasure;
     }
-    
+
+    /**
+     * setter set how many dynamite current agent has
+     * @param newDynamite
+     */
     public void setDynamite(int newDynamite){
     	this.dynamite = newDynamite;
     }
 
+    /**
+     * setter set the pre state of the current state
+     * @param s
+     */
     public void setPreState(State s){
     	this.preState = s;
     }
-    
+
+    /**
+     * get row of the state
+     * @return
+     */
     public int getRow(){
     	return this.row;
     }
-    
+
+    /**
+     * get col of the state
+     * @return
+     */
     public int getCol(){
     	return this.col;
     }
-    
+
+    /**
+     * @return get direction of the state
+     */
     public int getDirection(){
     	return this.direction;
     }
-    
+
+    /**
+     * @return boolean get previous state from current state
+     */
     public State getPreState(){
     	return this.preState;
     }
-    
+
+    /**
+     * @return boolean check if current state agent has axe
+     */
     public boolean getAxe(){
     	return this.axe;
     }
-    
+
+    /**
+     * @return boolean check if current agent has a raft
+     */
     public boolean getRaft(){
     	return this.raft;
     }
-    
+
+    /**
+     * @return boolean check if current agent has a key
+     */
     public boolean getKey(){
     	return this.key;
     }
-    
+
+    /**
+     * @return boolean check if current agent has a treasure
+     */
     public boolean getTreasure(){
     	return this.treasure;
     }
-    
+
+    /**
+     * @return number of dynamite current agent has
+     */
     public int getDynamite(){
     	return this.dynamite;
     }
-    
+
+    /**
+     * @return get the row if current agent go forward
+     */
     public int getForwardRow(){
         switch (this.getDirection()){
             case Constants.NORTH:
@@ -127,6 +202,9 @@ public class State implements Cloneable {
         }
     }
 
+    /**
+     * @return get the col if current agent go forward
+     */
     public int getForwardCol(){
         switch (this.getDirection()){
             case Constants.WEST:
@@ -137,22 +215,10 @@ public class State implements Cloneable {
                 return this.getCol();
         }
     }
-    
-    public char getDirectionChar(){
-        switch (this.getDirection()){
-            case Constants.NORTH:
-                return '^';
-            case Constants.SOUTH:
-                return 'v';
-            case Constants.WEST:
-                return '<';
-            case Constants.EAST:
-                return '>';
-            default:
-                return (char) 0;
-        }
-    }
 
+    /**
+     * @return a deep copy of the state
+     */
     public State clone(){
         State newState = new State(Constants.START_ROW, Constants.START_COL, Constants.NORTH);
 
@@ -177,24 +243,5 @@ public class State implements Cloneable {
      */
     public Position getCurrentPosition(){
         return new Position(row, col);
-    }
-    /*
-     * print the current state info
-     */
-    public void printState(){
-        System.out.println("--------------------------player info--------------------------");
-        System.out.println("getRow: " + this.getRow());
-        System.out.println("getCol: " + this.getCol());
-        if(this.getPreState() != null){
-            System.out.println("getPreState node getRow: " + this.getPreState().getRow());
-            System.out.println("getPreState node getCol: " + this.getPreState().getCol());
-        }
-
-        /*System.out.println("getAxe: " + this.getAxe());
-        System.out.println("getKey: " + this.getKey());
-        System.out.println("getRaft: " + this.getRaft());
-        System.out.println("getDynamite: " + this.getDynamite());
-        System.out.println("getTreasure: " + this.getTreasure());*/
-    	
     }
 }

@@ -2,6 +2,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 
+/**
+ * the main planning class, search for the solution for the map
+ */
 public class SearchCompletedPath{
     private Board originalBoard;
     private State originalState;
@@ -87,13 +90,11 @@ public class SearchCompletedPath{
         while(!statePQ.isEmpty()){
             // get a state from queue
             SearchState currentState = statePQ.poll();
-            //currentState.printSearchState();
             // if destination is reached return path
             Position currPosition = currentState.getAgentPosition();
             char currPositionType = currentState.getTypeInBoard(currPosition.getRow(), currPosition.getCol());
             if(currentState.hasTreasure() && origin.equals(currPosition)){
                 path = currentState.getCurrentPath();
-                //currentState.printStatePath();
                 break;
             }
 
@@ -229,7 +230,7 @@ public class SearchCompletedPath{
                                 }
                                 break;
                             default:
-                                System.out.println("Unexpected movePositionType: " + movePositionType);
+
                                 throw new RuntimeException();
                         }
                         break;
@@ -351,13 +352,11 @@ public class SearchCompletedPath{
                                 }
                                 break;
                             default:
-                                System.out.println("Unexpected movePositionType: " + movePositionType);
                                 throw new RuntimeException();
                         }
                         break;
                     default:
                         //as we should only be stand on either Empty or on Water
-                        System.out.println("Unexpected currPositionType: " + currPositionType);
                         throw new RuntimeException();
                 }
             }
@@ -392,7 +391,6 @@ public class SearchCompletedPath{
      * @return calculate manhattan distance between tow position
      */
     private int ManhattanHeuristic(SearchState state){
-        //return Math.abs(src.getRow() - dest.getRow()) + Math.abs(src.getCol() - dest.getCol());
         Position currPosition = state.getAgentPosition();
         if(state.hasTreasure()){
             return Math.abs(currPosition.getRow() - origin.getRow()) + Math.abs(currPosition.getCol() - origin.getCol());

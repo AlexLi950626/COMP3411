@@ -1,3 +1,7 @@
+/**
+ * position used to store col and row
+ */
+
 public class Position implements Cloneable {
     private int row;
     private int col;

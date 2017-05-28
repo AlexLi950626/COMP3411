@@ -1,9 +1,10 @@
-//import com.sun.corba.se.impl.orbutil.closure.Constant;
-//import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
-
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * this class is used to store the information of each state of the map and player, which help planning to back track
+ * path or search other future states
+ */
 public class SearchState implements Comparable{
     private SearchState preState;
     public Board board;
@@ -299,35 +300,4 @@ public class SearchState implements Comparable{
         return s.toString();
     }
 
-    public void printSearchState(){
-        System.out.println("-----------------------------------------------------------------------------------------");
-        board.printExtractMap(currAgentPosition);
-        if(preState != null){
-            System.out.println("PrePosition is: " + preState.getAgentPosition().toString());
-        } else {
-            System.out.println("PrePosition is: null");
-        }
-
-        System.out.println("CurrPosition is: " + currAgentPosition.toString());
-        System.out.println("Raft: " + hasRaft());
-        System.out.println("Key: " + hasKey());
-        System.out.println("Axe: " + hasAxe());
-        System.out.println("Treasure: " + hasTreasure());
-        System.out.println("Dynamite: " + numDynamite());
-        System.out.println("gCost: " + gCost + " hCost: " + hCost);
-
-
-        System.out.println("");
-    }
-
-    public void printStatePath(){
-        ArrayList<SearchState> ss = new ArrayList<>();
-        for(SearchState s = this; s != null; s = s.preState){
-            ss.add(s);
-        }
-        Collections.reverse(ss);
-        for(SearchState k : ss){
-            k.printSearchState();
-        }
-    }
 }

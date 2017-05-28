@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 /**
  * Created by shiyun on 11/05/17.
+ * board store information about the whole map and items location
  */
 public class Board implements Cloneable {
 
@@ -20,6 +21,11 @@ public class Board implements Cloneable {
     private char[][] board;
 
 
+    /**
+     * constructor
+     * @param rowSize
+     * @param colSize
+     */
     public Board(int rowSize, int colSize){
         numTree = 0;
         axe_positions = new ArrayList<>();
@@ -342,31 +348,6 @@ public class Board implements Cloneable {
         return true;
     }
 
-    public void printMap(State player){
-        boolean flag;
-        System.out.println("-------------------------------board info-------------------------------");
-        for(int row = 50; row < 140; row++){
-            flag = false;
-            for(int col = 70; col < 120; col++){
-                if(row == player.getRow() && col == player.getCol()){
-                    System.out.print(player.getDirectionChar());
-                } else {
-                    System.out.print(board[row][col]);
-                    flag = true;
-                }
-            }
-            if(flag){
-                System.out.print('\n');
-            }
-        }
-        System.out.print('\n');
-        System.out.println("board_axe: " + axe_positions.size());
-        System.out.println("board_key: " + key_positions.size());
-        System.out.println("board_tree: " + numTree);
-        System.out.println("board_door: " + door_positions.size());
-        System.out.println("board_dynamite: " + dynamite_positions.size());
-    }
-
     /**
      * create a deep copy of the game
      * @return
@@ -520,35 +501,9 @@ public class Board implements Cloneable {
         return posiPos;
     }
 
-    /**
-     * print extract map
-     * @param agentPos
+    /**\
+     * @return a string contain all information about the board
      */
-    public void printExtractMap(Position agentPos){
-        boolean flag;
-        for(int row = 0; row < this.board.length; row++){
-            flag = false;
-            for(int col = 0; col < this.board[0].length; col++){
-                if(row == agentPos.getRow() && col == agentPos.getCol()){
-                    System.out.print('P');
-                } else {
-                    System.out.print(board[row][col]);
-                    flag = true;
-                }
-            }
-            if(flag){
-                System.out.print('\n');
-            }
-        }
-        System.out.println("board info:");
-        System.out.println("board_axe: " + axe_positions.size());
-        System.out.println("board_key: " + key_positions.size());
-        System.out.println("board_tree: " + numTree);
-        System.out.println("board_door: " + door_positions.size());
-        System.out.println("board_dynamite: " + dynamite_positions.size());
-        System.out.println("board_treasure: " + treasure_positions.size());
-    }
-
     public String itemsToString(){
         StringBuilder s = new StringBuilder();
         for(Position a : axe_positions){

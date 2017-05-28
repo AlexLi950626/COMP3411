@@ -152,7 +152,6 @@ public class Agent {
                        }
                    }
                }
-               //agent.print_view(view);
                action = agent.get_action( view );
                out.write( action );
            }
@@ -189,8 +188,6 @@ public class Agent {
 	       action = e.checkExplore(currBoard.getBoard(), currAgent);
 	       if (action != ' ') {
 	           currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
-	           currBoard.printMap(currAgent);
-	           //currAgent.setPreState(prv);
 	           prv = new State(currAgent);
 	           return action;
 	       } else {
@@ -202,7 +199,6 @@ public class Agent {
 	           //firstLandExplore = true;
 	    	   if(waterExplore){
 	    		   //end of the water explore
-	    		   System.out.println("disable water");
 	    		   action = e.disableWaterExplore(currBoard.getBoard(),currAgent);
 	    		   if(action != ' '){
 	        		   currBoard.updateBoardAndStateFromGivenAction(action, currAgent);
@@ -244,30 +240,6 @@ public class Agent {
        return action;
    }
 
-   /**
-    * print the view that is returned from the server
-    * @param view give by server
-    */
-   void print_view( char view[][] )
-   {System.out.println("\n+-----+");
-
-       int i,j;
-
-       for( i=0; i < 5; i++ ) {
-           System.out.print("|");
-           for( j=0; j < 5; j++ ) {
-               if(( i == 2 )&&( j == 2 )) {
-                   System.out.print('^');
-               }
-               else {
-                   System.out.print( view[i][j] );
-               }
-           }
-           System.out.println("|");
-       }
-       System.out.println("+-----+");
-   }
-
     /**
      * Translate coordinates path to actual action path
      * @return the action path
@@ -298,9 +270,6 @@ public class Agent {
                }else if(currPos.getCol() == goingToPos.getCol()-1){ //go east
                    actionPath.addAll(e.directionAction(Constants.EAST, copyState.getDirection()));
                    copyState.updateDirection(Constants.EAST);
-               } else {
-                   //bad path
-                   System.out.println("bad path");
                }
 
                //depend on the type of where we going do different action
@@ -357,18 +326,5 @@ public class Agent {
        getToItemPath = getActionPathFromPosPath(path);
        return getToItemPath != null;
    }
-
-   public void printPath(ArrayList<Position> pos){
-       for(Position p : pos){
-           System.out.print(p.toString());
-       }
-       System.out.println();
-   }
-   public void printActionPath(){
-        for(char c : getToItemPath){
-            System.out.print(c + " ");
-        }
-        System.out.println();
-    }
 }
 
