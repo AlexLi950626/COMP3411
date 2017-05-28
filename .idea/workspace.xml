@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="57b9cd26-5f57-434e-a713-7b976fe33745" name="Default" comment="a* comment is done">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/COMP3411/Agent.class" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/COMP3411/Explore.class" afterPath="$PROJECT_DIR$/out/production/COMP3411/Explore.class" />
+    <list default="true" id="57b9cd26-5f57-434e-a713-7b976fe33745" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/COMP3411/Board.class" afterPath="$PROJECT_DIR$/out/production/COMP3411/Board.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/COMP3411/SearchCompletedPath.class" afterPath="$PROJECT_DIR$/out/production/COMP3411/SearchCompletedPath.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/COMP3411/SearchState.class" afterPath="$PROJECT_DIR$/out/production/COMP3411/SearchState.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Agent.java" afterPath="$PROJECT_DIR$/src/Agent.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Board.java" afterPath="$PROJECT_DIR$/src/Board.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Constants.java" afterPath="$PROJECT_DIR$/src/Constants.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Position.java" afterPath="$PROJECT_DIR$/src/Position.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/SearchCompletedPath.java" afterPath="$PROJECT_DIR$/src/SearchCompletedPath.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/SearchState.java" afterPath="$PROJECT_DIR$/src/SearchState.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/State.java" afterPath="$PROJECT_DIR$/src/State.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -544,7 +538,7 @@
       <workItem from="1495952950438" duration="2033000" />
       <workItem from="1495957859738" duration="237000" />
       <workItem from="1495958307063" duration="666000" />
-      <workItem from="1495962456976" duration="11774000" />
+      <workItem from="1495962456976" duration="11974000" />
     </task>
     <task id="LOCAL-00001" summary="tests">
       <created>1495339190742</created>
@@ -672,11 +666,18 @@
       <option name="project" value="LOCAL" />
       <updated>1495956790011</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="other classes except explore comments are done">
+      <created>1495974319419</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1495974319420</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="215098000" />
+    <option name="totallyTimeSpent" value="215298000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="706" y="-4" width="1321" height="780" extended-state="6" />
@@ -764,7 +765,8 @@
     <MESSAGE value="Clean up a bit of the code" />
     <MESSAGE value="commenting" />
     <MESSAGE value="a* comment is done" />
-    <option name="LAST_COMMIT_MESSAGE" value="a* comment is done" />
+    <MESSAGE value="other classes except explore comments are done" />
+    <option name="LAST_COMMIT_MESSAGE" value="other classes except explore comments are done" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
