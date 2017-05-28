@@ -161,8 +161,10 @@ public class Agent {
         		   e.checkTree(currBoard.getBoard());
 
         		   if(!e.returnCutTree().isEmpty()){
+        			   System.out.println("cut tree list:"  + e.returnCutTree());
         			   e.enableCutTree();
         		   }else{
+        			   System.out.println("----------------------------Tree Empty!---------------------------");
         			   e.disableCutTree();
         		   }
         		   

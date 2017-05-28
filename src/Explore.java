@@ -50,13 +50,13 @@ public class Explore {
 					// next == tree 
 					//BFS find cut once tree
 					if(!cutTreeList.isEmpty()){
-		        		State tree = new State(player);
-		        		tree.setRow(cutTreeList.get(0).getRow());
-		        		tree.setCol(cutTreeList.get(0).getCol());
-		    			ArrayList<State> p = toNode(board,player,tree,Constants.EMPTY);
+		        		State treeState = new State(player);
+		        		treeState.setRow(cutTreeList.get(0).getRow());
+		        		treeState.setCol(cutTreeList.get(0).getCol());
+		    			ArrayList<State> p = toNode(board,player,treeState,Constants.EMPTY);
 		    			path.addAll(BFSpath(board,p));
-		        		
-		        		cutTreeList.remove(0);
+		    			//tree.remove(cutTreeList.get(0).toString());
+		        		//cutTreeList.remove(0);
 		        	}
 					
 					treeOnce = true;
@@ -70,15 +70,90 @@ public class Explore {
 		   	if(path.size() != 0){
 		       	action = path.get(0) ; //get the first element from the path
 		        path.remove(0);
-		        if(action == Constants.CHOP_TREE){
+		        if(path.size() == 1 && action == Constants.CHOP_TREE){
+		        	//remove the tree first
+		        	
 		        	//find next tree
-		        	if(!cutTreeList.isEmpty()){
+		        	if(cutTreeList.size() >= 2){
 		        		State treeState = new State(player);
-		        		treeState.setRow(cutTreeList.get(0).getRow());
-		        		treeState.setCol(cutTreeList.get(0).getCol());
-		    			ArrayList<State> p = toNode(board,player,treeState,Constants.EMPTY);
-		    			path.addAll(BFSpath(board,p));
-		        		tree.remove(cutTreeList.get(0).toString());
+		        		treeState.setRow(cutTreeList.get(1).getRow());
+		        		treeState.setCol(cutTreeList.get(1).getCol());
+		        		if(board[treeState.getRow()][treeState.getCol()] == Constants.TREE){
+		        			ArrayList<State> pos = toNode(board,player,treeState,Constants.EMPTY);
+			    			path.addAll(BFSpath(board,pos));
+			        		//tree.remove(cutTreeList.get(0).toString());
+			        		//cutTreeList.remove(0);
+			    			Position p = new Position(player.getRow(),player.getCol());
+			        		switch(player.getDirection()){
+			        			case Constants.NORTH:
+			        				p.setRow(p.getRow() -1);
+					        		tree.remove(p.toString());
+			        				break;
+			        			case Constants.SOUTH:
+			        				p.setRow(p.getRow() +1);
+					        		tree.remove(p.toString());
+			        				break;
+			        			case Constants.WEST:
+			        				p.setCol(p.getCol() -1);
+					        		tree.remove(p.toString());
+			        				break;
+			        			case Constants.EAST:
+			        				p.setCol(p.getCol() +1);
+					        		tree.remove(p.toString());
+			        				break;
+			        		}
+			        		cutTreeList.remove(0);
+			        		//remove 'F'
+				        	path.remove(0);
+				        	if(path.get(0) == Constants.CHOP_TREE){
+				        		//remove 'C' again
+				        		path.remove(0);
+				        	} 
+		        		}else {
+			        		//tree remove by other BFS
+			        		int i = 1;
+			        		while(board[treeState.getRow()][treeState.getCol()] != Constants.TREE){
+			        			cutTreeList.remove(i);
+			        			if(cutTreeList.size() > 1){
+			        				treeState.setRow(cutTreeList.get(i).getRow());
+					        		treeState.setCol(cutTreeList.get(i).getCol());
+			        			}else{
+			        				break;
+			        			}
+			        		}
+			        		if(cutTreeList.size() > 1){
+			        			ArrayList<State> posi = toNode(board,player,treeState,Constants.EMPTY);
+				    			path.addAll(BFSpath(board,posi));
+				    			Position po = new Position(player.getRow(),player.getCol());
+				        		switch(player.getDirection()){
+				        			case Constants.NORTH:
+				        				po.setRow(po.getRow() -1);
+						        		tree.remove(po.toString());
+				        				break;
+				        			case Constants.SOUTH:
+				        				po.setRow(po.getRow() +1);
+						        		tree.remove(po.toString());
+				        				break;
+				        			case Constants.WEST:
+				        				po.setCol(po.getCol() -1);
+						        		tree.remove(po.toString());
+				        				break;
+				        			case Constants.EAST:
+				        				po.setCol(po.getCol() +1);
+						        		tree.remove(po.toString());
+				        				break;
+				        		}
+			        		}
+			        		
+			        		cutTreeList.remove(0);
+			        		path.remove(0);
+				        	if(path.size() > 0 && path.get(0) == Constants.CHOP_TREE){
+				        		//remove 'C' again
+				        		path.remove(0);
+				        	}
+			        	}
+		    			
+		        	} else{
 		        		cutTreeList.remove(0);
 		        	}
 		        }
@@ -622,10 +697,11 @@ public class Explore {
 	 * Analyze which tree we should chop and which tree we cannot chop
 	 */
 	public void checkTree(char[][] board){
-		boolean unknown = false;
-		boolean water = false;
+
 
 		for(String s: tree.keySet()){
+			boolean unknown = false;
+			boolean water = false;
 			if(tree.get(s) == Constants.WAIT){
 				String[] treeString =  null;
 				 treeString = s.split(",");
@@ -651,6 +727,7 @@ public class Explore {
 					
 					if(unknown == true && water == false){
 						//cut
+						treeOnce = false;
 						tree.put(s,Constants.CUT);
 						cutTreeList.add(p);
 					} else{
